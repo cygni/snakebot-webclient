@@ -1,0 +1,6 @@
+export default {
+    ADD_GAMES: 'ADD_GAMES',
+    START_GAME: 'START_GAME',
+    ACTIVE_GAME: 'ACTIVE_GAME',
+    MAP_UPDATE_EVENT: 'MAP_UPDATE_EVENT'
+}

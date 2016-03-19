@@ -1,0 +1,12 @@
+{
+  name: "RandomBot",
+  playerId: "b31798ec-528a-4488-85e4-739fd466768a",
+  content: "snakehead"
+}
+
+{
+  tail: true,
+  playerId: "0c146578-87b0-48e2-89c5-1e71b6215d41",
+  order: 1,
+  content: "snakebody"
+}
