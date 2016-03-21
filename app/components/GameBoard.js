@@ -19,7 +19,9 @@ class GameBoard extends React.Component {
         this.state = {
             world: [],
             snakes: [],
-            tileHeight: 0
+            tileSize: 0,
+            width: 0,
+            height: 0
         }
     }
 
@@ -32,15 +34,18 @@ class GameBoard extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps.game);
         if (nextProps.game.world) {
+            console.log("nextProps");
+            console.log(nextProps.game);
             this.setState({
                 world: nextProps.game.world
             });
         }
-        if (nextProps.game.tileHeight) {
+        if (nextProps.game.tileSize) {
             this.setState({
-                tileHeight: nextProps.game.tileHeight
+                tileSize: nextProps.game.tileSize,
+                height: nextProps.game.height,
+                width: nextProps.game.width
             });
         }
     };
@@ -79,11 +84,11 @@ class GameBoard extends React.Component {
                             <Row className="show-grid">
                                 <Col xs={18} md={12} lg={12}>
                                     <Col xs={12} md={8} lg={8}>
-                                        <div style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)", width: 720, height: 520}}>
+                                        <div className={this.state.width === 0 ? 'hidden' : ''} style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: this.state.width + 20, height:  this.state.height + 20}}>
                                             {immutTiles.map((tilerow, index) => {
                                                 return (
                                                     <div key={index}
-                                                         style={{width: 700, height: this.state.tileHeight}}>
+                                                         style={{width: this.state.width , height: this.state.tileSize}}>
                                                         {tilerow}
                                                     </div>
                                                 )

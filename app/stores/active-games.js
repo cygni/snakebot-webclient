@@ -14,9 +14,6 @@ var startedGame = {};
 var gameEvents = {};
 var active = false;
 var socket = new SockJS('http://localhost:8080/events');
-const HEIGHT = 500;
-const WIDTH = 700;
-
 
 var boardColors = [
     ["#F44336", "#EF9A9A"],
@@ -57,22 +54,35 @@ const _addGames = (games) => {
         let gameInArray = _games.find(gme => game.gameId === gme.id);
         if (gameInArray) {
             gameInArray.gameFeatures = game.gameFeatures;
-            gameInArray.players = game.players;
+            game.players.forEach((player, index) => {
+                if (! gameInArray.players.find(entry => entry.id === player.id)) {
+                    gameInArray.players.push({"index": index, "name": player.name, id: player.id, 'color': snakeColors[index]});
+                }
+            });
         }
         else {
             let tmpGame = Object.assign(game);
+
+            let size = calculateSize(tmpGame.gameFeatures.width, tmpGame.gameFeatures.height);
+            let tileSize = size[1] / tmpGame.gameFeatures.height;
+            let players = [];
+
+            game.players.forEach((player, index) => {
+                    players.push({"index": index, "name": player.name, id: player.id, 'color': snakeColors[index]});
+            });
 
 
             _games.push({
                 "id": tmpGame.gameId,
                 "gameFeatures": tmpGame.gameFeatures,
                 "color": boardColors[index],
-                "players": tmpGame.players,
-                "world": createEmptyWorld(tmpGame.gameFeatures.width, tmpGame.gameFeatures.height),
-                "tileHeight": HEIGHT / tmpGame.gameFeatures.height
+                "players": players,
+                "world": createEmptyWorld(tmpGame.gameFeatures.width, tmpGame.gameFeatures.height, tileSize),
+                "tileSize": tileSize,
+                "height": size[1],
+                "width": size[0]
             });
         }
-        _addPlayers(game);
     })
 };
 
@@ -108,17 +118,17 @@ const _socketSend = () => {
     setTimeout(_socketSend, 10000);
 };
 
-const _addPlayers = (game) => {
-    let gameInMap = playerMap.get(game.id);
-    let players = gameInMap ? gameInMap : [];
-
-    game.players.forEach((player, index) => {
-        if (!players.find(entry => entry.id === player.id)) {
-            players.push({"index": index, "name": player.name, id: player.id, 'color': snakeColors[index]});
-        }
-    });
-    playerMap.set(game.gameId, players);
-};
+//const _addPlayers = (game) => {
+//    let gameInMap = playerMap.get(game.id);
+//    let players = gameInMap ? gameInMap : [];
+//
+//    game.players.forEach((player, index) => {
+//        if (!players.find(entry => entry.id === player.id)) {
+//            players.push({"index": index, "name": player.name, id: player.id, 'color': snakeColors[index]});
+//        }
+//    });
+//    playerMap.set(game.gameId, players);
+//};
 
 const _startGame = () => {
     socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.websocket.event.api.SetGameFilter"}');
@@ -133,39 +143,37 @@ const _setActiveGame = (id) => {
 const _addMapUpdate = (event) => {
     var updatedGame = _games.find(game => game.id === event.gameId);
     updatedGame.world = sortWorld(event.map);
-    _updateSnakes(event.gameId, event.map.snakeInfos)
+    _updateSnakes(updatedGame.players, event.map.snakeInfos)
 };
 
-const _updateSnakes = (id, snakeList) => {
-    let players = playerMap.get(id);
+const _updateSnakes = (oldList, snakeList) => {
     snakeList.forEach(snake => {
-        let tmpSnake = players.find(existingSnake => snake.id === existingSnake.id);
+        let tmpSnake = oldList.find(existingSnake => snake.id === existingSnake.id);
         if (tmpSnake) {
             tmpSnake.length = snake.length;
         }
         else {
-            players.push({
+            oldList.push({
                 "id": snake.id,
                 "name": snake.name,
                 "length": snake.length,
-                "color": snakeColors[players.length]
+                "color": snakeColors[oldList.length]
             })
         }
     })
 };
 
-function createEmptyWorld(boardWidth, boardHeight) {
+function createEmptyWorld(boardWidth, boardHeight, size) {
     let tiles = [];
-    let tileHeight = HEIGHT / boardHeight;
-    let tileWidth = WIDTH / boardWidth;
+
     for (let i = 0; i < boardHeight; i++) {
         let emptyTileRow = [];
         for (let j = 0; j < boardWidth; j++) {
             let key = "" + i + "-" + j;
             emptyTileRow.push({
                     "key": key,
-                    "height": tileHeight,
-                    "width": tileWidth,
+                    "height": size,
+                    "width": size,
                     "color": "",
                     "gradient": 1,
                     "tail": false,
@@ -180,8 +188,9 @@ function createEmptyWorld(boardWidth, boardHeight) {
 
 function sortWorld(world) {
     let tiles = [];
-    let tileHeight = HEIGHT / world.height;
-    let tileWidth = WIDTH / world.width;
+
+    let size = calculateSize(world.width, world.height);
+    let tileSize = size[1] / world.height;
 
     for (let i = 0; i < world.tiles.length; i++) {
         let tileRow = [];
@@ -189,7 +198,7 @@ function sortWorld(world) {
         for (let j = 0; j < tileList.size; j++) {
             let key = "" + i + "-" + j;
             let tile = tileList.get(j);
-            tileRow.push(buildTileObject(tile, key, tileHeight, tileWidth))
+            tileRow.push(buildTileObject(tile, key, tileSize))
         }
         tiles.push(tileRow);
     }
@@ -197,7 +206,7 @@ function sortWorld(world) {
     return tiles;
 }
 
-function buildTileObject(tile, key, tileHeight, tileWidth) {
+function buildTileObject(tile, key, tileSize) {
 
     let item = {};
 
@@ -206,8 +215,8 @@ function buildTileObject(tile, key, tileHeight, tileWidth) {
         {
             item = {
                 "key": key,
-                "height": tileHeight,
-                "width": tileWidth,
+                "height": tileSize,
+                "width": tileSize,
                 "color": "",
                 "gradient": 1,
                 "tail": false,
@@ -217,7 +226,12 @@ function buildTileObject(tile, key, tileHeight, tileWidth) {
         }
         case "snakebody" :
         {
-            let snake = playerMap.get(_activeGame.id).find(snake => snake.id === tile.playerId);
+            console.log("players");
+            console.log(_activeGame.players);
+            let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
+
+            console.log("snake");
+            console.log(snake);
             let opacity = 1;
 
             if (tile.order > 4) {
@@ -234,8 +248,8 @@ function buildTileObject(tile, key, tileHeight, tileWidth) {
 
             item = {
                 "key": key,
-                "height": tileHeight,
-                "width": tileWidth,
+                "height": tileSize,
+                "width": tileSize,
                 "color": snake.color,
                 "gradient": opacity,
                 "tail": tile.tail,
@@ -245,11 +259,11 @@ function buildTileObject(tile, key, tileHeight, tileWidth) {
         }
         case "snakehead" :
         {
-            let snake = playerMap.get(_activeGame.id).find(snake => snake.id === tile.playerId);
+            let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
             item = {
                 "key": key,
-                "height": tileHeight,
-                "width": tileWidth,
+                "height": tileSize,
+                "width": tileSize,
                 "color": snake ? snake.color : "white",
                 "gradient": 1,
                 "tail": tile.tail,
@@ -263,8 +277,8 @@ function buildTileObject(tile, key, tileHeight, tileWidth) {
         {
             item = {
                 "key": key,
-                "height": tileHeight,
-                "width": tileWidth,
+                "height": tileSize,
+                "width": tileSize,
                 "color": "black",
                 "gradient": 1,
                 "tail": false,
@@ -277,8 +291,8 @@ function buildTileObject(tile, key, tileHeight, tileWidth) {
         {
             item = {
                 "key": key,
-                "height": tileHeight,
-                "width": tileWidth,
+                "height": tileSize,
+                "width": tileSize,
                 "color": "green",
                 "gradient": 1,
                 "tail": false,
@@ -293,6 +307,22 @@ function buildTileObject(tile, key, tileHeight, tileWidth) {
     }
 
     return item;
+}
+
+function calculateSize (width, height) {
+    if(width === height) {
+        return [750, 750];
+    }
+    else{
+        if(width > height) {
+            let ratio = width/height;
+            return [750, 750/ratio]
+        }
+        else {
+            let ratio = height/width;
+            return [750/ratio, 750]
+        }
+    }
 }
 
 

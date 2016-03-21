@@ -12,12 +12,10 @@ export default (props) => {
                 <Col xs={3} md={2}>
                     <Sidebar />
                 </Col>
-                <Col xs={12} md={8}>
+                <Col xs={15} md={10}>
                     { props.children }
                 </Col>
-                <Col xs={3} md={2}>
-                    <SidebarRight />
-                </Col>
+
             </Row>
         </Grid>
     )
