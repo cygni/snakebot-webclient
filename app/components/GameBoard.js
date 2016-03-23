@@ -6,7 +6,6 @@ import Immutable from 'immutable'
 import AppAction from '../action/app-actions'
 import GameStore from '../stores/active-games'
 import StoreWatch from './watch/StoreWatch'
-import SocketUtils from '../utils/SocketUtils'
 
 function getActiveGame() {
     let game = GameStore.getActiveGame();
@@ -29,14 +28,8 @@ class GameBoard extends React.Component {
         GameStore.initWS();
     }
 
-    updateList() {
-        //this.state.socket.send('{"type":"se.cygni.snake.websocket.event.api.ListActiveGames"}');
-    }
-
     componentWillReceiveProps(nextProps) {
         if (nextProps.game.world) {
-            console.log("nextProps");
-            console.log(nextProps.game);
             this.setState({
                 world: nextProps.game.world
             });
@@ -59,6 +52,7 @@ class GameBoard extends React.Component {
             for (let i = 0; i < _this.state.world.length; i++) {
                 let tileRow = [];
                 let tileList = Immutable.List(_this.state.world[i]);
+
                 for (var j = 0; j < tileList.size; j++) {
                     let tile = tileList.get(j);
                     tileRow.push(<Tile key={tile.key}

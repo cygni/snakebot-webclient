@@ -50,6 +50,7 @@ var percentage = new Map([
 
 
 const _addGames = (games) => {
+    let tmpGameList = [];
     games.map((game, index) => {
         let gameInArray = _games.find(gme => game.gameId === gme.id);
         if (gameInArray) {
@@ -59,6 +60,8 @@ const _addGames = (games) => {
                     gameInArray.players.push({"index": index, "name": player.name, id: player.id, 'color': snakeColors[index]});
                 }
             });
+
+            tmpGameList.push(gameInArray);
         }
         else {
             let tmpGame = Object.assign(game);
@@ -72,7 +75,7 @@ const _addGames = (games) => {
             });
 
 
-            _games.push({
+            tmpGameList.push({
                 "id": tmpGame.gameId,
                 "gameFeatures": tmpGame.gameFeatures,
                 "color": boardColors[index],
@@ -83,7 +86,15 @@ const _addGames = (games) => {
                 "width": size[0]
             });
         }
-    })
+    });
+
+    if(active) {
+        let game = tmpGameList.find(game => game.id === _activeGame.id);
+        if (!game) {
+            tmpGameList.push(_activeGame);
+        }
+    }
+    _games = tmpGameList;
 };
 
 const _addGameEvent = (game) => {
@@ -226,12 +237,7 @@ function buildTileObject(tile, key, tileSize) {
         }
         case "snakebody" :
         {
-            console.log("players");
-            console.log(_activeGame.players);
             let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
-
-            console.log("snake");
-            console.log(snake);
             let opacity = 1;
 
             if (tile.order > 4) {
@@ -243,8 +249,6 @@ function buildTileObject(tile, key, tileSize) {
                     opacity = 0.125;
                 }
             }
-
-            console.log(opacity);
 
             item = {
                 "key": key,
@@ -300,10 +304,6 @@ function buildTileObject(tile, key, tileSize) {
             };
             break;
         }
-        default :
-        {
-            console.log("default: " + tile.content);
-        }
     }
 
     return item;
@@ -311,16 +311,16 @@ function buildTileObject(tile, key, tileSize) {
 
 function calculateSize (width, height) {
     if(width === height) {
-        return [750, 750];
+        return [900, 900];
     }
     else{
         if(width > height) {
             let ratio = width/height;
-            return [750, 750/ratio]
+            return [900, 900/ratio]
         }
         else {
             let ratio = height/width;
-            return [750/ratio, 750]
+            return [900/ratio, 900]
         }
     }
 }
