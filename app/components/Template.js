@@ -1,7 +1,6 @@
 import React from 'react'
 import { Grid, Row, Col} from 'react-bootstrap'
 import Sidebar from './sidebar/Sidebar'
-import SidebarRight from './sidebar/SidebarRight'
 import Header from './header/Header'
 
 export default (props) => {

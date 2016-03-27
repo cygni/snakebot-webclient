@@ -1,5 +1,5 @@
 import React from 'react'
-import {Col, Panel, Accordion,Table, ListGroup, ListGroupItem} from 'react-bootstrap'
+import {Panel, Accordion,Table, ListGroup, ListGroupItem} from 'react-bootstrap'
 import StoreWatch from '../watch/StoreWatch'
 import GameStore from '../../stores/active-games'
 import AppAction from '../../action/app-actions'
@@ -49,7 +49,7 @@ class Sidebar extends React.Component {
                                     return (
                                         <tr key={snake.id}>
                                             <td style={{background: snake.color, color: "white"}}>Name: {snake.name}
-                                                Length: {snake.length}</td>
+                                                Length: {snake.length} Points: {snake.points} </td>
                                         </tr>
                                     )
                                 })}

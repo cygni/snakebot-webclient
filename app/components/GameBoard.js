@@ -1,9 +1,7 @@
 import React from 'react'
-import _ from 'lodash'
 import Tile from './gamecomponents/Tile'
-import { Button, Glyphicon,DropdownButton, MenuItem, Grid, Row, Col, ListGroup, ListGroupItem, PageHeader } from 'react-bootstrap';
+import {  Grid, Row, Col} from 'react-bootstrap';
 import Immutable from 'immutable'
-import AppAction from '../action/app-actions'
 import GameStore from '../stores/active-games'
 import StoreWatch from './watch/StoreWatch'
 
@@ -50,6 +48,7 @@ class GameBoard extends React.Component {
 
         if (this.state.world.length > 0) {
             for (let i = 0; i < _this.state.world.length; i++) {
+
                 let tileRow = [];
                 let tileList = Immutable.List(_this.state.world[i]);
 
