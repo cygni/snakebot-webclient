@@ -61,6 +61,7 @@ class GameBoard extends React.Component {
                                        width={tile.width}
                                        tail={tile.tail}
                                        type={tile.type}
+                                       tileType={tile.tileType}
                     />
                     )
                 }

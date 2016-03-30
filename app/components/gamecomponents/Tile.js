@@ -1,5 +1,20 @@
 import React from 'react'
 
+var borders = new Map([
+                       ["horizontal", "none solid none solid"],
+                       ["vertical", "solid none solid none"],
+                       ["endTop", "solid solid none solid"],
+                       ["endLeft", "solid none solid solid"],
+                       ["endRight","solid solid solid none"],
+                       ["endBottom", "none solid solid solid"],
+                       ["leftBotCorner", "none none solid solid"],
+                       ["rightBotCorner", "none solid solid none"],
+                       ["leftTopCorner", "solid none none solid"],
+                       ["rightTopCorner", "solid solid none none"],
+                       ["single", "solid"],
+                       ["none", "none"]
+                     ]);
+
 class Tile extends React.Component {
     constructor(props) {
         super(props);
@@ -7,7 +22,7 @@ class Tile extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if(nextProps.type && this.props.type) {
-            return nextProps.type != this.props.type || this.props.gradient != nextProps.gradient;
+            return nextProps.type != this.props.type || this.props.gradient != nextProps.gradient || this.props.tileType != nextProps.tileType;
         }
         return false;
     }
@@ -41,13 +56,14 @@ class Tile extends React.Component {
             },
             snakebody: {
                 background: this.props.color,
-                opacity: this.props.gradient,
-                borderLeft: "1px solid white",
-                borderRight: "1px solid white",
+              //  opacity: this.props.gradient,
                 padding: 0,
                 margin: 0,
                 width: this.props.width,
                 height: this.props.height,
+                borderColor: "black",
+                borderWidth: 3,
+                borderStyle: borders.get(this.props.tileType),
                 display: 'inline-block'
             },
             snakehead: {
@@ -56,6 +72,9 @@ class Tile extends React.Component {
                 background: this.props.color,
                 width: this.props.width,
                 height: this.props.height,
+                borderColor: "black",
+                borderWidth: 3,
+                borderStyle: "solid",
                 display: 'inline-block'
             }
         };
@@ -95,7 +114,8 @@ Tile.PropTypes = {
     height: React.PropTypes.number.isRequired,
     color: React.PropTypes.string.isRequired,
     gradient: React.PropTypes.number.isRequired,
-    tail: React.PropTypes.bool.isRequired
+    tail: React.PropTypes.bool.isRequired,
+    tileType: React.PropTypes.string.isRequired
 };
 
 export default Tile

@@ -1,11 +1,61 @@
 import React from 'react';
 
 let percentage = new Map([
-    [ 1, 0.87 ],
-    [ 2,  0.75 ],
-    [ 3, 0.63 ],
+    [1, 0.87 ],
+    [2,  0.75 ],
+    [3, 0.63 ],
     [4, 0.50]
 ]);
+
+function isConnectingPart(me, arr, x, y){
+    var column = arr[x];
+    if(column == undefined)
+      return false;
+
+    var tile = column[y];
+    if(tile == undefined)
+      return false;
+
+    return tile.playerId === me.playerId && Math.abs(tile.order - me.order) <= 1;
+}
+
+function getTileType(arr, x, y){
+
+  var me = arr[x][y];
+  var hasTop = isConnectingPart(me, arr, x, y - 1) ? 0x1000 : 0;
+  var hasRight = isConnectingPart(me, arr, x + 1, y) ? 0x0100 : 0;
+  var hasBot = isConnectingPart(me, arr, x, y + 1) ? 0x0010 : 0;
+  var hasLeft = isConnectingPart(me, arr, x - 1, y) ? 0x0001 : 0;
+
+  var config = hasTop | hasBot | hasLeft | hasRight;
+
+  switch(config){
+    case 0x1000:
+      return "endBottom";
+    case 0x0100:
+      return "endLeft";
+    case 0x0010:
+      return "endTop";
+    case 0x0001:
+      return "endRight";
+    case 0x0101:
+      return "vertical";
+    case 0x1010:
+      return "horizontal";
+    case 0x0011:
+      return "rightTopCorner";
+    case 0x0110:
+      return "leftTopCorner";
+    case 0x1001:
+      return "rightBotCorner";
+    case 0x1100:
+      return "leftBotCorner";
+    case 0x0000:
+      return "single";
+  }
+
+  return "none"
+}
 
 export default {
     createEmptyWorld(boardWidth, boardHeight, size) {
@@ -46,7 +96,13 @@ export default {
                 if(!tile) {
                     console.log("no tile: " + j + " " + i)
                 }
-                tileRow.push(this.buildTileObject(tile, key, tileSize, _activegame))
+
+                let builtTile = this.buildTileObject(tile, key, tileSize, _activegame)
+
+                if(builtTile.type == "snakebody")
+                  builtTile.tileType = getTileType(world.tiles, j, i);
+
+                tileRow.push(builtTile)
             }
             tiles.push(tileRow);
         }
