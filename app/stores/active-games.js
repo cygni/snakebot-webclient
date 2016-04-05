@@ -90,10 +90,8 @@ const _addGames = (games) => {
 };
 
 const _initWS = () => {
-    socket.onopen = function () {
-        _socketSend()
-    };
     socket.onmessage = function (e) {
+        console.log("message received: " + e.data);
         var jsonData = JSON.parse(e.data);
 
         if (jsonData.type == "se.cygni.snake.api.event.MapUpdateEvent") {
@@ -112,34 +110,75 @@ const _initWS = () => {
     };
 };
 
-const _socketSend = () => {
-    socket.send('{"type":"se.cygni.snake.websocket.event.api.ListActiveGames"}');
-    setTimeout(_socketSend, 10000);
-};
-
 const _startGame = () => {
+    console.log("starting game");
     socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.websocket.event.api.SetGameFilter"}');
     socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.websocket.event.api.StartGame"}');
 };
 
 const _setActiveGame = (id) => {
+    console.log("setting active game");
     _activeGame = _games.find(game => game.id === id);
     active = true;
 };
 
 const _addMapUpdate = (event) => {
+    console.log("add map update");
     var updatedGame = _games.find(game => game.id === event.gameId);
     _updateSnakes(updatedGame.players, event.map.snakeInfos)
+
+    event.map.tiles = _generateTiles(event.map)
     updatedGame.world = BoardUtils.sortWorld(event.map, _activeGame);
 };
+
+function _getTileCoordinate(absolutePos, mapWidth){
+  let y = Math.floor(absolutePos / mapWidth);
+  let x = absolutePos - y * mapWidth;
+
+  return {x: x, y: y};
+}
+
+function _generateTiles (map) {
+  let tiles = new Array(map.width);
+  for(var i = 0; i < map.height; i++) {
+    tiles[i] = Array.apply(null, Array(map.height)).map(function() { return {content: "empty"} });
+  }
+
+  map.foodPositions.forEach(foodPosition => {
+    let coordinate = _getTileCoordinate(foodPosition, map.width);
+    tiles[coordinate.x][coordinate.y] = {content: "food"}
+  });
+
+  map.obstaclePositions.forEach(obstaclePosition => {
+    let coordinate = _getTileCoordinate(obstaclePosition, map.width);
+    tiles[coordinate.x][coordinate.y] = {content: "obstacle"}
+  });
+
+  map.snakeInfos.forEach(snakeInfo => {
+    var head = true;
+
+    snakeInfo.positions.forEach((snakePosition, index) => {
+      let coordinate = _getTileCoordinate(snakePosition, map.width);
+      let type = "snakebody";
+
+      if(head){
+        type = "snakehead";
+        head = false;
+      }
+
+      tiles[coordinate.x][coordinate.y] = {content: type, playerId: snakeInfo.id, order: index };
+    })
+  });
+
+  return tiles;
+}
 
 function _updateSnakes (oldList, snakeList) {
     snakeList.forEach(snake => {
         let tmpSnake = oldList.find(existingSnake => snake.id === existingSnake.id);
         if (tmpSnake ) {
-            tmpSnake.length = snake.length;
             tmpSnake.points = snake.points;
-            if(!snake.alive) {
+            if(snake.positions.length <= 0) {
                 tmpSnake.color = "grey";
                 tmpSnake.alive = false;
             }
@@ -150,7 +189,7 @@ function _updateSnakes (oldList, snakeList) {
                 "name": snake.name,
                 "length": snake.length,
                 "color": snakeColors[oldList.length],
-                "alive": snake.alive,
+                "alive": snake.positions.length <= 0,
                 "points": snake.points
             })
         }
