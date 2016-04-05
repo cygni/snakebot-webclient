@@ -23,10 +23,6 @@ class Sidebar extends React.Component {
         AppAction.activeGame(key);
     }
 
-    componentWillReceiveProps(nextProps) {
-        //console.log("JELLOL"  + JSON.stringify(nextProps));
-    }
-
     render() {
         return (
             <Accordion style={{marginTop: "10px"}}>

@@ -22,7 +22,7 @@ class Tile extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if(nextProps.type && this.props.type) {
-            return nextProps.type != this.props.type || this.props.gradient != nextProps.gradient || this.props.tileType != nextProps.tileType;
+            return nextProps.type != this.props.type || this.props.tileType != nextProps.tileType;
         }
         return false;
     }
@@ -56,7 +56,6 @@ class Tile extends React.Component {
             },
             snakebody: {
                 background: this.props.color,
-              //  opacity: this.props.gradient,
                 padding: 0,
                 margin: 0,
                 width: this.props.width,
@@ -113,7 +112,6 @@ Tile.PropTypes = {
     width: React.PropTypes.number.isRequired,
     height: React.PropTypes.number.isRequired,
     color: React.PropTypes.string.isRequired,
-    gradient: React.PropTypes.number.isRequired,
     tail: React.PropTypes.bool.isRequired,
     tileType: React.PropTypes.string.isRequired
 };

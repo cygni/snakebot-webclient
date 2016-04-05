@@ -3,7 +3,8 @@ import AppConstants from '../constants/app-constants'
 import {EventEmitter} from 'events'
 import SockJS from 'sockjs-client'
 import AppAction from '../action/app-actions'
-import BoardUtils from '../util/board-action'
+import BoardUtils from '../util/board-utils'
+import TileUtils from '../util/tile-utils'
 
 
 const CHANGE_EVENT = 'change';
@@ -57,9 +58,6 @@ const _addGames = (games) => {
         }
         else {
             let tmpGame = Object.assign(game);
-
-            let size =  BoardUtils.calculateSize(tmpGame.gameFeatures.width, tmpGame.gameFeatures.height);
-            let tileSize = size[1] / tmpGame.gameFeatures.height;
             let players = [];
 
             game.players.forEach((player, index) => {
@@ -71,11 +69,7 @@ const _addGames = (games) => {
                 "id": tmpGame.gameId,
                 "gameFeatures": tmpGame.gameFeatures,
                 "color": boardColors[index],
-                "players": players,
-                "world": BoardUtils.createEmptyWorld(tmpGame.gameFeatures.width, tmpGame.gameFeatures.height, tileSize),
-                "tileSize": tileSize,
-                "height": size[1],
-                "width": size[0]
+                "players": players
             });
         }
     });
@@ -91,7 +85,6 @@ const _addGames = (games) => {
 
 const _initWS = () => {
     socket.onmessage = function (e) {
-        console.log("message received: " + e.data);
         var jsonData = JSON.parse(e.data);
 
         if (jsonData.type == "se.cygni.snake.api.event.MapUpdateEvent") {
@@ -111,73 +104,34 @@ const _initWS = () => {
 };
 
 const _startGame = () => {
-    console.log("starting game");
     socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.websocket.event.api.SetGameFilter"}');
     socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.websocket.event.api.StartGame"}');
 };
 
 const _setActiveGame = (id) => {
-    console.log("setting active game");
     _activeGame = _games.find(game => game.id === id);
     active = true;
 };
 
 const _addMapUpdate = (event) => {
-    console.log("add map update");
     var updatedGame = _games.find(game => game.id === event.gameId);
-    _updateSnakes(updatedGame.players, event.map.snakeInfos)
+    _updateSnakes(updatedGame.players, event.map.snakeInfos);
 
-    event.map.tiles = _generateTiles(event.map)
-    updatedGame.world = BoardUtils.sortWorld(event.map, _activeGame);
+    event.map.foodPositions = event.map.foodPositions.map(function(pos) { return TileUtils.getTileCoordinate(pos, event.map.width); });
+    event.map.obstaclePositions = event.map.obstaclePositions.map(function(pos) { return TileUtils.getTileCoordinate(pos, event.map.width); });
+    event.map.snakeInfos.forEach(snake => {
+      snake.positions = snake.positions.map(function(pos) { return TileUtils.getTileCoordinate(pos, event.map.width); });
+    });
+
+    updatedGame.map = event.map;
 };
-
-function _getTileCoordinate(absolutePos, mapWidth){
-  let y = Math.floor(absolutePos / mapWidth);
-  let x = absolutePos - y * mapWidth;
-
-  return {x: x, y: y};
-}
-
-function _generateTiles (map) {
-  let tiles = new Array(map.width);
-  for(var i = 0; i < map.height; i++) {
-    tiles[i] = Array.apply(null, Array(map.height)).map(function() { return {content: "empty"} });
-  }
-
-  map.foodPositions.forEach(foodPosition => {
-    let coordinate = _getTileCoordinate(foodPosition, map.width);
-    tiles[coordinate.x][coordinate.y] = {content: "food"}
-  });
-
-  map.obstaclePositions.forEach(obstaclePosition => {
-    let coordinate = _getTileCoordinate(obstaclePosition, map.width);
-    tiles[coordinate.x][coordinate.y] = {content: "obstacle"}
-  });
-
-  map.snakeInfos.forEach(snakeInfo => {
-    var head = true;
-
-    snakeInfo.positions.forEach((snakePosition, index) => {
-      let coordinate = _getTileCoordinate(snakePosition, map.width);
-      let type = "snakebody";
-
-      if(head){
-        type = "snakehead";
-        head = false;
-      }
-
-      tiles[coordinate.x][coordinate.y] = {content: type, playerId: snakeInfo.id, order: index };
-    })
-  });
-
-  return tiles;
-}
 
 function _updateSnakes (oldList, snakeList) {
     snakeList.forEach(snake => {
         let tmpSnake = oldList.find(existingSnake => snake.id === existingSnake.id);
         if (tmpSnake ) {
             tmpSnake.points = snake.points;
+            tmpSnake.length = snake.positions.length;
             if(snake.positions.length <= 0) {
                 tmpSnake.color = "grey";
                 tmpSnake.alive = false;
@@ -187,7 +141,7 @@ function _updateSnakes (oldList, snakeList) {
             oldList.push({
                 "id": snake.id,
                 "name": snake.name,
-                "length": snake.length,
+                "length": snake.positions.length,
                 "color": snakeColors[oldList.length],
                 "alive": snake.positions.length <= 0,
                 "points": snake.points

@@ -4,6 +4,8 @@ import {  Grid, Row, Col} from 'react-bootstrap';
 import Immutable from 'immutable'
 import GameStore from '../stores/active-games'
 import StoreWatch from './watch/StoreWatch'
+import TileUtils from '../util/tile-utils'
+import BoardUtils from '../util/board-utils'
 
 function getActiveGame() {
     let game = GameStore.getActiveGame();
@@ -14,11 +16,8 @@ class GameBoard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            world: [],
-            snakes: [],
-            tileSize: 0,
-            width: 0,
-            height: 0
+            map: {},
+            snakes: []
         }
     }
 
@@ -32,6 +31,13 @@ class GameBoard extends React.Component {
                 world: nextProps.game.world
             });
         }
+
+        if(nextProps.game.map) {
+          this.setState({
+            map: nextProps.game.map
+          });
+        }
+
         if (nextProps.game.tileSize) {
             this.setState({
                 tileSize: nextProps.game.tileSize,
@@ -43,23 +49,24 @@ class GameBoard extends React.Component {
 
 
     render() {
-        var _this = this;
-        var tiles = [];
+        console.log(this.state.map);
 
-        if (this.state.world.length > 0) {
-            for (let i = 0; i < _this.state.world.length; i++) {
+        let tiles = [];
+        let map = this.state.map;
+        let size = BoardUtils.calculateSize(map);
+        let tileSize = BoardUtils.getTileSize(map);
+        let activeGame = getActiveGame();
 
+        if (map != undefined && map.width != undefined) {
+            for (let y = 0; y < map.height; y++) {
                 let tileRow = [];
-                let tileList = Immutable.List(_this.state.world[i]);
 
-                for (var j = 0; j < tileList.size; j++) {
-                    let tile = tileList.get(j);
+                for (var x = 0; x < map.width; x++) {
+                    let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game)
                     tileRow.push(<Tile key={tile.key}
-                                       gradient={tile.gradient}
                                        color={tile.color}
                                        height={tile.height}
                                        width={tile.width}
-                                       tail={tile.tail}
                                        type={tile.type}
                                        tileType={tile.tileType}
                     />
@@ -78,11 +85,11 @@ class GameBoard extends React.Component {
                             <Row className="show-grid">
                                 <Col xs={18} md={12} lg={12}>
                                     <Col xs={12} md={8} lg={8}>
-                                        <div className={this.state.width === 0 ? 'hidden' : ''} style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: this.state.width + 20, height:  this.state.height + 20}}>
+                                        <div className={!map.width || map.width === 0 ? 'hidden' : ''} style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: size.width + 20, height:  size.height + 20}}>
                                             {immutTiles.map((tilerow, index) => {
                                                 return (
                                                     <div key={index}
-                                                         style={{width: this.state.width , height: this.state.tileSize}}>
+                                                         style={{width: size.width , height: tileSize}}>
                                                         {tilerow}
                                                     </div>
                                                 )
