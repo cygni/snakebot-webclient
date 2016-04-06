@@ -33,11 +33,17 @@ var boardColors = [
 ];
 
 var snakeColors = [
-    'red',
-    'black',
-    'blue',
-    'grey',
-    'pink'
+    '#B71C1C',
+    '#880E4F',
+    '#4A148C',
+    '#0D47A1',
+    '#006064',
+    '#004D40',
+    '#33691E',
+    '#827717',
+    '#FF6F00',
+    '#E65100',
+    '#BF360C'
 ];
 
 const _addGames = (games) => {
@@ -58,7 +64,7 @@ const _addGames = (games) => {
                "players": players,
                "currentFrame": 0,
                "mapEvents": [],
-               "updateFrequency": 100
+               "updateFrequency": 500
            });
     });
 };
@@ -141,7 +147,7 @@ const _changeFrame = () => {
   if(GameStore.isGameRunning() && GameStore.isGamePaused() == false)
     setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
 
-  _activeGame.currentFrame = Math.min(_activeGame.currentFrame + 1, _activeGame.mapEvents.length - 1);
+  _activeGame.currentFrame = Math.max(0, Math.min(_activeGame.currentFrame + 1, _activeGame.mapEvents.length - 1));
   _updateSnakes(_activeGame.players, _activeGame.mapEvents[_activeGame.currentFrame]);
 
   GameStore.emitChange();
@@ -153,6 +159,7 @@ function _setUpdateFrequency(freq){
 
 function _setCurrentFrame(frame){
   _activeGame.currentFrame = frame;
+  _updateSnakes(_activeGame.players, _activeGame.mapEvents[_activeGame.currentFrame]);
 }
 
 const GameStore = Object.assign(EventEmitter.prototype, {
@@ -216,7 +223,7 @@ const GameStore = Object.assign(EventEmitter.prototype, {
 
     getFrameInfo() {
       if(_activeGame)
-        return {currentFrame: _activeGame.currentFrame, lastFrame: _activeGame.mapEvents.length - 1};
+        return {currentFrame: _activeGame.currentFrame, lastFrame: Math.max(0, _activeGame.mapEvents.length - 1)};
       return { currentFrame: 0, lastFrame: 0};
     },
 
