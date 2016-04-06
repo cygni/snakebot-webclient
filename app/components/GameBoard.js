@@ -1,24 +1,30 @@
 import React from 'react'
 import Tile from './gamecomponents/Tile'
-import {  Grid, Row, Col} from 'react-bootstrap';
+import { Grid, Row, Col} from 'react-bootstrap';
 import Immutable from 'immutable'
-import GameStore from '../stores/active-games'
+import GameStore from '../stores/GameStore'
 import StoreWatch from './watch/StoreWatch'
-import TileUtils from '../util/tile-utils'
-import BoardUtils from '../util/board-utils'
+import TileUtils from '../util/TileUtils'
+import BoardUtils from '../util/BoardUtils'
 
 function getActiveGame() {
     let game = GameStore.getActiveGame();
-    return {game}
+    return {game: game}
 }
 
 class GameBoard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            map: {},
-            snakes: []
+            shouldRender: false,
+            mapEvents: [],
+            snakes: [],
+            currentFrame: 0
         }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+      return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
     }
 
     componentDidMount() {
@@ -26,38 +32,27 @@ class GameBoard extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.game.world) {
-            this.setState({
-                world: nextProps.game.world
-            });
-        }
-
-        if(nextProps.game.map) {
-          this.setState({
-            map: nextProps.game.map
-          });
-        }
-
-        if (nextProps.game.tileSize) {
-            this.setState({
-                tileSize: nextProps.game.tileSize,
-                height: nextProps.game.height,
-                width: nextProps.game.width
-            });
+        if(nextProps.game) {
+          this.setState({ mapEvents: nextProps.game.mapEvents,
+                          currentFrame: nextProps.game.currentFrame });
+          console.log("frame: " + this.state.currentFrame + " length " + this.state.mapEvents.length)
         }
     };
 
 
     render() {
-        console.log(this.state.map);
-
         let tiles = [];
-        let map = this.state.map;
-        let size = BoardUtils.calculateSize(map);
-        let tileSize = BoardUtils.getTileSize(map);
-        let activeGame = getActiveGame();
+        let map = this.state.mapEvents[this.state.currentFrame];
+
+        let size = {width:0, height:0};
+        let tileSize = 0;
 
         if (map != undefined && map.width != undefined) {
+
+          size = BoardUtils.calculateSize(map);
+          tileSize = BoardUtils.getTileSize(map);
+          let activeGame = getActiveGame();
+
             for (let y = 0; y < map.height; y++) {
                 let tileRow = [];
 
@@ -85,7 +80,7 @@ class GameBoard extends React.Component {
                             <Row className="show-grid">
                                 <Col xs={18} md={12} lg={12}>
                                     <Col xs={12} md={8} lg={8}>
-                                        <div className={!map.width || map.width === 0 ? 'hidden' : ''} style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: size.width + 20, height:  size.height + 20}}>
+                                        <div className={!map || !map.width || map.width === 0 ? 'hidden' : ''} style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: size.width + 20, height:  size.height + 20}}>
                                             {immutTiles.map((tilerow, index) => {
                                                 return (
                                                     <div key={index}

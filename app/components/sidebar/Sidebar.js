@@ -1,9 +1,9 @@
 import React from 'react'
 import {Panel, Accordion,Table, ListGroup, ListGroupItem} from 'react-bootstrap'
 import StoreWatch from '../watch/StoreWatch'
-import GameStore from '../../stores/active-games'
+import GameStore from '../../stores/GameStore'
 import AppAction from '../../action/app-actions'
-import StartGameButton from '../header/StartGameButton'
+import GameControl from '../header/GameControl'
 
 
 function getActiveGames() {
@@ -44,7 +44,7 @@ class Sidebar extends React.Component {
                                 {game.players.map(snake => {
                                     return (
                                         <tr key={snake.id}>
-                                            <td style={{background: snake.color, color: "white"}}>Name: {snake.name}
+                                            <td style={{background: snake.alive ? snake.color : "grey", color: "white"}}>Name: {snake.name}
                                                 Length: {snake.length} Points: {snake.points} </td>
                                         </tr>
                                     )
@@ -57,7 +57,7 @@ class Sidebar extends React.Component {
                                 <ListGroupItem>Height: {game.gameFeatures.height}</ListGroupItem>
                             </ListGroup>
 
-                            <StartGameButton />
+                            <GameControl />
                         </Panel>
                     )
                 })}

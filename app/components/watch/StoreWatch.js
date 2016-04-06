@@ -1,5 +1,5 @@
 import React from 'react'
-import AppStore from '../../stores/active-games'
+import GameStore from '../../stores/GameStore'
 
 export default (InnerComponent, stateCallback ) => class extends React.Component {
     constructor(props) {
@@ -9,11 +9,11 @@ export default (InnerComponent, stateCallback ) => class extends React.Component
     }
 
     componentWillMount() {
-        AppStore.addChangeListener(this._onChange)
+        GameStore.addChangeListener(this._onChange)
     }
 
     componentWillUnmount() {
-        AppStore.removeChangeListener(this._onChange)
+        GameStore.removeChangeListener(this._onChange)
     }
 
     _onChange() {

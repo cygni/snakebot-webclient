@@ -1,7 +1,6 @@
 import React from 'react'
 
-var borders = new Map([
-                       ["horizontal", "none solid none solid"],
+var borders = new Map([["horizontal", "none solid none solid"],
                        ["vertical", "solid none solid none"],
                        ["endTop", "solid solid none solid"],
                        ["endLeft", "solid none solid solid"],
@@ -12,8 +11,7 @@ var borders = new Map([
                        ["leftTopCorner", "solid none none solid"],
                        ["rightTopCorner", "solid solid none none"],
                        ["single", "solid"],
-                       ["none", "none"]
-                     ]);
+                       ["none", "none"]]);
 
 class Tile extends React.Component {
     constructor(props) {

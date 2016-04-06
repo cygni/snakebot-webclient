@@ -111,7 +111,7 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
                 "key": key,
                 "height": tileSize,
                 "width": tileSize,
-                "color": snake.color,
+                "color":  snake && snake.alive ? snake.color : "grey",
                 "type": "snakebody",
                 "tileType": tile.tileType
             };
@@ -124,7 +124,7 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
                 "key": key,
                 "height": tileSize,
                 "width": tileSize,
-                "color": snake ? snake.color : "white",
+                "color": snake && snake.alive ? snake.color : "grey",
                 "type": "snakehead"
             };
             break;
