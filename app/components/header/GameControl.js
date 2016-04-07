@@ -1,10 +1,9 @@
 import React from 'react'
 import {Button, Grid} from 'react-bootstrap'
-import InputRange from 'react-input-range';
 import AppAction from '../../action/app-actions'
 import StoreWatch from '../watch/StoreWatch'
 import GameStore from '../../stores/GameStore'
-import ReactSliderNativeBootstrap from 'react-bootstrap-native-slider';
+import ReactSliderNativeBootstrap from 'react-bootstrap-native-slider'
 
 function gameControlStateCallback() {
     let gameActive = GameStore.hasActiveGame();
