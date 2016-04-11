@@ -88,7 +88,6 @@ function _getTileAt (x, y, map) {
 }
 
 function buildTileObject(tile, key, tileSize, _activeGame) {
-
     let item = {};
 
     switch (tile.content) {
