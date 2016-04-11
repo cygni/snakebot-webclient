@@ -127,7 +127,7 @@ function _parseSnakes (oldList, snakeList) {
             "points": snake.points
         });
     })
-};
+}
 
 const _updateSnakes = (playerList, frame) => {
   frame.snakeInfos.forEach(snake => {
@@ -141,7 +141,7 @@ const _updateSnakes = (playerList, frame) => {
     player.length = snake.positions.length;
     player.alive = snake.positions.length > 0;
   });
-}
+};
 
 const _changeFrame = () => {
   if(GameStore.isGameRunning() && GameStore.isGamePaused() == false)
@@ -151,11 +151,11 @@ const _changeFrame = () => {
   _updateSnakes(_activeGame.players, _activeGame.mapEvents[_activeGame.currentFrame]);
 
   GameStore.emitChange();
-}
+};
 
 function _setUpdateFrequency(freq){
   _activeGame.updateFrequency = freq;
-};
+}
 
 function _setCurrentFrame(frame){
   _activeGame.currentFrame = frame;
@@ -196,15 +196,13 @@ const GameStore = Object.assign(EventEmitter.prototype, {
     },
 
     isGamePaused() {
-        if(_activeGame && _activeGame.paused)
-          return true;
-        return false;
+        return !!(_activeGame && _activeGame.paused);
+
     },
 
     isGameRunning() {
-        if(_activeGame && _activeGame.running)
-          return true;
-        return false;
+        return !!(_activeGame && _activeGame.running);
+
     },
 
     getUpdateFrequency() {

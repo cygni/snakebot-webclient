@@ -35,11 +35,9 @@ class GameBoard extends React.Component {
         if(nextProps.game) {
           this.setState({ mapEvents: nextProps.game.mapEvents,
                           currentFrame: nextProps.game.currentFrame });
-          console.log("frame: " + this.state.currentFrame + " length " + this.state.mapEvents.length)
         }
     };
-
-
+    
     render() {
         let tiles = [];
         let map = this.state.mapEvents[this.state.currentFrame];
@@ -51,13 +49,14 @@ class GameBoard extends React.Component {
 
           size = BoardUtils.calculateSize(map);
           tileSize = BoardUtils.getTileSize(map);
+
           let activeGame = getActiveGame();
 
             for (let y = 0; y < map.height; y++) {
                 let tileRow = [];
 
                 for (var x = 0; x < map.width; x++) {
-                    let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game)
+                    let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game);
                     tileRow.push(<Tile key={tile.key}
                                        color={tile.color}
                                        height={tile.height}
