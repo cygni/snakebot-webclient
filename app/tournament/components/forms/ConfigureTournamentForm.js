@@ -1,9 +1,6 @@
 import React from 'react';
-import {Row, Col, Input, Label, ListGroup, ListGroupItem} from 'react-bootstrap';
-import Action from '../../action/tournament-actions';
-import WorldSize from '../slider/WorldSize';
+import {Row, Col, Input, ListGroup, ListGroupItem} from 'react-bootstrap';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
-
 
 const ConfigureTournamentForm = React.createClass({
     mixins: [LinkedStateMixin],

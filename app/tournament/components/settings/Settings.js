@@ -1,8 +1,7 @@
 import React from 'react'
 import TournamentStore from '../../stores/TournamentStore'
 import StoreWatch from '../../watch/StoreWatch'
-import {Input, ButtonInput, Row, Col, Grid} from 'react-bootstrap'
-import Action from '../../action/tournament-actions'
+import {ButtonInput, Grid} from 'react-bootstrap'
 import CreateTournamentForm from './../forms/CreateTournamentForm'
 import ConfigureTournamentForm from './../forms/ConfigureTournamentForm'
 
@@ -10,7 +9,6 @@ function getActiveTournament() {
     let tournament = TournamentStore.getActiveTournament();
     return {tournament: tournament}
 }
-
 
 const innerButton = (
     <ButtonInput value="Create Tournament" onClick={() => alert("hello")}/>
@@ -25,28 +23,22 @@ class Settings extends React.Component {
         }
     }
 
-    onSubmit() {
-        // console.log("SAAA: " + this.state.tempGameName)
-    }
-
     componentWillReceiveProps(nextProps) {
-       if(nextProps.tournament.name) {
-           this.setState({
-               tournamentName: nextProps.tournament.name
-           })
-       }
+        if (nextProps.tournament.name) {
+            this.setState({
+                tournamentName: nextProps.tournament.name
+            })
+        }
     };
-
 
     render() {
         let table;
-        if(!this.state.tournamentName) {
+        if (!this.state.tournamentName) {
             table = <CreateTournamentForm />
         }
         else {
-            table = <ConfigureTournamentForm name={this.state.tournamentName} />
+            table = <ConfigureTournamentForm name={this.state.tournamentName}/>
         }
-
 
         return (
             <Grid fluid>
