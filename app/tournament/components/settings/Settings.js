@@ -25,8 +25,6 @@ class Settings extends React.Component {
         }
     }
 
-
-
     onSubmit() {
         // console.log("SAAA: " + this.state.tempGameName)
     }
@@ -48,8 +46,8 @@ class Settings extends React.Component {
         else {
             table = <ConfigureTournamentForm name={this.state.tournamentName} />
         }
-        
-        
+
+
         return (
             <Grid fluid>
                 {table}
