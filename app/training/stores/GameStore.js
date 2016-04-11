@@ -1,9 +1,9 @@
-import {dispatch, register} from '../dispatchers/AppDispatcher'
+import {dispatch, register} from '../../dispatchers/AppDispatcher'
 import Constants from '../constants/Constants'
 import {EventEmitter} from 'events'
 import SockJS from 'sockjs-client'
 import AppAction from '../action/app-actions'
-import BoardUtils from '../util/BoardUtils'
+
 import TileUtils from '../util/TileUtils'
 
 const CHANGE_EVENT = 'change';
