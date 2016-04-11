@@ -76,7 +76,7 @@ const _initWS = () => {
         if (jsonData.type == "se.cygni.snake.api.event.MapUpdateEvent") {
             AppAction.mapUpdateEvent(jsonData);
         }
-        else if (jsonData.type == "se.cygni.snake.websocket.event.api.ActiveGamesList") {
+        else if (jsonData.type == "se.cygni.snake.eventapi.response.ActiveGamesList") {
             AppAction.addGames(jsonData.games);
         }
         else {
@@ -91,8 +91,8 @@ const _initWS = () => {
 };
 
 const _startGame = () => {
-    socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.websocket.event.api.SetGameFilter"}');
-    socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.websocket.event.api.StartGame"}');
+    socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
 };
 
 const _setActiveGame = (id) => {
