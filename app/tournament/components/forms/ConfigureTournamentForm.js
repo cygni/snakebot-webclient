@@ -61,7 +61,7 @@ const ConfigureTournamentForm = React.createClass({
                     </Col>
                 </Row>
                 <Row>
-                    <Col md={5} mdPush={1}>
+                    <Col md={4} mdPush={1}>
                         <h1>Settings</h1>
                         <form role="form" onSubmit={this.createTournamentTable}>
                             <Row className="width">
@@ -249,7 +249,7 @@ const ConfigureTournamentForm = React.createClass({
                             </Row>
                         </form>
                     </Col>
-                    <Col md={5} mdPush={1}>
+                    <Col md={4} mdPush={3}>
                         <h1>Available players</h1>
                         <ListGroup>
                             <ListGroupItem>Player 1</ListGroupItem>
