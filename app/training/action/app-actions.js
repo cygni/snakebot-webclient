@@ -1,5 +1,5 @@
 import Constants from'../constants/Constants'
-import {dispatch} from '../dispatchers/AppDispatcher'
+import {dispatch} from '../../dispatchers/AppDispatcher'
 
 export default {
     addGames ( games ) {
