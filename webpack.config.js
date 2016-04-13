@@ -1,9 +1,9 @@
 module.exports = {
-    entry: "./app/app.js",
+    entry: "./app/App.js",
     output: {
         path:'./dist',
         filename: "bundle.js",
-        publicPath: 'http://localhost:8090/'
+        publicPath: '/'
     },
     devServer: {
         inline: true,
