@@ -1,12 +1,27 @@
 {
-  name: "RandomBot",
-  playerId: "b31798ec-528a-4488-85e4-739fd466768a",
-  content: "snakehead"
-}
-
-{
-  tail: true,
-  playerId: "0c146578-87b0-48e2-89c5-1e71b6215d41",
-  order: 1,
-  content: "snakebody"
+  "gameSettings": {
+    "width": "LARGE",
+    "height": "SMALL",
+    "maxNoofPlayers": 10,
+    "startSnakeLength": "5",
+    "timeInMsPerTick": "1000",
+    "obstaclesEnabled": true,
+    "foodEnabled": true,
+    "edgeWrapsAround": false,
+    "headToTailConsumes": true,
+    "tailConsumeGrows": false,
+    "addFoodLikelihood": 15,
+    "removeFoodLikelihood": 5,
+    "addObstacleLikelihood": 10,
+    "removeObstacleLikelihood": 5,
+    "spontaneousGrowthEveryNWorldTick": 3,
+    "trainingGame": false,
+    "pointsPerLength": 1,
+    "pointsPerFood": 2,
+    "pointsPerCausedDeath": 5,
+    "pointsPerNibble": 10,
+    "pointsLastSnakeLiving": 10,
+    "noofRoundsTailProtectedAfterNibble": 3,
+    "pointsSuicide": -10
+  }
 }
