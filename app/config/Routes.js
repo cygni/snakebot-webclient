@@ -4,11 +4,11 @@ import Gameboard from '../training/components/GameBoard'
 import TournamentTemplate from '../tournament/components/TournamentTemplate'
 import Settings from '../tournament/components/settings/Settings'
 
-import { Router, Route, IndexRoute } from 'react-router';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 
 export default () => {
     return (
-        <Router>
+        <Router history={hashHistory}>
             <Route path="/" component={GameTemplate}>
                 <IndexRoute component={Gameboard}/>
             </Route>
