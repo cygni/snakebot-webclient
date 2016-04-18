@@ -17,26 +17,25 @@ const innerButton = (
 class Settings extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            tournamentName: ""
-        }
+        TournamentStore.initWS();
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.tournament.name) {
-            this.setState({
-                tournamentName: nextProps.tournament.name
-            })
-        }
+
+        // if (nextProps.tournament) {
+        //     this.setState({
+        //         tournamentName: nextProps.tournament
+        //     })
+        // }
     };
 
     render() {
         let table;
-        if (!this.state.tournamentName) {
+        if (!this.props.tournament.tournamentName) {
             table = <CreateTournamentForm />
         }
         else {
-            table = <ConfigureTournamentForm name={this.state.tournamentName}/>
+            table = <ConfigureTournamentForm tournamentName={this.props.tournament.tournamentName}/>
         }
 
         return (

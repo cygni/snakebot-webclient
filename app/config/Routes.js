@@ -6,7 +6,7 @@ import TournamentTemplate from '../tournament/components/TournamentTemplate'
 import Settings from '../tournament/components/settings/Settings'
 import Bracket from '../tournament/components/bracket/Bracket'
 
-import { Router, Route, IndexRoute } from 'react-router';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 
 export default () => {
     return (

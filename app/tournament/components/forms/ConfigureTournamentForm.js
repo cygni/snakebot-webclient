@@ -1,60 +1,37 @@
 import React from 'react';
-import {Row, Col, Input, ListGroup, ListGroupItem} from 'react-bootstrap';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import {Row, Col, Input, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+import TournamentStore from '../../stores/TournamentStore'
+import StoreWatch from '../../watch/StoreWatch'
+import Action from '../../action/tournament-actions'
 
-const ConfigureTournamentForm = React.createClass({
-    mixins: [LinkedStateMixin],
+function getSettings() {
+    let settings = TournamentStore.getSettings();
+    return {settings: settings}
+}
 
-    getInitialState() {
-        return {
-            tournamentName: this.props.name,
-            width: 25, // 25,50,75,100
-            height: 25, // 25,50,75,100
-            maxPlayers: 5, //min 5
-            startSnakeLength: 1, // max 10 min 1
-            timeInMsPerTick: 250, // min 250 max 1500
-            pointsPerLength: 1, // 0-25
-            pointsPerFood: 1, // 0-25
-            pointsPerCausedDeath: 5, // 0-25
-            pointsPerNibble: 10, // 0-25
-            pointsLastSnakeLiving: 10, //0-25
-            pointsPerSuicide: -1, // -1 till -25
-            noofRoundsTailProtectedAfterNibble: 3, //0-10
-            addFoodLikelihood: 15, // 1-100%
-            removeFoodLikelihood: 5, // 1-100%
-            addObstacleLikelihood: 15, // 1-100%
-            removeObstacleLikelihood: 15, // 1-100%
-            obstaclesEnabled: true,
-            foodEnabled: true,
-            edgeWrapsAround: false,
-            headToTailConsumes: true,
-            tailConsumeGrows: false
+
+class ConfigureTournamentForm extends  React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+
+    createTournamentTable() {
+        Action.createTournamentTable();
+    }
+
+    static onInputChange(event) {
+        if(event.target) {
+            Action.updateSettings(event.target.id, event.target.value);
         }
-    },
-
-    // createTournamentTable() {
-    //     Action.createTournamentTable(this.state.tempGameName);
-    // },
-
-    settingsLinkState(name) {
-        return {
-            value: this.state[name],
-            requestChange: (newValue) => {
-                this.setState({[name]: newValue});
-            }
-        }
-    },
-
-    handleRadioOnChange(booleanName, name) {
-        this.setState({[name]: booleanName});
-    },
+    }
 
     render() {
         return (
             <div>
                 <Row>
-                    <Col md={12} >
-                        <h1 style={{textAlign: "center"}}>Name: {this.state.tournamentName}</h1>
+                    <Col md={12}>
+                        <h1 style={{textAlign: "center"}}>Name: {this.props.tournamentName}</h1>
                     </Col>
                 </Row>
                 <Row>
@@ -62,188 +39,228 @@ const ConfigureTournamentForm = React.createClass({
                         <h1>Settings</h1>
                         <form role="form" onSubmit={this.createTournamentTable}>
                             <Row className="width">
-                                <Col md={6} >
-                                    <h5>Width: {this.state.width} </h5>
+                                <Col md={6}>
+                                    <h5>Width: {this.props.settings.width} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input type="select" valueLink={this.settingsLinkState('width')}>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="75">75</option>
-                                        <option value="100">100</option>
+                                <Col md={6}>
+                                    <Input type="select" id="width" onChange={ConfigureTournamentForm.onInputChange}>
+                                        <option value="SMALL">SMALL (25)</option>
+                                        <option value="MEDIUM">MEDIUM (50)</option>
+                                        <option value="LARGE">LARGE (75)</option>
+                                        <option value="XLARGE">XLARGE (100)</option>
                                     </Input>
                                 </Col>
                             </Row>
                             <Row className="height">
-                                <Col md={6} >
-                                    <h5>Height: {this.state.height} </h5>
+                                <Col md={6}>
+                                    <h5>Height: {this.props.settings.height} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input type="select" valueLink={this.settingsLinkState('height')}>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="75">75</option>
-                                        <option value="100">100</option>
+                                <Col md={6}>
+                                    <Input type="select" id="height" value={this.props.settings.height} onChange={ConfigureTournamentForm.onInputChange}>
+                                        <option value="SMALL">SMALL (25)</option>
+                                        <option value="MEDIUM">MEDIUM (50)</option>
+                                        <option value="LARGE">LARGE (75)</option>
+                                        <option value="XLARGE">XLARGE (100)</option>
                                     </Input>
                                 </Col>
                             </Row>
                             <Row className="maxPlayers">
-                                <Col md={6} >
-                                    <h5>MaxPlayers: {this.state.maxPlayers} </h5>
+                                <Col md={6}>
+                                    <h5>MaxPlayers: {this.props.settings.maxNoofPlayers} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="maxPlayers" type="number" min="5" valueLink={this.settingsLinkState('maxPlayers')}/>
+                                <Col md={6}>
+                                    <Input name="maxPlayers" id="maxNoofPlayers" type="number" min="5" max="100"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.maxNoofPlayers}/>
                                 </Col>
                             </Row>
                             <Row className="startSnakeLength">
-                                <Col md={6} >
-                                    <h5>StartSnakeLength: {this.state.startSnakeLength} </h5>
+                                <Col md={6}>
+                                    <h5>StartSnakeLength: {this.props.settings.startSnakeLength} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="startSnakeLength" type="number" min="1" max="10" valueLink={this.settingsLinkState('startSnakeLength')}/>
+                                <Col md={6}>
+                                    <Input name="startSnakeLength" id="startSnakeLength" type="number" min="1" max="10"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.startSnakeLength}/>
                                 </Col>
                             </Row>
                             <Row className="timeInMsPerTick">
-                                <Col md={6} >
-                                    <h5>TimeInMsPerTick: {this.state.timeInMsPerTick} </h5>
+                                <Col md={6}>
+                                    <h5>TimeInMsPerTick: {this.props.settings.timeInMsPerTick} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="timeInMsPerTick" type="number" min="250" max="1500" valueLink={this.settingsLinkState('timeInMsPerTick')}/>
+                                <Col md={6}>
+                                    <Input name="timeInMsPerTick" type="number" id="timeInMsPerTick" step="250" min="250" max="1500"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.timeInMsPerTick}/>
                                 </Col>
                             </Row>
                             <Row className="pointsPerLength">
-                                <Col md={6} >
-                                    <h5>PointsPerLength: {this.state.pointsPerLength} </h5>
+                                <Col md={6}>
+                                    <h5>PointsPerLength: {this.props.settings.pointsPerLength} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="pointsPerLength" type="number" min="0" max="25" valueLink={this.settingsLinkState('pointsPerLength')}/>
+                                <Col md={6}>
+                                    <Input name="pointsPerLength" id="pointsPerLength" type="number" min="0" max="25"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.pointsPerLength}/>
                                 </Col>
                             </Row>
                             <Row className="pointsPerFood">
-                                <Col md={6} >
-                                    <h5>PointsPerFood: {this.state.pointsPerFood} </h5>
+                                <Col md={6}>
+                                    <h5>PointsPerFood: {this.props.settings.pointsPerFood} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="pointsPerFood" type="number" min="0" max="25" valueLink={this.settingsLinkState('pointsPerFood')}/>
+                                <Col md={6}>
+                                    <Input name="pointsPerFood" id="pointsPerFood" type="number" min="0" max="25"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.pointsPerFood}/>
                                 </Col>
                             </Row>
                             <Row className="pointsPerCausedDeath">
-                                <Col md={6} >
-                                    <h5>PointsPerCausedDeath: {this.state.pointsPerCausedDeath} </h5>
+                                <Col md={6}>
+                                    <h5>PointsPerCausedDeath: {this.props.settings.pointsPerCausedDeath} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="pointsPerCausedDeath" type="number" min="0" max="25" valueLink={this.settingsLinkState('pointsPerCausedDeath')}/>
+                                <Col md={6}>
+                                    <Input name="pointsPerCausedDeath" id="pointsPerCausedDeath" type="number" min="0" max="25"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.pointsPerCausedDeath}/>
                                 </Col>
                             </Row>
                             <Row className="pointsPerNibble">
-                                <Col md={6} >
-                                    <h5>PointsPerNibble: {this.state.pointsPerNibble} </h5>
+                                <Col md={6}>
+                                    <h5>PointsPerNibble: {this.props.settings.pointsPerNibble} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="pointsPerNibble" type="number" min="0" max="25" valueLink={this.settingsLinkState('pointsPerNibble')}/>
+                                <Col md={6}>
+                                    <Input name="pointsPerNibble" id="pointsPerNibble" type="number" min="0" max="25"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.pointsPerNibble}/>
                                 </Col>
                             </Row>
                             <Row className="pointsLastSnakeLiving">
-                                <Col md={6} >
-                                    <h5>PointsLastSnakeLiving: {this.state.pointsLastSnakeLiving} </h5>
+                                <Col md={6}>
+                                    <h5>PointsLastSnakeLiving: {this.props.settings.pointsLastSnakeLiving} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="pointsLastSnakeLiving" type="number" min="0" max="25" valueLink={this.settingsLinkState('pointsLastSnakeLiving')}/>
+                                <Col md={6}>
+                                    <Input name="pointsLastSnakeLiving" id="pointsLastSnakeLiving" type="number" min="0" max="25"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.pointsLastSnakeLiving}/>
                                 </Col>
                             </Row>
                             <Row className="pointsPerSuicide">
-                                <Col md={6} >
-                                    <h5>PointsPerSuicide: {this.state.pointsPerSuicide} </h5>
+                                <Col md={6}>
+                                    <h5>PointsPerSuicide: {this.props.settings.pointsSuicide} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="pointsPerSuicide" type="number" min="-25" max="-1" valueLink={this.settingsLinkState('pointsPerSuicide')}/>
+                                <Col md={6}>
+                                    <Input name="pointsSuicide" id="pointsSuicide" type="number" min="-25" max="-1"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.pointsSuicide}/>
                                 </Col>
                             </Row>
                             <Row className="noofRoundsTailProtectedAfterNibble">
-                                <Col md={6} >
-                                    <h5>NoofRoundsTailProtectedAfterNibble: {this.state.noofRoundsTailProtectedAfterNibble} </h5>
+                                <Col md={6}>
+                                    <h5>
+                                        NoofRoundsTailProtectedAfterNibble: {this.props.settings.noofRoundsTailProtectedAfterNibble} </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="noofRoundsTailProtectedAfterNibble" type="number" min="0" max="10" valueLink={this.settingsLinkState('noofRoundsTailProtectedAfterNibble')}/>
+                                <Col md={6}>
+                                    <Input name="noofRoundsTailProtectedAfterNibble" id="noofRoundsTailProtectedAfterNibble" type="number" min="0" max="10"
+                                           onChange={ConfigureTournamentForm.onInputChange} value={this.props.settings.noofRoundsTailProtectedAfterNibble}/>
                                 </Col>
                             </Row>
                             <Row className="addFoodLikelihood">
-                                <Col md={6} >
-                                    <h5>AddFoodLikelihood: {this.state.addFoodLikelihood} %</h5>
+                                <Col md={6}>
+                                    <h5>AddFoodLikelihood: {this.props.settings.addFoodLikelihood} %</h5>
                                 </Col>
-                                <Col md={6} >
-                                    <input name="addFoodLikelihood" type="range" min="0" max="100" defaultValue={this.state.addFoodLikelihood} valueLink={this.settingsLinkState('addFoodLikelihood')}/>
+                                <Col md={6}>
+                                    <input name="addFoodLikelihood" id="addFoodLikelihood" type="range" min="0" max="100"
+                                           value={this.props.settings.addFoodLikelihood}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="removeFoodLikelihood">
-                                <Col md={6} >
-                                    <h5>RemoveFoodLikelihood: {this.state.removeFoodLikelihood} %</h5>
+                                <Col md={6}>
+                                    <h5>RemoveFoodLikelihood: {this.props.settings.removeFoodLikelihood} %</h5>
                                 </Col>
-                                <Col md={6} >
-                                    <input name="removeFoodLikelihood" type="range" min="0" max="100" defaultValue={this.state.removeFoodLikelihood} valueLink={this.settingsLinkState('removeFoodLikelihood')}/>
+                                <Col md={6}>
+                                    <input name="removeFoodLikelihood" id="removeFoodLikelihood" type="range" min="0" max="100"
+                                           value={this.props.settings.removeFoodLikelihood}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="addObstacleLikelihood">
-                                <Col md={6} >
-                                    <h5>AddObstacleLikelihood: {this.state.addObstacleLikelihood} %</h5>
+                                <Col md={6}>
+                                    <h5>AddObstacleLikelihood: {this.props.settings.addObstacleLikelihood} %</h5>
                                 </Col>
-                                <Col md={6} >
-                                    <input name="addObstacleLikelihood" type="range" min="0" max="100" defaultValue={this.state.addObstacleLikelihood} valueLink={this.settingsLinkState('addObstacleLikelihood')}/>
+                                <Col md={6}>
+                                    <input name="addObstacleLikelihood" id="addObstacleLikelihood" type="range" min="0" max="100"
+                                           value={this.props.settings.addObstacleLikelihood}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="removeObstacleLikelihood">
-                                <Col md={6} >
-                                    <h5>RemoveObstacleLikelihood: {this.state.removeObstacleLikelihood} %</h5>
+                                <Col md={6}>
+                                    <h5>RemoveObstacleLikelihood: {this.props.settings.removeObstacleLikelihood} %</h5>
                                 </Col>
-                                <Col md={6} >
-                                    <input name="removeObstacleLikelihood" type="range" min="0" max="100" defaultValue={this.state.removeObstacleLikelihood} valueLink={this.settingsLinkState('removeObstacleLikelihood')}/>
+                                <Col md={6}>
+                                    <input name="removeObstacleLikelihood" id="removeObstacleLikelihood" type="range" min="0" max="100"
+                                           value={this.props.settings.removeObstacleLikelihood}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="obstaclesEnabled">
-                                <Col md={6} >
-                                    <h5>ObstaclesEnabled: {this.state.obstaclesEnabled} </h5>
+                                <Col md={6}>
+                                    <h5>ObstaclesEnabled: </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="obstaclesEnabled" type="radio" label="True" defaultValue={true} checked={this.state.obstaclesEnabled === true} onChange={this.handleRadioOnChange.bind(this, true, "obstaclesEnabled")}/>
-                                    <Input name="obstaclesEnabled" type="radio" label="False"  defaultValue={false} checked={this.state.obstaclesEnabled === false} onChange={this.handleRadioOnChange.bind(this, false, "obstaclesEnabled")}/>
+                                <Col md={6}>
+                                    <Input name="obstaclesEnabled" id="obstaclesEnabled" type="radio" label="True" defaultValue={true}
+                                           defaultChecked={this.props.settings.obstaclesEnabled === true}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
+                                    <Input name="obstaclesEnabled" id="obstaclesEnabled" type="radio" label="False" defaultValue={false}
+                                           defaultChecked={this.props.settings.obstaclesEnabled === false}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="foodEnabled">
-                                <Col md={6} >
-                                    <h5>FoodEnabled: {this.state.foodEnabled} </h5>
+                                <Col md={6}>
+                                    <h5>FoodEnabled: </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="foodEnabled" type="radio" label="True" defaultValue={true} checked={this.state.foodEnabled === true} onChange={this.handleRadioOnChange.bind(this, true, "foodEnabled")}/>
-                                    <Input name="foodEnabled" type="radio" label="False"  defaultValue={false} checked={this.state.foodEnabled === false} onChange={this.handleRadioOnChange.bind(this, false, "foodEnabled")}/>
+                                <Col md={6}>
+                                    <Input name="foodEnabled" id="foodEnabled" type="radio" label="True" defaultValue={true}
+                                           defaultChecked={this.props.settings.foodEnabled === true}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
+                                    <Input name="foodEnabled" id="foodEnabled" type="radio" label="False" defaultValue={false}
+                                           defaultChecked={this.props.settings.foodEnabled === false}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="edgeWrapsAround">
-                                <Col md={6} >
-                                    <h5>EdgeWrapsAround: {this.state.edgeWrapsAround} </h5>
+                                <Col md={6}>
+                                    <h5>EdgeWrapsAround:</h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="edgeWrapsAround" type="radio" label="True" defaultValue={true} checked={this.state.edgeWrapsAround === true} onChange={this.handleRadioOnChange.bind(this, true, "edgeWrapsAround")}/>
-                                    <Input name="edgeWrapsAround" type="radio" label="False"  defaultValue={false} checked={this.state.edgeWrapsAround === false} onChange={this.handleRadioOnChange.bind(this, false, "edgeWrapsAround")}/>
+                                <Col md={6}>
+                                    <Input name="edgeWrapsAround" id="edgeWrapsAround" type="radio" label="True" defaultValue={true}
+                                           defaultChecked={this.props.settings.edgeWrapsAround === true}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
+                                    <Input name="edgeWrapsAround" id="edgeWrapsAround" type="radio" label="False" defaultValue={false}
+                                           defaultChecked={this.props.settings.edgeWrapsAround === false}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="headToTailConsumes">
-                                <Col md={6} >
-                                    <h5>HeadToTailConsumes: {this.state.headToTailConsumes} </h5>
+                                <Col md={6}>
+                                    <h5>HeadToTailConsumes: </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="headToTailConsumes" type="radio" label="True" defaultValue={true} checked={this.state.headToTailConsumes === true} onChange={this.handleRadioOnChange.bind(this, true, "headToTailConsumes")}/>
-                                    <Input name="headToTailConsumes" type="radio" label="False"  defaultValue={false} checked={this.state.headToTailConsumes === false} onChange={this.handleRadioOnChange.bind(this, false, "headToTailConsumes")}/>
+                                <Col md={6}>
+                                    <Input name="headToTailConsumes" id="headToTailConsumes" type="radio" label="True" defaultValue={true}
+                                           defaultChecked={this.props.settings.headToTailConsumes === true}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
+                                    <Input name="headToTailConsumes" id="headToTailConsumes" type="radio" label="False" defaultValue={false}
+                                           defaultChecked={this.props.settings.headToTailConsumes === false}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
                             <Row className="tailConsumeGrows">
-                                <Col md={6} >
-                                    <h5>TailConsumeGrows: {this.state.tailConsumeGrows} </h5>
+                                <Col md={6}>
+                                    <h5>TailConsumeGrows: </h5>
                                 </Col>
-                                <Col md={6} >
-                                    <Input name="tailConsumeGrows" type="radio" label="True" defaultValue={true} checked={this.state.tailConsumeGrows === true} onChange={this.handleRadioOnChange.bind(this, true, "tailConsumeGrows")}/>
-                                    <Input name="tailConsumeGrows" type="radio" label="False"  defaultValue={false} checked={this.state.tailConsumeGrows === false} onChange={this.handleRadioOnChange.bind(this, false, "tailConsumeGrows")}/>
+                                <Col md={6}>
+                                    <Input name="tailConsumeGrows" id="tailConsumeGrows" type="radio" label="True" defaultValue={true}
+                                           defaultChecked={this.props.settings.tailConsumeGrows === true}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
+                                    <Input name="tailConsumeGrows" id="tailConsumeGrows" type="radio" label="False" defaultValue={false}
+                                           defaultChecked={this.props.settings.tailConsumeGrows === false}
+                                           onChange={ConfigureTournamentForm.onInputChange}/>
                                 </Col>
                             </Row>
+                            <Button onClick={this.createTournamentTable} bsStyle="primary" bsSize="large">Create Tournament</Button>
                         </form>
                     </Col>
                     <Col md={4} mdPush={3}>
@@ -258,6 +275,10 @@ const ConfigureTournamentForm = React.createClass({
             </div>
         )
     }
-});
+}
 
-export default ConfigureTournamentForm;
+ConfigureTournamentForm.PropTypes = {
+    tournamentName: React.PropTypes.string.isRequired
+};
+
+export default StoreWatch(ConfigureTournamentForm, getSettings);
