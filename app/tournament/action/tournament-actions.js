@@ -1,6 +1,7 @@
 import Constants from'../constants/Constants'
 import {dispatch} from '../../dispatchers/AppDispatcher'
 
+
 export default {
     createTournament ( name ) {
         dispatch({
@@ -35,6 +36,12 @@ export default {
     tournamentGamePlanReceived (jsonData) {
         dispatch({
             actionType: Constants.GAME_PLAN_RECEIVED, jsonData
+        })
+    },
+
+    updatePlayers (players) {
+        dispatch({
+            actionType: Constants.UPDATE_PLAYERS, players
         })
     }
 }
