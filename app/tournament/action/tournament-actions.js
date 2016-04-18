@@ -14,15 +14,27 @@ export default {
         })
     },
 
-    createTournamentTable ( settings ) {
+    createTournamentTable ( ) {
         dispatch({
-            actionType: Constants.CREATE_TOURNAMENT_TABLE, settings
+            actionType: Constants.CREATE_TOURNAMENT_TABLE
         })
     },
 
     tournamentCreated  (jsonData) {
         dispatch({
             actionType: Constants.TOURNAMENT_CREATED, jsonData
+        })
+    },
+
+    startTournament () {
+        dispatch({
+            actionType: Constants.START_TOURNAMENT
+        })
+    },
+
+    tournamentGamePlanReceived (jsonData) {
+        dispatch({
+            actionType: Constants.GAME_PLAN_RECEIVED, jsonData
         })
     }
 }
