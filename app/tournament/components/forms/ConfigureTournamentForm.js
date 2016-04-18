@@ -1,8 +1,10 @@
 import React from 'react';
-import {Row, Col, Input, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+import {Row, Col, Input, Button} from 'react-bootstrap';
 import TournamentStore from '../../stores/TournamentStore'
 import StoreWatch from '../../watch/StoreWatch'
 import Action from '../../action/tournament-actions'
+import PlayerList from '../players/PlayerList'
+
 
 function getSettings() {
     let settings = TournamentStore.getSettings();
@@ -13,6 +15,7 @@ function getSettings() {
 class ConfigureTournamentForm extends  React.Component {
     constructor(props) {
         super(props);
+        this.createTournamentTable = this.createTournamentTable.bind(this);
     }
 
 
@@ -265,16 +268,12 @@ class ConfigureTournamentForm extends  React.Component {
                                 </Col>
                             </Row>
                             <Button onClick={this.createTournamentTable} bsStyle="primary" bsSize="large">Create Tournament</Button>
-                            <Button onClick={this.startTournament} bsStyle="primary" bsSize="large">Start Tournament</Button>
+                            <Button onClick={this.startTournament} bsStyle="primary" bsSize="large">Setup tournament bracket</Button>
                         </form>
                     </Col>
                     <Col md={4} mdPush={3}>
                         <h1>Available players</h1>
-                        <ListGroup>
-                            <ListGroupItem>Player 1</ListGroupItem>
-                            <ListGroupItem>Player 2</ListGroupItem>
-                            <ListGroupItem>Player 3</ListGroupItem>
-                        </ListGroup>
+                        <PlayerList/>
                     </Col>
                 </Row>
             </div>

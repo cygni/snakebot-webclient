@@ -15,7 +15,7 @@ export default () => {
             </Route>
             <Route path="/tournament" component={TournamentTemplate}>
                 <IndexRoute component={Settings}/>
-                <Route path="/tournamentbracket" component={Bracket}/>
+                <Route name='bracket' path="/tournamentbracket" component={Bracket}/>
             </Route>
         </Router>
     );
