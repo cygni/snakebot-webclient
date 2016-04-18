@@ -1,5 +1,4 @@
 import React from 'react';
-import { hashHistory } from 'react-router';
 import GameTemplate from '../training/components/GameTemplate'
 import Gameboard from '../training/components/GameBoard'
 import TournamentTemplate from '../tournament/components/TournamentTemplate'
