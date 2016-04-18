@@ -39,8 +39,7 @@ const _createTournament = (name) => {
 };
 
 const _createTournamentTable = () => {
-    var gameSettings = {gameSettings: tournament.gameSettings}
-    socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"token-here", "gameSettings": ' + JSON.stringify(gameSettings) + '}');
+    socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"token-here", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
 };
 
 const _startTournament = () => {
