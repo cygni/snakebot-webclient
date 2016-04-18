@@ -20,6 +20,10 @@ class ConfigureTournamentForm extends  React.Component {
         Action.createTournamentTable();
     }
 
+    startTournament() {
+        Action.startTournament();
+    }
+
     static onInputChange(event) {
         if(event.target) {
             Action.updateSettings(event.target.id, event.target.value);
@@ -261,6 +265,7 @@ class ConfigureTournamentForm extends  React.Component {
                                 </Col>
                             </Row>
                             <Button onClick={this.createTournamentTable} bsStyle="primary" bsSize="large">Create Tournament</Button>
+                            <Button onClick={this.startTournament} bsStyle="primary" bsSize="large">Start Tournament</Button>
                         </form>
                     </Col>
                     <Col md={4} mdPush={3}>
