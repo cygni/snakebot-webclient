@@ -1,25 +1,34 @@
 import React from 'react';
-import TournamentStore from '../../stores/TournamentStore'
-import StoreWatch from '../../watch/StoreWatch'
+import {Row, Col, Input, ListGroup, ListGroupItem} from 'react-bootstrap';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 require('./bracket.scss');
 
+const ConfigureTournamentForm = React.createClass({
+    mixins: [LinkedStateMixin],
 
-function getGamePlan() {
-   let gameplan = TournamentStore.getTournamentGameplan()
-    return {gameplan: gameplan}
-}
+    getInitialState() {
+        return {
 
-class Bracket extends React.Component {
-    constructor(props) {
-        super(props)
-    }
+        }
+    },
 
+    settingsLinkState(name) {
+        return {
+            value: this.state[name],
+            requestChange: (newValue) => {
+                this.setState({[name]: newValue});
+            }
+        }
+    },
+
+    handleRadioOnChange(booleanName, name) {
+        this.setState({[name]: booleanName});
+    },
 
     render() {
         return (
             <div className="bracket">
                <main id="tournament">
-
                     <ul className="round round-1">
                         <li className="spacer">&nbsp;</li>
 
@@ -126,6 +135,6 @@ class Bracket extends React.Component {
             </div>
         )
     }
-}
+});
 
-export default StoreWatch(Bracket, getGamePlan)
+export default ConfigureTournamentForm;
