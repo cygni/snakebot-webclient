@@ -20,6 +20,7 @@
     "react-addons-linked-state-mixin": "^15.0.1",
     "react-bootstrap": "^0.28.5",
     "react-bootstrap-native-slider": "^1.1.6",
+    "react-bootstrap-switch": "^3.4.5",
     "react-bootstrap-validation": "^0.1.11",
     "react-dom": "^15.0.1",
     "react-input-range": "^0.6.2",

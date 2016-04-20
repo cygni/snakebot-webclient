@@ -1,0 +1,24 @@
+.configure-tournament-form {
+    margin-top: 20px;
+    .tournament-name {
+        display: inline;
+        margin-right: 30px;
+    }
+    .btn-group {
+        float:right;
+    }
+    .form-group {
+        display: inline;
+    }
+    .radio {
+        display: inherit;
+        margin-right: 20px;
+        margin-top: 10px;
+    }
+    .row {
+        padding: 5px 0;
+    }
+    input[type="range"] {
+        margin-top: 10px;
+    }
+}
