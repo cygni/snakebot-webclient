@@ -1,6 +1,5 @@
 import React from 'react';
 import {Row, Col, Input, Button, ButtonGroup } from 'react-bootstrap';
-import Switch from 'react-bootstrap-switch';
 import TournamentStore from '../../stores/TournamentStore'
 import StoreWatch from '../../watch/StoreWatch'
 import Action from '../../action/tournament-actions'
