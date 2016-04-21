@@ -29,9 +29,9 @@ class Sidebar extends React.Component {
                 <h3>Active Games</h3>
                 {this.props.games.map((game, index) => {
                     var boundClick = this.selectedGame.bind(this, game.id);
-                    let title = game.gameFeatures.trainingGame ? game.players[0].name : game.id;
+                    // let title = game.gameFeatures.trainingGame ? game.players[0].name : game.id;
                     return (
-                        <Panel header={title} eventKey={index} key={game.id} onClick={boundClick}>
+                        <Panel header={game.id} eventKey={index} key={game.id} onClick={boundClick}>
                             <Table striped bordered condensed>
                                 <thead>
                                 <tr>

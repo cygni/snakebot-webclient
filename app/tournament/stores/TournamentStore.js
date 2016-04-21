@@ -6,7 +6,7 @@ import TournamentAction from '../action/tournament-actions'
 import { hashHistory } from 'react-router'
 
 const CHANGE_EVENT = 'change';
-var socket = new SockJS('http://localhost:8080/events');
+// var socket = new SockJS('http://localhost:8080/events');
 
 let playerList = [];
 let tournament = {};
@@ -168,15 +168,15 @@ let tournamentGameplan = {
 };
 
 const _createTournament = (name) => {
-    socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"token-here"}');
+    // socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"token-here"}');
 };
 
 const _createTournamentTable = () => {
-    socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"token-here", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
+    // socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"token-here", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
 };
 
 const _startTournament = () => {
-    socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournamentGame", "token":"token-here", "gameId":"' + tournament.tournamentId + '"}');
+    // socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournamentGame", "token":"token-here", "gameId":"' + tournament.tournamentId + '"}');
     hashHistory.push('/tournamentbracket');
 };
 
@@ -196,28 +196,28 @@ const _updatePlayers = (players) => {
 };
 
 
-const _initWS = () => {
-    socket.onmessage = function (e) {
-        var jsonData = JSON.parse(e.data);
-
-        if (jsonData.type == "se.cygni.snake.eventapi.response.TournamentCreated") {
-            TournamentAction.tournamentCreated(jsonData);
-        }
-        else if (jsonData.type == "se.cygni.snake.eventapi.model.TournamentGamePlan") {
-            TournamentAction.tournamentGamePlanReceived(jsonData);
-            TournamentAction.updatePlayers(jsonData.players)
-        }
-
-        else {
-            console.log(jsonData);
-        }
-
-    }.bind(this);
-
-    socket.onclose = function () {
-        console.log('close');
-    };
-};
+// const _initWS = () => {
+//     socket.onmessage = function (e) {
+//         var jsonData = JSON.parse(e.data);
+//
+//         if (jsonData.type == "se.cygni.snake.eventapi.response.TournamentCreated") {
+//             TournamentAction.tournamentCreated(jsonData);
+//         }
+//         else if (jsonData.type == "se.cygni.snake.eventapi.model.TournamentGamePlan") {
+//             TournamentAction.tournamentGamePlanReceived(jsonData);
+//             TournamentAction.updatePlayers(jsonData.players)
+//         }
+//
+//         else {
+//             console.log(jsonData);
+//         }
+//
+//     }.bind(this);
+//
+//     socket.onclose = function () {
+//         console.log('close');
+//     };
+// };
 
 const _updateSettings = (key, value) => {
     tournament.gameSettings[key] = value;
@@ -255,9 +255,9 @@ const GameStore = Object.assign(EventEmitter.prototype, {
     getSettings () {
         return tournament.gameSettings;
     },
-    initWS() {
-        _initWS();
-    },
+    // initWS() {
+    //     _initWS();
+    // },
 
     getPlayerList () {
         return playerList;
