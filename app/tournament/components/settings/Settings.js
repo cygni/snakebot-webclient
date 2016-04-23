@@ -20,16 +20,10 @@ class Settings extends React.Component {
         TournamentStore.initWS();
     }
 
-    componentWillReceiveProps(nextProps) {
-
-        // if (nextProps.tournament) {
-        //     this.setState({
-        //         tournamentName: nextProps.tournament
-        //     })
-        // }
-    };
 
     render() {
+        console.log(this.props.tournament);
+
         let table;
         if (!this.props.tournament.tournamentName) {
             table = <CreateTournamentForm />

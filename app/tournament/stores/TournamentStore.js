@@ -3,322 +3,20 @@ import Constants from '../constants/Constants'
 import {EventEmitter} from 'events'
 import SockJS from 'sockjs-client'
 import TournamentAction from '../action/tournament-actions'
-import { hashHistory } from 'react-router'
+import {hashHistory} from 'react-router'
+import Colors from '../../util/Colors'
+import TileUtils from '../../util/TileUtils'
 
 const CHANGE_EVENT = 'change';
-var socket = new SockJS('http://localhost:8080/events');
+var socket;
 
 let playerList = [];
 let tournament = {};
 let tournamentGameplan = {
-  "type": "se.cygni.snake.eventapi.model.TournamentGamePlan",
-  "noofLevels": 5,
-  "players": [
-    {
-      "name": "#emil_163",
-      "id": "bc6ab6c0-3c20-49d2-b70c-bc29b0edaf03"
-    },
-    {
-      "name": "#emil_807",
-      "id": "099aa6c4-74f6-4e2e-9163-80abc8f4406c"
-    },
-    {
-      "name": "#emil_142",
-      "id": "60a2eda3-52d4-495a-8400-82c69e80f388"
-    },
-    {
-      "name": "#emil_430",
-      "id": "60079f08-d071-476e-a47f-e91cdced41c4"
-    },
-    {
-      "name": "#emil_352",
-      "id": "84000e3c-1f04-4b52-a38c-ff82337730ac"
-    },
-    {
-      "name": "#emil_541",
-      "id": "8f12a681-8227-4ed1-b6db-35b2116ba4a2"
-    },
-    {
-      "name": "#emil_87",
-      "id": "e7d25beb-d683-46a9-bf4a-42e839323c22"
-    },
-    {
-      "name": "#emil_271",
-      "id": "a2ad45b2-9faa-4b52-a211-6d541e85759f"
-    },
-    {
-      "name": "#emil_942",
-      "id": "318a1fb1-104f-438c-91bc-1e1268435af8"
-    },
-    {
-      "name": "#emil_173",
-      "id": "5b8a2272-c4a0-4676-9d79-4d8c183737f0"
-    },
-    {
-      "name": "#emil_299",
-      "id": "776470dc-8952-4de0-8585-48c675063e3e"
-    },
-    {
-      "name": "#emil_260",
-      "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-    },
-    {
-      "name": "#emil_899",
-      "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-    },
-    {
-      "name": "#emil_628",
-      "id": "8267faec-41ad-4ac5-8830-f123b96b3255"
-    }
-  ],
-  "tournamentName": "xedas",
-  "tournamentId": "1c8e02df-a298-42cf-bc08-3d0be0982ee2",
-  "tournamentLevels": [
-    {
-      "level": 0,
-      "expectedNoofPlayers": 14,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 5,
-          "players": [
-            {
-              "name": "#emil_163",
-              "id": "bc6ab6c0-3c20-49d2-b70c-bc29b0edaf03"
-            },
-            {
-              "name": "#emil_807",
-              "id": "099aa6c4-74f6-4e2e-9163-80abc8f4406c"
-            },
-            {
-              "name": "#emil_142",
-              "id": "60a2eda3-52d4-495a-8400-82c69e80f388"
-            },
-            {
-              "name": "#emil_430",
-              "id": "60079f08-d071-476e-a47f-e91cdced41c4"
-            },
-            {
-              "name": "#emil_352",
-              "id": "84000e3c-1f04-4b52-a38c-ff82337730ac"
-            }
-          ]
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 5,
-          "players": [
-            {
-              "name": "#emil_541",
-              "id": "8f12a681-8227-4ed1-b6db-35b2116ba4a2"
-            },
-            {
-              "name": "#emil_87",
-              "id": "e7d25beb-d683-46a9-bf4a-42e839323c22"
-            },
-            {
-              "name": "#emil_271",
-              "id": "a2ad45b2-9faa-4b52-a211-6d541e85759f"
-            },
-            {
-              "name": "#emil_942",
-              "id": "318a1fb1-104f-438c-91bc-1e1268435af8"
-            },
-            {
-              "name": "#emil_173",
-              "id": "5b8a2272-c4a0-4676-9d79-4d8c183737f0"
-            }
-          ]
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": [
-            {
-              "name": "#emil_299",
-              "id": "776470dc-8952-4de0-8585-48c675063e3e"
-            },
-            {
-              "name": "#emil_260",
-              "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            },
-            {
-              "name": "#emil_628",
-              "id": "8267faec-41ad-4ac5-8830-f123b96b3255"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "level": 1,
-      "expectedNoofPlayers": 11,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": [
-            {
-              "name": "#emil_299",
-              "id": "776470dc-8952-4de0-8585-48c675063e3e"
-            },
-            {
-              "name": "#emil_260",
-              "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            },
-            {
-              "name": "#emil_628",
-              "id": "8267faec-41ad-4ac5-8830-f123b96b3255"
-            }
-          ]
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": [
-            {
-              "name": "#emil_299",
-              "id": "776470dc-8952-4de0-8585-48c675063e3e"
-            },
-            {
-              "name": "#emil_260",
-              "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            },
-            {
-              "name": "#emil_628",
-              "id": "8267faec-41ad-4ac5-8830-f123b96b3255"
-            }
-            ]
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 3,
-          "players": [
-            {
-              "name": "#emil_299",
-              "id": "776470dc-8952-4de0-8585-48c675063e3e"
-            },
-            {
-              "name": "#emil_260",
-              "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "level": 2,
-      "expectedNoofPlayers": 8,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": [
-            {
-              "name": "#emil_299",
-              "id": "776470dc-8952-4de0-8585-48c675063e3e"
-            },
-            {
-              "name": "#emil_260",
-              "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            },
-            {
-              "name": "#emil_628",
-              "id": "8267faec-41ad-4ac5-8830-f123b96b3255"
-            }
-            ]
-        }
-      ]
-    },
-    {
-      "level": 3,
-      "expectedNoofPlayers": 6,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 3,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 3,
-          "players": [
-            {
-              "name": "#emil_299",
-              "id": "776470dc-8952-4de0-8585-48c675063e3e"
-            },
-            {
-              "name": "#emil_260",
-              "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            }
-            ]
-        }
-      ]
-    },
-    {
-      "level": 4,
-      "expectedNoofPlayers": 4,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": [
-            {
-              "name": "#emil_260",
-              "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            },
-            {
-              "name": "#emil_628",
-              "id": "8267faec-41ad-4ac5-8830-f123b96b3255"
-            },
-            {
-              "name": "#emil_899",
-              "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-            }
-            ]
-        }
-      ]
-    }
-  ]
+    tournamentLevels: []
 };
+let activeGameList = [];
+let activeGame = {};
 
 const _createTournament = (name) => {
     socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"token-here"}');
@@ -329,15 +27,18 @@ const _createTournamentTable = () => {
 };
 
 const _startTournament = () => {
-    socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournamentGame", "token":"token-here", "gameId":"' + tournament.tournamentId + '"}');
-    hashHistory.push('/tournamentbracket');
+    socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"token-here", "tournamentId":"' + tournament.tournamentId + '"}');
+    hashHistory.push('tournament/tournamentbracket');
+};
+
+const _getActiveTournament = () => {
+    socket.send('{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"token-here"}');
 };
 
 const _tournamentCreated = (jsonData) => {
     tournament.tournamentName = jsonData.tournamentName;
     tournament.tournamentId = jsonData.tournamentId;
     tournament.gameSettings = jsonData.gameSettings;
-    localStorage.setItem("tournament", JSON.stringify(tournament));
 };
 
 const _updateGameplan = (jsonData) => {
@@ -348,8 +49,59 @@ const _updatePlayers = (players) => {
     playerList = players;
 };
 
-
 const _initWS = () => {
+    if (!socket) {
+        socket = new SockJS('http://localhost:8080/events')
+    }
+    _listen()
+};
+
+const _setActiveTournamentGame = (gameId) => {
+    let game = activeGameList.find(game => game.gameId == gameId);
+    let players = [];
+    game.players.forEach((player, index) => {
+        players.push({"index": index, "name": player.name, id: player.id, 'color': Colors.getSnakeColor()[index]});
+    });
+
+    activeGame = {
+        "id": game.gameId,
+        "gameFeatures": game.gameFeatures,
+        "color": Colors.getBoardColor()[0],
+        "players": players,
+        "currentFrame": 0,
+        "mapEvents": [],
+        "updateFrequency": 500
+    };
+
+    localStorage.setItem("activeGame", JSON.stringify(activeGame));
+    hashHistory.push('/tournament/activeTournamentGame');
+};
+
+const _startGame = () => {
+    socket.send('{"includedGameIds": ["' + activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    socket.send('{"gameId":"' + activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
+};
+
+
+const _updateSnakes = (playerList, frame) => {
+    frame.snakeInfos.forEach(snake => {
+        var player = playerList.find(p => p.id === snake.id);
+        if (!player) {
+            console.log("unable to find player");
+            return;
+        }
+
+        player.points = snake.points;
+        player.length = snake.positions.length;
+        player.alive = snake.positions.length > 0;
+    });
+};
+
+const _listen = () => {
+    socket.onopen = function () {
+        _getActiveTournament();
+    };
+    
     socket.onmessage = function (e) {
         var jsonData = JSON.parse(e.data);
 
@@ -359,6 +111,13 @@ const _initWS = () => {
         else if (jsonData.type == "se.cygni.snake.eventapi.model.TournamentGamePlan") {
             TournamentAction.tournamentGamePlanReceived(jsonData);
             TournamentAction.updatePlayers(jsonData.players)
+        }
+
+        else if (jsonData.type == "se.cygni.snake.eventapi.response.ActiveGamesList") {
+            activeGameList = jsonData.games;
+        }
+        else if (jsonData.type == "se.cygni.snake.api.event.MapUpdateEvent") {
+            TournamentAction.mapUpdateEvent(jsonData);
         }
 
         else {
@@ -376,8 +135,51 @@ const _updateSettings = (key, value) => {
     tournament.gameSettings[key] = value;
 };
 
+const _changeFrame = () => {
+    setTimeout(() => _changeFrame(), activeGame.updateFrequency);
 
-const GameStore = Object.assign(EventEmitter.prototype, {
+    activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
+    _updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
+    TournamentStore.emitChange();
+};
+
+const _addMapUpdate = (event) => {
+    _parseSnakes(activeGame.players, event.map.snakeInfos);
+
+    event.map.foodPositions = event.map.foodPositions.map(function (pos) {
+        return TileUtils.getTileCoordinate(pos, event.map.width);
+    });
+    event.map.obstaclePositions = event.map.obstaclePositions.map(function (pos) {
+        return TileUtils.getTileCoordinate(pos, event.map.width);
+    });
+    event.map.snakeInfos.forEach(snake => {
+        snake.positions = snake.positions.map(function (pos) {
+            return TileUtils.getTileCoordinate(pos, event.map.width);
+        });
+    });
+
+    activeGame.mapEvents.push(event.map);
+};
+
+function _parseSnakes(oldList, snakeList) {
+    snakeList.forEach(snake => {
+        if (oldList.find(existingSnake => snake.id === existingSnake.id)) {
+            return;
+        }
+
+        oldList.push({
+            "id": snake.id,
+            "name": snake.name,
+            "length": snake.positions.length,
+            "color": Colors.getSnakeColor()[oldList.length],
+            "alive": snake.positions.length <= 0,
+            "points": snake.points
+        });
+    })
+}
+
+
+const TournamentStore = Object.assign(EventEmitter.prototype, {
     emitChange () {
         this.emit(CHANGE_EVENT)
     },
@@ -391,18 +193,7 @@ const GameStore = Object.assign(EventEmitter.prototype, {
     },
 
     getActiveTournament () {
-        // console.log("wuut");
-        // console.log(tournament);
-        // let t = localStorage.getItem("tournament");
-        // console.log(t);
-        // console.log(!tournament && localStorage.getItem("tournament"));
-
-        // console.log(tournament);
-        // if (!tournament.tournamentId && localStorage.getItem("tournament")) {
-        //     console.log("TRUER");
-        //     tournament = localStorage.getItem("tournament");
-        // }
-        return tournament
+        return tournament;
     },
 
     getSettings () {
@@ -418,6 +209,14 @@ const GameStore = Object.assign(EventEmitter.prototype, {
 
     getTournamentGameplan() {
         return tournamentGameplan;
+    },
+
+    getActiveGame() {
+        if (Object.keys(activeGame).length == 0 && localStorage.getItem("activeGame")) {
+            let tmp = localStorage.getItem("activeGame");
+            activeGame = JSON.parse(tmp);
+        }
+        return activeGame;
     },
 
     dispatherIndex: register(action => {
@@ -443,11 +242,21 @@ const GameStore = Object.assign(EventEmitter.prototype, {
             case Constants.UPDATE_PLAYERS:
                 _updatePlayers(action.players);
                 break;
+            case Constants.SET_ACTIVE_GAME:
+                _setActiveTournamentGame(action.gameId);
+                break;
+            case Constants.TOURNAMENT_MAP_UPDATE_EVENT:
+                _addMapUpdate(action.event);
+                break;
+            case Constants.START_TOURNAMENT_GAME:
+                _startGame();
+                _changeFrame();
+                break;
 
         }
 
-        GameStore.emitChange();
+        TournamentStore.emitChange();
     })
 });
 
-export default GameStore;
+export default TournamentStore;

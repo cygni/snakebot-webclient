@@ -43,5 +43,23 @@ export default {
         dispatch({
             actionType: Constants.UPDATE_PLAYERS, players
         })
+    },
+
+    setActiveGame (gameId) {
+        dispatch({
+            actionType: Constants.SET_ACTIVE_GAME, gameId
+        })
+    },
+
+    mapUpdateEvent ( event ) {
+        dispatch({
+            actionType: Constants.TOURNAMENT_MAP_UPDATE_EVENT, event
+        })
+    },
+
+    startGame () {
+        dispatch({
+            actionType: Constants.START_TOURNAMENT_GAME
+        })
     }
 }

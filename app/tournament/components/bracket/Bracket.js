@@ -1,6 +1,7 @@
 import React from 'react';
 import TournamentStore from '../../stores/TournamentStore'
 import StoreWatch from '../../watch/StoreWatch'
+import TournamentAction from '../../action/tournament-actions'
 require('./bracket.scss');
 
 
@@ -11,7 +12,12 @@ function getGamePlan() {
 
 class Bracket extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
+        TournamentStore.initWS();
+    }
+
+    startGame(gameId) {
+        TournamentAction.setActiveGame(gameId);
     }
 
     render() {
@@ -19,18 +25,21 @@ class Bracket extends React.Component {
            <main id="tournament">
                 {
                     this.props.gameplan.tournamentLevels.map((level,i) => {
+
                         return (
                             <div className="panel panel-info col-sm-3" key={i}>
                                 <div className="panel-heading">Level {level.level}</div>
                                 {
                                     level.tournamentGames.map((game,i) => {
+
                                         return (
                                             <div className="panel-body" key={i}>
                                                 <ul className="list-group player">
                                                 {
                                                     game.players.map((player,i) => {
+                                                        var boundClick = this.startGame.bind(this, game.gameId);
                                                         return (
-                                                            <li className="list-group-item" key={i}>{player.name}</li>
+                                                            <li className="list-group-item" key={i} onClick={boundClick}>{player.name} </li>
                                                         )
                                                     })
                                                 }
