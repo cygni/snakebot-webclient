@@ -73,5 +73,17 @@ export default {
         dispatch({
             actionType: Constants.TOURNAMENT_ENDED_EVENT, event
         })
+    },
+
+    setUpdateFrequencyTournament ( freq ) {
+        dispatch({
+            actionType: Constants.SET_UPDATE_FREQUENCY_TOURNAMENT, freq
+        })
+    },
+
+    setCurrentFrameTournament ( frame ) {
+        dispatch({
+            actionType: Constants.SET_CURRENT_TOURNAMENT_FRAME, frame
+        })
     }
 }
