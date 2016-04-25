@@ -61,5 +61,11 @@ export default {
         dispatch({
             actionType: Constants.START_TOURNAMENT_GAME
         })
+    },
+
+    tournamentEndedEvent (event) {
+        dispatch({
+            actionType: Constants.TOURNAMENT_ENDED_EVENT, event
+        })
     }
 }

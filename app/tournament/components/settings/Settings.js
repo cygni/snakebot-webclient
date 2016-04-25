@@ -22,7 +22,6 @@ class Settings extends React.Component {
 
 
     render() {
-        console.log(this.props.tournament);
 
         let table;
         if (!this.props.tournament.tournamentName) {

@@ -8,6 +8,7 @@ import TileUtils from '../../../util/TileUtils'
 import BoardUtils from '../../../util/BoardUtils'
 import TournamentAction from '../../action/tournament-actions'
 import {Button} from 'react-bootstrap'
+import ActivePlayerList from '../players/ActivePlayerList'
 
 function getActiveGame() {
     let game = TournamentStore.getActiveGame();
@@ -18,7 +19,7 @@ class GameBoard extends React.Component {
     constructor(props) {
         super(props);
         TournamentStore.initWS();
-        this.startGame =  this.startGame.bind(this);
+        this.startGame = this.startGame.bind(this);
         this.state = {
             shouldRender: false,
             mapEvents: [],
@@ -43,9 +44,9 @@ class GameBoard extends React.Component {
     };
 
     startGame() {
-        this.setState ({
+        this.setState({
             gameStarted: true
-        })
+        });
         TournamentAction.startGame();
 
     }
@@ -59,10 +60,8 @@ class GameBoard extends React.Component {
         let tileSize = 0;
 
         if (map != undefined && map.width != undefined) {
-            console.log(map);
             size = BoardUtils.calculateSize(map);
             tileSize = BoardUtils.getTileSize(map);
-
 
             for (let y = 0; y < map.height; y++) {
                 let tileRow = [];
@@ -86,7 +85,8 @@ class GameBoard extends React.Component {
 
         if (this.state.gameStarted) {
             return (
-                <Grid>
+                <Grid fluid>
+                    <Row>
                     <Col xs={14} md={9}>
                         <Grid >
                             <Row className="show-grid">
@@ -108,12 +108,24 @@ class GameBoard extends React.Component {
                             </Row>
                         </Grid>
                     </Col>
+                        <Col xs={4} md={3}>
+                            <ActivePlayerList/>
+                        </Col>
+                        </Row>
                 </Grid>
             )
         }
         else {
             return (
-                <Button onClick={this.startGame} className="btn btn-default btn-lg">Start game</Button>
+                <Grid>
+                    <Row>
+                        <Col md={2} mdPush={5}>
+                            <div class="center-block" style={{paddingTop: "30px"}}>
+                                <Button onClick={this.startGame} className="btn btn-primary btn-lg">Start game</Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </Grid>
 
             )
         }

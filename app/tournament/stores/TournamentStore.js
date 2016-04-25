@@ -17,6 +17,10 @@ let tournamentGameplan = {
 };
 let activeGameList = [];
 let activeGame = {};
+let finalPlacement = {
+    winner: {},
+    list: []
+};
 
 const _createTournament = (name) => {
     socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"token-here"}');
@@ -27,6 +31,10 @@ const _createTournamentTable = () => {
 };
 
 const _startTournament = () => {
+    console.log("KLSADASDKSAL");
+    localStorage.removeItem("gameplan");
+    localStorage.removeItem("finalPlacement");
+    console.log(localStorage.getItem("finalPlacement"));
     socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"token-here", "tournamentId":"' + tournament.tournamentId + '"}');
     hashHistory.push('tournament/tournamentbracket');
 };
@@ -42,6 +50,7 @@ const _tournamentCreated = (jsonData) => {
 };
 
 const _updateGameplan = (jsonData) => {
+    localStorage.setItem("gameplan", JSON.stringify(jsonData));
     tournamentGameplan = jsonData
 };
 
@@ -70,7 +79,7 @@ const _setActiveTournamentGame = (gameId) => {
         "players": players,
         "currentFrame": 0,
         "mapEvents": [],
-        "updateFrequency": 500
+        "updateFrequency": 125
     };
 
     localStorage.setItem("activeGame", JSON.stringify(activeGame));
@@ -84,24 +93,26 @@ const _startGame = () => {
 
 
 const _updateSnakes = (playerList, frame) => {
-    frame.snakeInfos.forEach(snake => {
-        var player = playerList.find(p => p.id === snake.id);
-        if (!player) {
-            console.log("unable to find player");
-            return;
-        }
+    if (frame) {
+        frame.snakeInfos.forEach(snake => {
+            var player = playerList.find(p => p.id === snake.id);
+            if (!player) {
+                console.log("unable to find player");
+                return;
+            }
 
-        player.points = snake.points;
-        player.length = snake.positions.length;
-        player.alive = snake.positions.length > 0;
-    });
+            player.points = snake.points;
+            player.length = snake.positions.length;
+            player.alive = snake.positions.length > 0;
+        });
+    }
 };
 
 const _listen = () => {
     socket.onopen = function () {
         _getActiveTournament();
     };
-    
+
     socket.onmessage = function (e) {
         var jsonData = JSON.parse(e.data);
 
@@ -109,6 +120,7 @@ const _listen = () => {
             TournamentAction.tournamentCreated(jsonData);
         }
         else if (jsonData.type == "se.cygni.snake.eventapi.model.TournamentGamePlan") {
+            // console.log(jsonData);
             TournamentAction.tournamentGamePlanReceived(jsonData);
             TournamentAction.updatePlayers(jsonData.players)
         }
@@ -119,9 +131,16 @@ const _listen = () => {
         else if (jsonData.type == "se.cygni.snake.api.event.MapUpdateEvent") {
             TournamentAction.mapUpdateEvent(jsonData);
         }
+        else if (jsonData.type == "se.cygni.snake.api.event.GameEndedEvent") {
+            TournamentAction.mapUpdateEvent(jsonData);
+        }
+
+        else if (jsonData.type == "se.cygni.snake.api.event.TournamentEndedEvent") {
+            TournamentAction.tournamentEndedEvent(jsonData)
+        }
 
         else {
-            console.log(jsonData);
+            console.log(jsonData.type);
         }
 
     }.bind(this);
@@ -136,7 +155,9 @@ const _updateSettings = (key, value) => {
 };
 
 const _changeFrame = () => {
-    setTimeout(() => _changeFrame(), activeGame.updateFrequency);
+    if (activeGame.currentFrame == 0 || activeGame.currentFrame < activeGame.mapEvents.length) {
+        setTimeout(() => _changeFrame(), activeGame.updateFrequency);
+    }
 
     activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
     _updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
@@ -159,6 +180,12 @@ const _addMapUpdate = (event) => {
     });
 
     activeGame.mapEvents.push(event.map);
+};
+
+const _tournamentEnded = (event) => {
+    finalPlacement.list = event.gameResult;
+    finalPlacement.winner = finalPlacement.list.find(snake => snake.playerId === event.playerWinnerId);
+    localStorage.setItem("finalPlacement", JSON.stringify(finalPlacement));
 };
 
 function _parseSnakes(oldList, snakeList) {
@@ -208,6 +235,10 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
     },
 
     getTournamentGameplan() {
+        if (localStorage.getItem("gameplan")) {
+            let tmp = localStorage.getItem("gameplan");
+            tournamentGameplan = JSON.parse(tmp);
+        }
         return tournamentGameplan;
     },
 
@@ -217,6 +248,19 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
             activeGame = JSON.parse(tmp);
         }
         return activeGame;
+    },
+
+    getActivePlayers() {
+        return activeGame.players.sort((a, b) => {
+            return b.points - a.points
+        });
+    },
+    getFinalPlacement () {
+        if (localStorage.getItem("finalPlacement")) {
+            let tmp = localStorage.getItem("finalPlacement");
+            finalPlacement = JSON.parse(tmp);
+        }
+        return finalPlacement;
     },
 
     dispatherIndex: register(action => {
@@ -251,6 +295,9 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
             case Constants.START_TOURNAMENT_GAME:
                 _startGame();
                 _changeFrame();
+                break;
+            case Constants.TOURNAMENT_ENDED_EVENT:
+                _tournamentEnded(action.event);
                 break;
 
         }
