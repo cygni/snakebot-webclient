@@ -77,7 +77,7 @@ const _setActiveTournamentGame = (gameId) => {
         "players": players,
         "currentFrame": 0,
         "mapEvents": [],
-        "updateFrequency": 250
+        "updateFrequency": 500
     };
     localStorage.setItem("activeGame", JSON.stringify(activeGame));
     hashHistory.push('/tournament/activeTournamentGame');
@@ -103,6 +103,15 @@ const _updateSnakes = (playerList, frame) => {
     }
 };
 
+function _setUpdateFrequency(freq){
+    activeGame.updateFrequency = freq;
+}
+
+function _setCurrentFrame(frame){
+    activeGame.currentFrame = frame;
+    _updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
+}
+
 const _listen = () => {
     socket.onopen = function () {
         _getActiveTournament();
@@ -125,6 +134,7 @@ const _listen = () => {
         }
         else if (jsonData.type == "se.cygni.snake.api.event.GameEndedEvent") {
             TournamentAction.mapUpdateEvent(jsonData);
+            _changeFrame();
         }
         else if (jsonData.type == "se.cygni.snake.api.event.TournamentEndedEvent") {
             TournamentAction.tournamentEndedEvent(jsonData)
@@ -257,6 +267,18 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
         return finalPlacement;
     },
 
+    getUpdateFrequency() {
+        if(activeGame)
+            return activeGame.updateFrequency;
+        return 100;
+    },
+
+    getFrameInfo() {
+        if(activeGame)
+            return {currentFrame: activeGame.currentFrame, lastFrame: Math.max(0, activeGame.mapEvents.length - 1)};
+        return { currentFrame: 0, lastFrame: 0};
+    },
+
     dispatherIndex: register(action => {
         switch (action.actionType) {
             case Constants.CREATE_TOURNAMENT:
@@ -288,13 +310,18 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
                 break;
             case Constants.START_TOURNAMENT_GAME:
                 _startGame();
-                _changeFrame();
                 break;
             case Constants.TOURNAMENT_ENDED_EVENT:
                 _tournamentEnded(action.event);
                 break;
             case Constants.KILL_TOURNAMENT:
                 _killTournament();
+                break;
+            case Constants.SET_CURRENT_TOURNAMENT_FRAME:
+                _setCurrentFrame(action.frame);
+                break;
+            case Constants.SET_UPDATE_FREQUENCY:
+                _setUpdateFrequency(action.freq);
                 break;
 
         }

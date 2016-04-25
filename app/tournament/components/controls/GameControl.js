@@ -6,12 +6,9 @@ import TournamentStore from '../../stores/TournamentStore'
 import ReactSliderNativeBootstrap from 'react-bootstrap-native-slider'
 
 function gameControlStateCallback() {
-    let gameActive = TournamentStore.hasActiveGame();
-    let gameRunning = TournamentStore.isGameRunning();
-    let gamePaused = TournamentStore.isGamePaused();
     let updateFrequency = TournamentStore.getUpdateFrequency();
     let frameInfo = TournamentStore.getFrameInfo();
-    return {gameActive, gamePaused, gameRunning, updateFrequency, frameInfo}
+    return {updateFrequency, frameInfo}
 }
 
 class GameControl extends React.Component {
@@ -30,19 +27,7 @@ class GameControl extends React.Component {
             firstFrame: 0
         };
     }
-
-    static startGame() {
-       AppAction.startGame();
-    }
-
-    static pauseGame() {
-      AppAction.pauseGame();
-    }
-
-    static resumeGame() {
-      AppAction.resumeGame();
-    }
-
+    
     componentWillReceiveProps(nextProps) {
             this.setState ({
               gameActive: nextProps.gameActive,
@@ -55,11 +40,11 @@ class GameControl extends React.Component {
     }
 
     updateFrequencyChanged(event) {
-      AppAction.setUpdateFrequency(parseInt(event.target.value));
+      AppAction.setUpdateFrequencyTournament(parseInt(event.target.value));
     }
 
     currentFrameChanged(event) {
-      AppAction.setCurrentFrame(parseInt(event.target.value));
+      AppAction.setCurrentFrameTournament(parseInt(event.target.value));
     }
 
     render() {
@@ -68,14 +53,11 @@ class GameControl extends React.Component {
         return (
           <div>
             <div>
-              <Button disabled={!this.state.gameActive} onClick={action} className="btn btn-default btn-lg">{text}</Button>
-            </div>
-            <div>
               <h4>Frame delay: {this.state.updateFrequency}</h4>
               <ReactSliderNativeBootstrap value={this.state.updateFrequency} handleChange={this.updateFrequencyChanged} step={this.state.frequencyStep} max={this.state.frequencyMaxValue} min={this.state.frequencyMinValue} disabled="disabled" />
             </div>
             <div>
-              <h4>Frame: {this.state.currentFrame} / {this.state.lastFrame}</h4>
+              <h4>Frame: {this.state.currentFrame}</h4>
               <ReactSliderNativeBootstrap value={this.state.currentFrame} handleChange={this.currentFrameChanged} step={1} max={this.state.lastFrame} min={this.state.firstFrame} disabled="disabled" />
             </div>
           </div>
