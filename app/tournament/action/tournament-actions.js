@@ -3,7 +3,7 @@ import {dispatch} from '../../dispatchers/AppDispatcher'
 
 
 export default {
-    createTournament ( name ) {
+    createTournament (name) {
         dispatch({
             actionType: Constants.CREATE_TOURNAMENT, name
         })
@@ -15,9 +15,15 @@ export default {
         })
     },
 
-    createTournamentTable ( ) {
+    createTournamentTable () {
         dispatch({
             actionType: Constants.CREATE_TOURNAMENT_TABLE
+        })
+    },
+
+    killTournament () {
+        dispatch({
+            actionType: Constants.KILL_TOURNAMENT
         })
     },
 
@@ -51,7 +57,7 @@ export default {
         })
     },
 
-    mapUpdateEvent ( event ) {
+    mapUpdateEvent (event) {
         dispatch({
             actionType: Constants.TOURNAMENT_MAP_UPDATE_EVENT, event
         })

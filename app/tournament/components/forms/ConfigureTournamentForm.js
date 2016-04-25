@@ -21,12 +21,15 @@ class ConfigureTournamentForm extends React.Component {
 
 
     createTournamentTable() {
-        console.log("hee");
         Action.createTournamentTable();
     }
 
     startTournament() {
         Action.startTournament();
+    }
+
+    killTournament() {
+        Action.killTournament()
     }
 
     static onInputChange(event) {
@@ -41,8 +44,16 @@ class ConfigureTournamentForm extends React.Component {
                 <div className="panel panel-default">
                     <div className="panel-heading">
                         <Row>
-                            <Col md={12}>
-                                <h1 className="tournament-name">Name: {this.props.tournamentName}</h1>
+                            <Col md={3}>
+                                <Button onClick={this.killTournament} bsStyle="info" bsSize="large">Kill
+                                    Tournament</Button>
+                            </Col>
+                            <Col md={6} mdPush={1}>
+                                <div className="center-block" style={{align: "center"}}>
+                                    <h1 className="tournament-name">Name: {this.props.tournamentName}</h1>
+                                </div>
+                            </Col>
+                            <Col md={3}>
                                 <ButtonGroup>
                                     <Button onClick={this.startTournament} bsStyle="info" bsSize="large">Setup
                                         tournament bracket</Button>
@@ -52,7 +63,7 @@ class ConfigureTournamentForm extends React.Component {
                     </div>
                     <div className="panel-body">
                         <Row>
-                            <Col md={8} className="panel panel-default">
+                            <Col md={10} className="panel panel-default">
                                 <div className="panel-heading">
                                     <h2 >Settings</h2>
                                 </div>
@@ -336,7 +347,8 @@ class ConfigureTournamentForm extends React.Component {
                                         </Row>
                                         <Row className="tailConsumeGrows">
                                             <Col md={6} mdPush={6}>
-                                                <Button onClick={this.createTournamentTable} bsStyle="info" bsSize="large">Update
+                                                <Button onClick={this.createTournamentTable} bsStyle="info"
+                                                        bsSize="large">Update
                                                     Tournament Settings</Button>
                                             </Col>
                                         </Row>
@@ -346,7 +358,7 @@ class ConfigureTournamentForm extends React.Component {
                             </Col>
 
 
-                            <Col md={4}>
+                            <Col md={2}>
                                 <h2>Competing snakes</h2>
                                 <PlayerList/>
                             </Col>

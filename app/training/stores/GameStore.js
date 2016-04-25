@@ -12,7 +12,7 @@ var playerMap = new Map();
 var _activeGame = undefined;
 var startedGame = {};
 var gameEvents = {};
-var socket = new SockJS('http://localhost:8080/events');
+// var socket = new SockJS('http://localhost:8080/events');
 
 const _addGames = (games) => {
     games.map((game, index) => {
@@ -38,24 +38,8 @@ const _addGames = (games) => {
 };
 
 const _initWS = () => {
-    socket.onmessage = function (e) {
-        var jsonData = JSON.parse(e.data);
-
-        if (jsonData.type == "se.cygni.snake.api.event.MapUpdateEvent") {
-            AppAction.mapUpdateEvent(jsonData);
-        }
-        else if (jsonData.type == "se.cygni.snake.eventapi.response.ActiveGamesList") {
-            AppAction.addGames(jsonData.games);
-        }
-        else {
-            console.log(jsonData);
-        }
-
-    }.bind(this);
-
-    socket.onclose = function () {
-        console.log('close');
-    };
+    // 
+    
 };
 
 const _startGame = () => {

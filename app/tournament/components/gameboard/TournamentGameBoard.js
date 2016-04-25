@@ -120,7 +120,7 @@ class GameBoard extends React.Component {
                 <Grid>
                     <Row>
                         <Col md={2} mdPush={5}>
-                            <div class="center-block" style={{paddingTop: "30px"}}>
+                            <div className="center-block" style={{paddingTop: "30px"}}>
                                 <Button onClick={this.startGame} className="btn btn-primary btn-lg">Start game</Button>
                             </div>
                         </Col>
