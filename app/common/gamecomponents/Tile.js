@@ -18,7 +18,7 @@ class Tile extends React.Component {
         super(props);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate(nextProps) {
         if(nextProps.type && this.props.type) {
             return nextProps.type != this.props.type || this.props.tileType != nextProps.tileType;
         }

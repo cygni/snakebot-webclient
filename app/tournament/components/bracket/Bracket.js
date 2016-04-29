@@ -14,7 +14,6 @@ function getGamePlan() {
 class Bracket extends React.Component {
     constructor(props) {
         super(props);
-        TournamentStore.initWS();
     }
 
     startGame(gameId) {

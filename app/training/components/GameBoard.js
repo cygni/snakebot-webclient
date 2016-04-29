@@ -1,6 +1,6 @@
 import React from 'react'
 import Tile from '../../common/gamecomponents/Tile'
-import { Grid, Row, Col} from 'react-bootstrap';
+import {Grid, Row, Col} from 'react-bootstrap';
 import Immutable from 'immutable'
 import GameStore from '../stores/GameStore'
 import StoreWatch from './watch/StoreWatch'
@@ -24,7 +24,7 @@ class GameBoard extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-      return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
+        return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
     }
 
     componentDidMount() {
@@ -32,25 +32,27 @@ class GameBoard extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.game) {
-          this.setState({ mapEvents: nextProps.game.mapEvents,
-                          currentFrame: nextProps.game.currentFrame });
+        if (nextProps.game) {
+            this.setState({
+                mapEvents: nextProps.game.mapEvents,
+                currentFrame: nextProps.game.currentFrame
+            });
         }
     };
-    
+
     render() {
         let tiles = [];
         let map = this.state.mapEvents[this.state.currentFrame];
 
-        let size = {width:0, height:0};
+        let size = {width: 0, height: 0};
         let tileSize = 0;
 
         if (map != undefined && map.width != undefined) {
 
-          size = BoardUtils.calculateSize(map);
-          tileSize = BoardUtils.getTileSize(map);
+            size = BoardUtils.calculateSize(map);
+            tileSize = BoardUtils.getTileSize(map);
 
-          let activeGame = getActiveGame();
+            let activeGame = getActiveGame();
 
             for (let y = 0; y < map.height; y++) {
                 let tileRow = [];
@@ -63,7 +65,7 @@ class GameBoard extends React.Component {
                                        width={tile.width}
                                        type={tile.type}
                                        tileType={tile.tileType}
-                    />
+                        />
                     )
                 }
                 tiles.push(tileRow);
@@ -73,28 +75,29 @@ class GameBoard extends React.Component {
         var immutTiles = Immutable.List(tiles);
 
         return (
-                <Grid>
-                    <Col xs={14} md={9}>
-                        <Grid >
-                            <Row className="show-grid">
-                                <Col xs={18} md={12} lg={12}>
-                                    <Col xs={12} md={8} lg={8}>
-                                        <div className={!map || !map.width || map.width === 0 ? 'hidden' : ''} style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: size.width + 20, height:  size.height + 20}}>
-                                            {immutTiles.map((tilerow, index) => {
-                                                return (
-                                                    <div key={index}
-                                                         style={{width: size.width , height: tileSize}}>
-                                                        {tilerow}
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </Col>
+            <Grid>
+                <Col xs={14} md={9}>
+                    <Grid >
+                        <Row className="show-grid">
+                            <Col xs={18} md={12} lg={12}>
+                                <Col xs={12} md={8} lg={8}>
+                                    <div className={!map || !map.width || map.width === 0 ? 'hidden' : ''}
+                                         style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: size.width + 20, height:  size.height + 20}}>
+                                        {immutTiles.map((tilerow, index) => {
+                                            return (
+                                                <div key={index}
+                                                     style={{width: size.width , height: tileSize}}>
+                                                    {tilerow}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
                                 </Col>
-                            </Row>
-                        </Grid>
-                    </Col>
-                </Grid>
+                            </Col>
+                        </Row>
+                    </Grid>
+                </Col>
+            </Grid>
         )
     }
 }

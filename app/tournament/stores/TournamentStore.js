@@ -1,14 +1,13 @@
 import {register} from '../../dispatchers/AppDispatcher'
 import Constants from '../constants/Constants'
 import {EventEmitter} from 'events'
-import SockJS from 'sockjs-client'
-import TournamentAction from '../action/tournament-actions'
 import {hashHistory} from 'react-router'
 import Colors from '../../util/Colors'
 import TileUtils from '../../util/TileUtils'
+import Socket from '../../websocket/WebSocket'
 
 const CHANGE_EVENT = 'change';
-var socket;
+
 
 let playerList = [];
 let tournament = {};
@@ -23,22 +22,23 @@ let finalPlacement = {
 };
 
 const _createTournament = (name) => {
-    socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"token-here"}');
+    Socket.init();
+    Socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"token-here"}');
 };
 
 const _createTournamentTable = () => {
-    socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"token-here", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"token-here", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
 };
 
 const _startTournament = () => {
     localStorage.removeItem("gameplan");
     localStorage.removeItem("finalPlacement");
-    socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"token-here", "tournamentId":"' + tournament.tournamentId + '"}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"token-here", "tournamentId":"' + tournament.tournamentId + '"}');
     hashHistory.push('tournament/tournamentbracket');
 };
 
 const _getActiveTournament = () => {
-    socket.send('{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"token-here"}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"token-here"}');
 };
 
 const _tournamentCreated = (jsonData) => {
@@ -56,11 +56,8 @@ const _updatePlayers = (players) => {
     playerList = players;
 };
 
-const _initWS = () => {
-    if (!socket) {
-        socket = new SockJS('http://snake.cygni.se:80/events')
-    }
-    _listen()
+const _updateActiveGamesList = (games) => {
+    activeGameList = games;
 };
 
 const _setActiveTournamentGame = (gameId) => {
@@ -84,8 +81,8 @@ const _setActiveTournamentGame = (gameId) => {
 };
 
 const _startGame = () => {
-    socket.send('{"includedGameIds": ["' + activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
-    socket.send('{"gameId":"' + activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
+    Socket.send('{"includedGameIds": ["' + activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    Socket.send('{"gameId":"' + activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
 };
 
 const _updateSnakes = (playerList, frame) => {
@@ -108,45 +105,11 @@ function _setUpdateFrequency(freq){
 }
 
 function _setCurrentFrame(frame){
+    console.log("8888;");
     activeGame.currentFrame = frame;
     _updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
 }
 
-const _listen = () => {
-    socket.onopen = function () {
-        _getActiveTournament();
-    };
-
-    socket.onmessage = function (e) {
-        var jsonData = JSON.parse(e.data);
-        if (jsonData.type == "se.cygni.snake.eventapi.response.TournamentCreated") {
-            TournamentAction.tournamentCreated(jsonData);
-        }
-        else if (jsonData.type == "se.cygni.snake.eventapi.model.TournamentGamePlan") {
-            TournamentAction.tournamentGamePlanReceived(jsonData);
-            TournamentAction.updatePlayers(jsonData.players)
-        }
-        else if (jsonData.type == "se.cygni.snake.eventapi.response.ActiveGamesList") {
-            activeGameList = jsonData.games;
-        }
-        else if (jsonData.type == "se.cygni.snake.api.event.MapUpdateEvent") {
-            TournamentAction.mapUpdateEvent(jsonData);
-        }
-        else if (jsonData.type == "se.cygni.snake.api.event.GameEndedEvent") {
-            TournamentAction.mapUpdateEvent(jsonData);
-        }
-        else if (jsonData.type == "se.cygni.snake.api.event.TournamentEndedEvent") {
-            TournamentAction.tournamentEndedEvent(jsonData)
-        }
-        else {
-            console.log(jsonData.type);
-        }
-    }.bind(this);
-
-    socket.onclose = function () {
-        console.log('close');
-    };
-};
 
 const _updateSettings = (key, value) => {
     tournament.gameSettings[key] = value;
@@ -187,7 +150,7 @@ const _tournamentEnded = (event) => {
 };
 
 const _killTournament = () => {
-    socket.send('{"tournamentId":"' + activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"token-here"}');
+    Socket.send('{"tournamentId":"' + activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"token-here"}');
     localStorage.removeItem("activeGame")
 };
 
@@ -229,9 +192,6 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
     getSettings () {
         return tournament.gameSettings;
     },
-    initWS() {
-        _initWS();
-    },
 
     getPlayerList () {
         return playerList;
@@ -245,13 +205,13 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
         return tournamentGameplan;
     },
 
-    getActiveGame() {
-        if (Object.keys(activeGame).length == 0 && localStorage.getItem("activeGame")) {
-            let tmp = localStorage.getItem("activeGame");
-            activeGame = JSON.parse(tmp);
-        }
-        return activeGame;
-    },
+    // getActiveGame() {
+    //     if (Object.keys(activeGame).length == 0 && localStorage.getItem("activeGame")) {
+    //         let tmp = localStorage.getItem("activeGame");
+    //         activeGame = JSON.parse(tmp);
+    //     }
+    //     return activeGame;
+    // },
 
     getActivePlayers() {
         return activeGame.players.sort((a, b) => {
@@ -272,11 +232,11 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
         return 100;
     },
 
-    getFrameInfo() {
-        if(activeGame)
-            return {currentFrame: activeGame.currentFrame, lastFrame: Math.max(0, activeGame.mapEvents.length - 1)};
-        return { currentFrame: 0, lastFrame: 0};
-    },
+    // getFrameInfo() {
+    //     if(activeGame)
+    //         return {currentFrame: activeGame.currentFrame, lastFrame: Math.max(0, activeGame.mapEvents.length - 1)};
+    //     return { currentFrame: 0, lastFrame: 0};
+    // },
 
     dispatherIndex: register(action => {
         switch (action.actionType) {
@@ -322,6 +282,12 @@ const TournamentStore = Object.assign(EventEmitter.prototype, {
                 break;
             case Constants.SET_UPDATE_FREQUENCY:
                 _setUpdateFrequency(action.freq);
+                break;
+            case Constants.UPDATE_ACTIVE_GAMES_LIST:
+                _updateActiveGamesList(action.games);
+                break;
+            case Constants.GET_ACTIVE_TOURNAMENT:
+                _getActiveTournament();
                 break;
 
         }

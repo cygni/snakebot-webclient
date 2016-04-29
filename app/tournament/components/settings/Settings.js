@@ -17,7 +17,6 @@ const innerButton = (
 class Settings extends React.Component {
     constructor(props) {
         super(props);
-        TournamentStore.initWS();
     }
 
 

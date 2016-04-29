@@ -18,7 +18,6 @@ function getActiveGame() {
 class GameBoard extends React.Component {
     constructor(props) {
         super(props);
-        TournamentStore.initWS();
         this.startGame = this.startGame.bind(this);
         this.state = {
             shouldRender: false,

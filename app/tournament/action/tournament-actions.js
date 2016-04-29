@@ -85,5 +85,17 @@ export default {
         dispatch({
             actionType: Constants.SET_CURRENT_TOURNAMENT_FRAME, frame
         })
+    },
+
+    updateActiveGamesList (games) {
+        dispatch({
+            actionType: Constants.UPDATE_ACTIVE_GAMES_LIST, games
+        })
+    },
+    
+    getActiveTournament () {
+        dispatch({
+            actionType: Constants.GET_ACTIVE_TOURNAMENT
+        })
     }
 }

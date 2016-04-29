@@ -1,138 +1,75 @@
-import {dispatch, register} from '../../dispatchers/AppDispatcher'
+import {register} from '../../dispatchers/AppDispatcher'
 import Constants from '../constants/Constants'
-import {EventEmitter} from 'events'
-import SockJS from 'sockjs-client'
+import Socket from '../../websocket/WebSocket'
+import BaseStore from '../../baseStore/BaseStore'
+import GameRenderingFunction from '../../util/GameRenderingFunctions'
 import AppAction from '../action/app-actions'
 
-import TileUtils from '../../util/TileUtils'
-
-const CHANGE_EVENT = 'change';
 var _games = [];
 var playerMap = new Map();
-var _activeGame = undefined;
+
+let _activeGame = undefined;
+
+let activeGameSettings = {
+    started: false,
+    running:false
+};
 var startedGame = {};
 var gameEvents = {};
-// var socket = new SockJS('http://localhost:8080/events');
 
 const _addGames = (games) => {
-    games.map((game, index) => {
-        if(_games.find(g => game.gameId === g.id)){
-          return;
-        }
-
-        let players = [];
-        game.players.forEach((player, index) => {
-          players.push({"index": index, "name": player.name, id: player.id, 'color': snakeColors[index]});
-        });
-
-        _games.push({
-               "id": game.gameId,
-               "gameFeatures": game.gameFeatures,
-               "color": boardColors[_games.length],
-               "players": players,
-               "currentFrame": 0,
-               "mapEvents": [],
-               "updateFrequency": 500
-           });
-    });
+    GameRenderingFunction.addGames(games, _games)
 };
 
 const _initWS = () => {
-    // 
-    
+    Socket.init()
 };
 
 const _startGame = () => {
-    socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
-    socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
+    Socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    Socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
+    activeGameSettings.started = true;
+    activeGameSettings.running = true;
 };
 
 const _setActiveGame = (id) => {
     _activeGame = _games.find(game => game.id === id);
 };
 
-const _addMapUpdate = (event) => {
-    var updatedGame = _games.find(game => game.id === event.gameId);
-    _parseSnakes(updatedGame.players, event.map.snakeInfos);
-
-    event.map.foodPositions = event.map.foodPositions.map(function(pos) { return TileUtils.getTileCoordinate(pos, event.map.width); });
-    event.map.obstaclePositions = event.map.obstaclePositions.map(function(pos) { return TileUtils.getTileCoordinate(pos, event.map.width); });
-    event.map.snakeInfos.forEach(snake => {
-      snake.positions = snake.positions.map(function(pos) { return TileUtils.getTileCoordinate(pos, event.map.width); });
-    });
-
-    updatedGame.mapEvents.push(event.map);
+const _setCurrentFrame = (frame) => {
+    GameRenderingFunction.setCurrentFrame(_activeGame, frame)
 };
 
-function _parseSnakes (oldList, snakeList) {
-    snakeList.forEach(snake => {
-        if (oldList.find(existingSnake => snake.id === existingSnake.id) ) {
-          return;
-        }
-
-        oldList.push({
-            "id": snake.id,
-            "name": snake.name,
-            "length": snake.positions.length,
-            "color": snakeColors[oldList.length],
-            "alive": snake.positions.length <= 0,
-            "points": snake.points
-        });
-    })
-}
-
-const _updateSnakes = (playerList, frame) => {
-  frame.snakeInfos.forEach(snake => {
-    var player = playerList.find(p => p.id === snake.id);
-    if(!player){
-      console.log("unable to find player");
-      return;
-    }
-
-    player.points = snake.points;
-    player.length = snake.positions.length;
-    player.alive = snake.positions.length > 0;
-  });
+const _setUpdateFrequency = (freq) => {
+    _activeGame.updateFrequency = freq;
 };
 
 const _changeFrame = () => {
-  if(GameStore.isGameRunning() && GameStore.isGamePaused() == false)
-    setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
+    if (activeGameSettings.started && activeGameSettings.running && (_activeGame.currentFrame == 0 || _activeGame.currentFrame <= _activeGame.mapEvents.length -1)) {
+        GameRenderingFunction.changeFrame(_activeGame);
+        setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
+        GameStore.emitChange();
+    }
 
-  _activeGame.currentFrame = Math.max(0, Math.min(_activeGame.currentFrame + 1, _activeGame.mapEvents.length - 1));
-  _updateSnakes(_activeGame.players, _activeGame.mapEvents[_activeGame.currentFrame]);
 
-  GameStore.emitChange();
 };
 
-function _setUpdateFrequency(freq){
-  _activeGame.updateFrequency = freq;
-}
+const _addMapUpdate = (event) => {
+    var updatedGame = _games.find(game => game.id === event.gameId);
+    updatedGame.mapEvents.push(event.map);
+};
 
-function _setCurrentFrame(frame){
-  _activeGame.currentFrame = frame;
-  _updateSnakes(_activeGame.players, _activeGame.mapEvents[_activeGame.currentFrame]);
-}
-
-const GameStore = Object.assign(EventEmitter.prototype, {
-    emitChange () {
-        this.emit(CHANGE_EVENT)
-    },
-
-    addChangeListener(callback) {
-        this.on(CHANGE_EVENT, callback)
-    },
-
-    removeChangeListener(callback) {
-        this.removeListener(CHANGE_EVENT, callback)
-    },
-
+const GameStore = Object.assign(BaseStore, {
     getGames() {
         return _games;
     },
 
     getActiveGame() {
         return _activeGame;
+    },
+
+    getActiveGameSettings() {
+        return activeGameSettings;
     },
 
     hasActiveGame() {
@@ -147,22 +84,6 @@ const GameStore = Object.assign(EventEmitter.prototype, {
         return startedGame;
     },
 
-    isGamePaused() {
-        return !!(_activeGame && _activeGame.paused);
-
-    },
-
-    isGameRunning() {
-        return !!(_activeGame && _activeGame.running);
-
-    },
-
-    getUpdateFrequency() {
-      if(_activeGame)
-        return _activeGame.updateFrequency;
-      return 100;
-    },
-
     initWS() {
         _initWS();
     },
@@ -172,9 +93,10 @@ const GameStore = Object.assign(EventEmitter.prototype, {
     },
 
     getFrameInfo() {
-      if(_activeGame)
-        return {currentFrame: _activeGame.currentFrame, lastFrame: Math.max(0, _activeGame.mapEvents.length - 1)};
-      return { currentFrame: 0, lastFrame: 0};
+        if (_activeGame) {
+            return {currentFrame: _activeGame.currentFrame, lastFrame: Math.max(0, _activeGame.mapEvents.length - 1)};
+        }
+        return {currentFrame: 0, lastFrame: 0};
     },
 
     dispatherIndex: register(action => {
@@ -184,14 +106,14 @@ const GameStore = Object.assign(EventEmitter.prototype, {
                 break;
             case Constants.START_GAME:
                 _startGame();
-                _activeGame.running = true;
                 _changeFrame();
                 break;
             case Constants.PAUSE_GAME:
-                _activeGame.paused = true;
+                activeGameSettings.running = false;
                 break;
             case Constants.RESUME_GAME:
-                _activeGame.paused = false;
+                activeGameSettings.running = true;
+                console.log("RESUME");
                 _changeFrame();
                 break;
             case Constants.ACTIVE_GAME:

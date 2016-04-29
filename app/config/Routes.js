@@ -11,7 +11,7 @@ import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 export default () => {
     return (
         <Router history={hashHistory}>
-            <Route path="/" component={GameTemplate}>
+            <Route path="/training" component={GameTemplate}>
                 <IndexRoute component={Gameboard}/>
             </Route>
             <Route path="/tournament" component={TournamentTemplate}>
