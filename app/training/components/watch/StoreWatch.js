@@ -1,5 +1,5 @@
 import React from 'react'
-import GameStore from '../../stores/GameStore'
+import GameStore from '../../../baseStore/BaseStore'
 
 export default (InnerComponent, stateCallback ) => class extends React.Component {
     constructor(props) {

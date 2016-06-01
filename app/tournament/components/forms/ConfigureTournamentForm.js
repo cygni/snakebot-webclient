@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col, Input, Button, ButtonGroup} from 'react-bootstrap';
-import TournamentStore from '../../stores/TournamentStore'
+import TournamentStore from '../../../baseStore/BaseStore'
 import StoreWatch from '../../watch/StoreWatch'
 import Action from '../../action/tournament-actions'
 import PlayerList from '../players/PlayerList'

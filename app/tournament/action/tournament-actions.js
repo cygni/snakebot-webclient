@@ -1,4 +1,4 @@
-import Constants from'../constants/Constants'
+import Constants from'../../constants/Constants'
 import {dispatch} from '../../dispatchers/AppDispatcher'
 
 
@@ -53,7 +53,7 @@ export default {
 
     setActiveGame (gameId) {
         dispatch({
-            actionType: Constants.SET_ACTIVE_GAME, gameId
+            actionType: Constants.SET_ACTIVE_TOURNAMENT_GAME, gameId
         })
     },
 

@@ -1,4 +1,4 @@
-import Constants from'../constants/Constants'
+import Constants from'../../constants/Constants'
 import {dispatch} from '../../dispatchers/AppDispatcher'
 
 export default {
@@ -7,33 +7,33 @@ export default {
             actionType: Constants.ADD_GAMES, games
         })
     },
-    startGame ( ) {
+    startGame ( id ) {
         dispatch({
-            actionType: Constants.START_GAME
+            actionType: Constants.START_GAME, id
         })
     },
 
-    pauseGame ( ) {
+    pauseGame ( id ) {
       dispatch({
-          actionType: Constants.PAUSE_GAME
+          actionType: Constants.PAUSE_GAME, id
       })
     },
 
-    resumeGame ( ) {
+    resumeGame ( id ) {
       dispatch({
-          actionType: Constants.RESUME_GAME
+          actionType: Constants.RESUME_GAME, id
       })
     },
 
     activeGame ( id ) {
         dispatch({
-            actionType: Constants.ACTIVE_GAME, id
+            actionType: Constants.SET_ACTIVE_TRAINING_GAME, id
         })
     },
 
-    setUpdateFrequency ( freq ) {
+    setUpdateFrequency ( freq, id ) {
         dispatch({
-            actionType: Constants.SET_UPDATE_FREQUENCY, freq
+            actionType: Constants.SET_UPDATE_FREQUENCY, freq, id
         })
     },
 
@@ -43,9 +43,9 @@ export default {
         })
     },
 
-    setCurrentFrame ( frame ) {
+    setCurrentFrame ( frame, id ) {
       dispatch({
-          actionType: Constants.SET_CURRENT_FRAME, frame
+          actionType: Constants.SET_CURRENT_FRAME, frame, id
       })
     }
 }

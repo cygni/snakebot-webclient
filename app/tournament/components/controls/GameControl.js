@@ -2,11 +2,11 @@ import React from 'react'
 import {Button} from 'react-bootstrap'
 import AppAction from '../../action/tournament-actions'
 import StoreWatch from '../../watch/StoreWatch'
-import TournamentStore from '../../stores/TournamentStore'
+import TournamentStore from '../../../baseStore/BaseStore'
 import ReactSliderNativeBootstrap from 'react-bootstrap-native-slider'
 
 function gameControlStateCallback() {
-    let updateFrequency = TournamentStore.getUpdateFrequency();
+    let updateFrequency = TournamentStore.getUpdateFrequencyForTournament();
     let frameInfo = TournamentStore.getFrameInfo();
     return {updateFrequency, frameInfo}
 }

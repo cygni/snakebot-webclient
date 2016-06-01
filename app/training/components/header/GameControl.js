@@ -1,8 +1,8 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
-import AppAction from '../../action/app-actions'
+import AppAction from '../../action/training-actions'
 import StoreWatch from '../watch/StoreWatch'
-import GameStore from '../../stores/GameStore'
+import GameStore from '../../../baseStore/BaseStore'
 import ReactSliderNativeBootstrap from 'react-bootstrap-native-slider'
 
 function gameControlStateCallback() {
@@ -11,7 +11,7 @@ function gameControlStateCallback() {
 
     // let gameRunning = GameStore.isGameRunning();
     // let gamePaused = GameStore.isGamePaused();
-    // let updateFrequency = GameStore.getUpdateFrequency();
+    // let updateFrequency = GameStore.getUpdateFrequencyForTournament();
     let frameInfo = GameStore.getFrameInfo();
     return {activeGameSettings: activeGameSettings, game: game, frameInfo: frameInfo}
 }
@@ -19,49 +19,27 @@ function gameControlStateCallback() {
 class GameControl extends React.Component {
     constructor(props) {
         super(props);
-        // this.state = {
-            // frequencyMinValue: 100,
-            // frequencyMaxValue: 2000,
-            // frequencyStep: 100,
-            // gameActive: false,
-            // gamePaused: false,
-            // gameRunning: false,
-            // updateFrequency: 500,
-            // currentFrame: 0,
-            // lastFrame: 0,
-            // firstFrame: 0
-        // };
     }
 
-    static startGame() {
-       AppAction.startGame();
+    static startGame( ) {
+       AppAction.startGame( this.props.id );
     }
 
     static pauseGame() {
-      AppAction.pauseGame();
+      AppAction.pauseGame( this.props.id );
     }
 
     static resumeGame() {
-      AppAction.resumeGame();
+      AppAction.resumeGame( this.props.id );
     }
 
-    componentWillReceiveProps(nextProps) {
-            // this.setState ({
-            //   gameActive: nextProps.gameActive,
-            //   gamePaused: nextProps.gamePaused,
-            //   gameRunning: nextProps.gameRunning,
-            //   updateFrequency: nextProps.updateFrequency,
-            //   currentFrame: nextProps.frameInfo.currentFrame,
-            //   lastFrame: nextProps.frameInfo.lastFrame
-            // });
-    }
 
     updateFrequencyChanged(event) {
-      AppAction.setUpdateFrequency(parseInt(event.target.value));
+      AppAction.setUpdateFrequency(parseInt(event.target.value), this.props.id );
     }
 
     currentFrameChanged(event) {
-      AppAction.setCurrentFrame(parseInt(event.target.value));
+      AppAction.setCurrentFrame(parseInt(event.target.value), this.props.id );
     }
 
     render() {
@@ -71,19 +49,19 @@ class GameControl extends React.Component {
             return (
                 <div>
                     <div>
-                        <Button onClick={action} className="btn btn-default btn-lg">{text}</Button>
+                        <Button onClick={action.bind(this)} className="btn btn-default btn-lg">{text}</Button>
                     </div>
                     <div>
                         <h4>Frame delay: {this.props.game.updateFrequency}</h4>
                         <ReactSliderNativeBootstrap value={this.props.game.updateFrequency}
-                                                    handleChange={this.updateFrequencyChanged} step={100} max={2000}
+                                                    handleChange={this.updateFrequencyChanged.bind(this)} step={100} max={2000}
                                                     min={100}/>
                     </div>
                     <div>
                         <h4>Frame: {this.props.game.currentFrame}
                             / {this.props.frameInfo.lastFrame}</h4>
                         <ReactSliderNativeBootstrap value={this.props.game.currentFrame}
-                                                    handleChange={this.currentFrameChanged} step={1}
+                                                    handleChange={this.currentFrameChanged.bind(this)} step={1}
                                                     max={this.props.frameInfo.lastFrame} min={0}/>
                     </div>
                 </div>
@@ -96,5 +74,9 @@ class GameControl extends React.Component {
         }
     }
 }
+
+GameControl.PropTypes = {
+    id: React.PropTypes.string.isRequired
+};
 
 export default StoreWatch(GameControl, gameControlStateCallback);

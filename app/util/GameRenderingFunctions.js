@@ -40,9 +40,10 @@ export default {
         this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
     },
 
-    addGames (games, _games) {
+    addGames (games, oldGames) {
         games.map((game) => {
-            if (_games.find(g => game.gameId === g.id)) {
+           
+            if (oldGames.find(g => game.gameId === g.id)) {
                 return;
             }
 
@@ -51,10 +52,10 @@ export default {
                 players.push({"index": index, "name": player.name, id: player.id, 'color': Colors.getSnakeColor()[index]});
             });
 
-            _games.push({
+            oldGames.push({
                 "id": game.gameId,
                 "gameFeatures": game.gameFeatures,
-                "color": Colors.getBoardColor()[_games.length],
+                "color": Colors.getBoardColor()[games.length],
                 "players": players,
                 "currentFrame": 0,
                 "mapEvents": [],
@@ -62,7 +63,7 @@ export default {
             });
         });
 
-        return _games;
+        return oldGames;
     },
 
     updateGame (map) {

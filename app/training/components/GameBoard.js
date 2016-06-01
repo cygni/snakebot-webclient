@@ -2,13 +2,13 @@ import React from 'react'
 import Tile from '../../common/gamecomponents/Tile'
 import {Grid, Row, Col} from 'react-bootstrap';
 import Immutable from 'immutable'
-import GameStore from '../stores/GameStore'
+import Store from '../../baseStore/BaseStore'
 import StoreWatch from './watch/StoreWatch'
 import TileUtils from '../../util/TileUtils'
 import BoardUtils from '../../util/BoardUtils'
 
 function getActiveGame() {
-    let game = GameStore.getActiveGame();
+    let game = Store.getActiveGame();
     return {game: game}
 }
 
@@ -28,7 +28,7 @@ class GameBoard extends React.Component {
     }
 
     componentDidMount() {
-        GameStore.initWS();
+        Store.initWS();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -41,6 +41,7 @@ class GameBoard extends React.Component {
     };
 
     render() {
+        console.log("active game: " + JSON.stringify(this.props.game));
         let tiles = [];
         let map = this.state.mapEvents[this.state.currentFrame];
 

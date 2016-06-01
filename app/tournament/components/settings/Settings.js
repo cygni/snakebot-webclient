@@ -1,5 +1,5 @@
 import React from 'react'
-import TournamentStore from '../../stores/TournamentStore'
+import TournamentStore from '../../../baseStore/BaseStore'
 import StoreWatch from '../../watch/StoreWatch'
 import {ButtonInput, Grid} from 'react-bootstrap'
 import CreateTournamentForm from './../forms/CreateTournamentForm'

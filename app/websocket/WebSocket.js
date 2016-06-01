@@ -1,13 +1,12 @@
 import React from 'react'
 import SockJS from 'sockjs-client'
 import TournamentAction from '../tournament/action/tournament-actions'
-import AppAction from '../training/action/app-actions'
+import AppAction from '../training/action/training-actions'
 
 var socket = new SockJS('http://localhost:8080/events');
 
 const listen = () => {
     socket.onopen = function () {
-        console.log("open");
         TournamentAction.getActiveTournament();
     };
 
@@ -36,7 +35,7 @@ const listen = () => {
             TournamentAction.tournamentEndedEvent(jsonData)
         }
         else {
-            console.log(jsonData.type);
+            console.log("ASAS" + jsonData.type);
         }
     };
 

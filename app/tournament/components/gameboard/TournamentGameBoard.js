@@ -2,7 +2,7 @@ import React from 'react'
 import Tile from '../../../common/gamecomponents/Tile'
 import {Grid, Row, Col} from 'react-bootstrap';
 import Immutable from 'immutable'
-import TournamentStore from '../../stores/TournamentStore'
+import TournamentStore from '../../../baseStore/BaseStore'
 import StoreWatch from '../../watch/StoreWatch'
 import TileUtils from '../../../util/TileUtils'
 import BoardUtils from '../../../util/BoardUtils'

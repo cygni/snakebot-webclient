@@ -1,5 +1,5 @@
 import React from 'react'
-import TournamentStore from '../../stores/TournamentStore'
+import TournamentStore from '../../../baseStore/BaseStore'
 import StoreWatch from '../../watch/StoreWatch'
 import {Table} from 'react-bootstrap'
 

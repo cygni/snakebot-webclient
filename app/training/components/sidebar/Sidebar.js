@@ -1,14 +1,14 @@
 import React from 'react'
 import {Panel, Accordion,Table, ListGroup, ListGroupItem} from 'react-bootstrap'
 import StoreWatch from '../watch/StoreWatch'
-import GameStore from '../../stores/GameStore'
-import AppAction from '../../action/app-actions'
+import GameStore from '../../../baseStore/BaseStore'
+import AppAction from '../../action/training-actions'
 import GameControl from '../header/GameControl'
 
 
 function getActiveGames() {
-    let games = GameStore.getGames();
-    return {games}
+    let games = GameStore.getTrainingGames();
+    return {games: games}
 }
 
 class Sidebar extends React.Component {
@@ -57,7 +57,7 @@ class Sidebar extends React.Component {
                                 <ListGroupItem>Height: {game.gameFeatures.height}</ListGroupItem>
                             </ListGroup>
 
-                            <GameControl />
+                            <GameControl id={game.id}/>
                         </Panel>
                     )
                 })}

@@ -1,5 +1,5 @@
 import React from 'react'
-import TournamentStore from '../stores/TournamentStore'
+import TournamentStore from '../../baseStore/BaseStore'
 
 export default (InnerComponent, stateCallback ) => class extends React.Component {
     constructor(props) {
