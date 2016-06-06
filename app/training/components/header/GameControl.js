@@ -6,14 +6,14 @@ import GameStore from '../../../baseStore/BaseStore'
 import ReactSliderNativeBootstrap from 'react-bootstrap-native-slider'
 
 function gameControlStateCallback() {
-    let activeGameSettings = GameStore.getActiveGameSettings();
+    // let activeGameSettings = GameStore.getActiveGameSettings();
     let game = GameStore.getActiveGame();
 
     // let gameRunning = GameStore.isGameRunning();
     // let gamePaused = GameStore.isGamePaused();
     // let updateFrequency = GameStore.getUpdateFrequencyForTournament();
     let frameInfo = GameStore.getFrameInfo();
-    return {activeGameSettings: activeGameSettings, game: game, frameInfo: frameInfo}
+    return {game: game, frameInfo: frameInfo}
 }
 
 class GameControl extends React.Component {
@@ -35,17 +35,18 @@ class GameControl extends React.Component {
 
 
     updateFrequencyChanged(event) {
-      AppAction.setUpdateFrequency(parseInt(event.target.value), this.props.id );
+      AppAction.setUpdateFrequency(parseInt(event.target.value));
     }
 
     currentFrameChanged(event) {
-      AppAction.setCurrentFrame(parseInt(event.target.value), this.props.id );
+        console.log("Changed");
+      AppAction.setCurrentFrame(parseInt(event.target.value));
     }
 
     render() {
         if(this.props.game) {
-            let text = this.props.activeGameSettings.started ? this.props.activeGameSettings.running ? "Pause Game" : "Resume Game" : "Start Game";
-            let action = this.props.activeGameSettings.started ? this.props.activeGameSettings.running ? GameControl.pauseGame : GameControl.resumeGame : GameControl.startGame;
+            let text = this.props.game.started ? this.props.game.running ? "Pause Game" : "Resume Game" : "Start Game";
+            let action = this.props.game.started ? this.props.game.running ? GameControl.pauseGame : GameControl.resumeGame : GameControl.startGame;
             return (
                 <div>
                     <div>
@@ -54,14 +55,14 @@ class GameControl extends React.Component {
                     <div>
                         <h4>Frame delay: {this.props.game.updateFrequency}</h4>
                         <ReactSliderNativeBootstrap value={this.props.game.updateFrequency}
-                                                    handleChange={this.updateFrequencyChanged.bind(this)} step={100} max={2000}
+                                                    handleChange={this.updateFrequencyChanged} step={100} max={2000}
                                                     min={100}/>
                     </div>
                     <div>
                         <h4>Frame: {this.props.game.currentFrame}
                             / {this.props.frameInfo.lastFrame}</h4>
                         <ReactSliderNativeBootstrap value={this.props.game.currentFrame}
-                                                    handleChange={this.currentFrameChanged.bind(this)} step={1}
+                                                    handleChange={this.currentFrameChanged} step={1}
                                                     max={this.props.frameInfo.lastFrame} min={0}/>
                     </div>
                 </div>

@@ -31,9 +31,9 @@ export default {
         })
     },
 
-    setUpdateFrequency ( freq, id ) {
+    setUpdateFrequency ( freq) {
         dispatch({
-            actionType: Constants.SET_UPDATE_FREQUENCY, freq, id
+            actionType: Constants.SET_UPDATE_FREQUENCY, freq
         })
     },
 
@@ -43,9 +43,9 @@ export default {
         })
     },
 
-    setCurrentFrame ( frame, id ) {
+    setCurrentFrame ( frame) {
       dispatch({
-          actionType: Constants.SET_CURRENT_FRAME, frame, id
+          actionType: Constants.SET_CURRENT_FRAME, frame
       })
     }
 }

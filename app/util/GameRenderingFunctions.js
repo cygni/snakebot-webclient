@@ -37,7 +37,9 @@ export default {
 
     setCurrentFrame(activeGame,frame) {
         activeGame.currentFrame = frame;
+        this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
         this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
+        this.parseSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame].snakeInfos);
     },
 
     addGames (games, oldGames) {

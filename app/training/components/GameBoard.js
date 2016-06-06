@@ -23,9 +23,9 @@ class GameBoard extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
+    // }
 
     componentDidMount() {
         Store.initWS();
@@ -41,9 +41,9 @@ class GameBoard extends React.Component {
     };
 
     render() {
-        console.log("active game: " + JSON.stringify(this.props.game));
+        // console.log("active game: " + JSON.stringify(this.props.game.currentFrame));
         let tiles = [];
-        let map = this.state.mapEvents[this.state.currentFrame];
+        let map = this.state.mapEvents[this.props.game.currentFrame];
 
         let size = {width: 0, height: 0};
         let tileSize = 0;

@@ -8,7 +8,6 @@ import Colors from '../util/Colors'
 import {hashHistory} from 'react-router'
 
 
-
 let _activeGame = undefined;
 let finalPlacement = {
     winner: {},
@@ -24,20 +23,18 @@ let games = [];
 
 let playerMap = new Map();
 
-let activeGameSettings = {
-    started: false,
-    running: false
-};
+// let activeGameSettings = {
+//     started: false,
+//     running: false
+// };
 let startedGame = {};
 let gameEvents = {};
 
-const _startGame = ( id ) => {
-    console.log(id);
-    let tmpGame = games.find(game => game.id === id);
-    Socket.send('{"includedGameIds": ["' + tmpGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
-    Socket.send('{"gameId":"' + tmpGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
-    tmpGame.started = true;
-    tmpGame.running = true;
+const _startGame = () => {
+    _activeGame.started = true;
+    _activeGame.running = true;
+    Socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    Socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
 };
 
 const _initWS = () => {
@@ -50,7 +47,6 @@ const _addGames = (gamesList) => {
 };
 
 
-
 // const _startGame = () => {
 //     Socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
 //     Socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
@@ -61,7 +57,6 @@ const _setActiveGame = (id) => {
     _activeGame = games.find(game => game.id === id);
     localStorage.setItem("activeGame", JSON.stringify(_activeGame))
 };
-
 
 
 const _createTournament = (name) => {
@@ -135,9 +130,8 @@ const _setActiveTournamentGame = (gameId) => {
 //     }
 // };
 
-function _setUpdateFrequency(gameId, freq) {
-    let currentGame = games.find(game => game.id == gameId);
-    currentGame.updateFrequency = freq;
+function _setUpdateFrequency(freq) {
+    _activeGame.updateFrequency = freq;
 }
 
 // function _setCurrentFrame(frame) {
@@ -154,15 +148,13 @@ const _updateSettings = (key, value) => {
     tournament.gameSettings[key] = value;
 };
 
-const _changeFrame = ( gameId ) => {
-    let currentGame = games.find(game => game.id == gameId);
-
-    console.log("Current game: " + JSON.stringify(currentGame));
-    if (currentGame && currentGame.started && currentGame.running &&
-        (currentGame.currentFrame == 0 || currentGame.currentFrame < currentGame.mapEvents.length)) {
-        console.log("here");
-        GameRenderingFunction.changeFrame(currentGame);
-        setTimeout(() => _changeFrame(), currentGame.updateFrequency);
+const _changeFrame = () => {
+    console.log("Change frame: " + JSON.stringify(_activeGame.running));
+    if (_activeGame && _activeGame.started && _activeGame.running &&
+        (_activeGame.currentFrame == 0 || _activeGame.currentFrame < _activeGame.mapEvents.length - 1)) {
+        console.log(_activeGame.currentFrame);
+        GameRenderingFunction.changeFrame(_activeGame);
+        setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
         BaseStore.emitChange();
     }
 };
@@ -219,7 +211,6 @@ const _killTournament = () => {
 // }
 
 
-
 const BaseStore = Object.assign(EventEmitter.prototype, {
     emitChange () {
         this.emit(CHANGE_EVENT)
@@ -234,7 +225,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     getActiveGame() {
-        if (localStorage.getItem("activeGame")) {
+        if (!_activeGame && localStorage.getItem("activeGame")) {
             let tmp = localStorage.getItem("activeGame");
             _activeGame = JSON.parse(tmp);
         }
@@ -297,10 +288,6 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
 
     getTournamentGames() {
         return games;
-    },
-
-    getActiveGameSettings() {
-        return activeGameSettings;
     },
 
     hasActiveGame() {
@@ -376,15 +363,15 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
                 _getActiveTournament();
                 break;
             case Constants.START_GAME:
-                _startGame( action.id );
-                _changeFrame( action.id);
+                _startGame();
+                _changeFrame();
                 break;
             case Constants.PAUSE_GAME:
-                activeGameSettings.running = false;
+                _activeGame.running = false;
                 break;
             case Constants.RESUME_GAME:
-                activeGameSettings.running = true;
-                _changeFrame(action.id);
+                _activeGame.running = true;
+                _changeFrame();
                 break;
             case Constants.SET_ACTIVE_TRAINING_GAME:
                 _setActiveGame(action.id);
