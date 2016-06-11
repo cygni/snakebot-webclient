@@ -20,5 +20,8 @@ export default {
                 return {width: 900 / ratio, height: 900};
             }
         }
+    },
+    mapIsEmpty(map) {
+        return !map || !map.width || map.width === 0;
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import Tile from './gamecomponents/Tile'
-import { Grid, Row, Col} from 'react-bootstrap';
+import {Grid, Row, Col} from 'react-bootstrap';
 import Immutable from 'immutable'
 import GameStore from '../stores/GameStore'
 import StoreWatch from './watch/StoreWatch'
@@ -16,6 +16,7 @@ class GameBoard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            context: null,
             shouldRender: false,
             mapEvents: [],
             snakes: [],
@@ -24,78 +25,76 @@ class GameBoard extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-      return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
+        return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
     }
 
     componentDidMount() {
         GameStore.initWS();
+        const context = this.refs.canvas.getContext('2d');
+        this.setState({context: context});
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.game) {
-          this.setState({ mapEvents: nextProps.game.mapEvents,
-                          currentFrame: nextProps.game.currentFrame });
+        if (nextProps.game) {
+            this.setState({
+                mapEvents: nextProps.game.mapEvents,
+                currentFrame: nextProps.game.currentFrame
+            });
         }
     };
-    
+
     render() {
-        let tiles = [];
         let map = this.state.mapEvents[this.state.currentFrame];
-
-        let size = {width:0, height:0};
+        let size = {width: 0, height: 0};
         let tileSize = 0;
-
-        if (map != undefined && map.width != undefined) {
-
-          size = BoardUtils.calculateSize(map);
-          tileSize = BoardUtils.getTileSize(map);
-
-          let activeGame = getActiveGame();
-
-            for (let y = 0; y < map.height; y++) {
-                let tileRow = [];
-
-                for (var x = 0; x < map.width; x++) {
-                    let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game);
-                    tileRow.push(<Tile key={tile.key}
-                                       color={tile.color}
-                                       height={tile.height}
-                                       width={tile.width}
-                                       type={tile.type}
-                                       tileType={tile.tileType}
-                    />
-                    )
-                }
-                tiles.push(tileRow);
-            }
+        let mapIsEmpty = BoardUtils.mapIsEmpty(map);
+        if (!mapIsEmpty) {
+            size = BoardUtils.calculateSize(map);
+            tileSize = BoardUtils.getTileSize(map);
         }
 
-        var immutTiles = Immutable.List(tiles);
-
         return (
-                <Grid>
-                    <Col xs={14} md={9}>
-                        <Grid >
-                            <Row className="show-grid">
-                                <Col xs={18} md={12} lg={12}>
-                                    <Col xs={12} md={8} lg={8}>
-                                        <div className={!map || !map.width || map.width === 0 ? 'hidden' : ''} style={{border: "10px solid black", background: "radial-gradient(50% 126%, #EF9A9A 50%, #F44336 100%)",width: size.width + 20, height:  size.height + 20}}>
-                                            {immutTiles.map((tilerow, index) => {
-                                                return (
-                                                    <div key={index}
-                                                         style={{width: size.width , height: tileSize}}>
-                                                        {tilerow}
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </Col>
-                                </Col>
-                            </Row>
-                        </Grid>
-                    </Col>
-                </Grid>
+            <Grid>
+                <Col xs={14} md={9}>
+                    <Grid >
+                        <Row className="show-grid">
+                            <div className={mapIsEmpty ? 'hidden' : ''} id="map"
+                                 style={{marginTop: 20}}>
+                                <canvas ref="canvas" width={size.width} height={size.height}/>
+                                {this.renderGameBoard(map, mapIsEmpty, size, tileSize)}
+                            </div>
+                        </Row>
+                    </Grid>
+                </Col>
+            </Grid>
         )
+    };
+
+    renderGameBoard(map, mapIsEmpty, size, tileSize) {
+        var ctx = this.state.context;
+
+        if (mapIsEmpty || ctx === null || ctx === undefined) {
+            return;
+        }
+
+        this.width = size.width;
+        this.height = size.height;
+        ctx.strokeStyle = "#D2D7D3";
+        let activeGame = getActiveGame();
+
+        for (let y = 0; y < map.height; y++) {
+            for (var x = 0; x < map.width; x++) {
+                let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game);
+                let yPos = y * tile.width;
+                let xPos = x * tile.width;
+                if (tile.tileType !== "empty") {
+                    ctx.fillStyle = tile.color;
+                    ctx.fillRect(xPos, yPos, tile.width, tile.height);
+                    ctx.fillStyle = "#FFFFFF";
+                }
+                ctx.strokeRect(xPos, yPos, tile.width, tile.height);
+            }
+        }
     }
 }
 
