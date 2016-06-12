@@ -1,25 +1,25 @@
-import React from 'react'
+import React from "react";
 
 var borders = new Map([["horizontal", "none solid none solid"],
-                       ["vertical", "solid none solid none"],
-                       ["endTop", "solid solid none solid"],
-                       ["endLeft", "solid none solid solid"],
-                       ["endRight","solid solid solid none"],
-                       ["endBottom", "none solid solid solid"],
-                       ["leftBotCorner", "none none solid solid"],
-                       ["rightBotCorner", "none solid solid none"],
-                       ["leftTopCorner", "solid none none solid"],
-                       ["rightTopCorner", "solid solid none none"],
-                       ["single", "solid"],
-                       ["none", "none"]]);
+    ["vertical", "solid none solid none"],
+    ["endTop", "solid solid none solid"],
+    ["endLeft", "solid none solid solid"],
+    ["endRight", "solid solid solid none"],
+    ["endBottom", "none solid solid solid"],
+    ["leftBotCorner", "none none solid solid"],
+    ["rightBotCorner", "none solid solid none"],
+    ["leftTopCorner", "solid none none solid"],
+    ["rightTopCorner", "solid solid none none"],
+    ["single", "solid"],
+    ["none", "none"]]);
 
 class Tile extends React.Component {
     constructor(props) {
         super(props);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if(nextProps.type && this.props.type) {
+    shouldComponentUpdate(nextProps) {
+        if (nextProps.type && this.props.type) {
             return nextProps.type != this.props.type || this.props.tileType != nextProps.tileType;
         }
         return false;
@@ -78,29 +78,29 @@ class Tile extends React.Component {
 
         var tile = {};
         {
-                (() => {
-                    switch (this.props.type) {
-                        case "empty":
-                            tile = styles.empty;
-                            break;
-                        case "food":
-                            tile = styles.food;
-                            break;
-                        case "obstacle":
-                            tile = styles.obstacle;
-                            break;
-                        case "snakebody":
-                            tile = styles.snakebody;
-                            break;
-                        case "snakehead":
-                            tile = styles.snakehead;
-                            break;
-                    }
-                })()
+            (() => {
+                switch (this.props.type) {
+                    case "empty":
+                        tile = styles.empty;
+                        break;
+                    case "food":
+                        tile = styles.food;
+                        break;
+                    case "obstacle":
+                        tile = styles.obstacle;
+                        break;
+                    case "snakebody":
+                        tile = styles.snakebody;
+                        break;
+                    case "snakehead":
+                        tile = styles.snakehead;
+                        break;
+                }
+            })()
         }
 
         return (
-            <div style={tile} />
+            <div style={tile}/>
         )
     }
 }

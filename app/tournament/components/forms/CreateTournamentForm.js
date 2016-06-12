@@ -1,6 +1,6 @@
-import React from 'react'
-import {Row, Col, Input, ButtonInput} from 'react-bootstrap'
-import Action from '../../action/tournament-actions'
+import React from "react";
+import {Row, Col, Input, ButtonInput} from "react-bootstrap";
+import Action from "../../action/tournament-actions";
 
 class CreateTournamentForm extends React.Component {
     constructor(props) {
@@ -26,7 +26,6 @@ class CreateTournamentForm extends React.Component {
 
     render() {
         return (
-
             <Row>
                 <Col xs={18} md={12}>
                     <h1> Create a new tournament</h1>

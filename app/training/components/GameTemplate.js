@@ -1,7 +1,7 @@
-import React from 'react'
-import { Grid, Row, Col} from 'react-bootstrap'
-import Sidebar from './sidebar/Sidebar'
-import Header from './header/Header'
+import React from "react";
+import {Grid, Row, Col} from "react-bootstrap";
+import Sidebar from "./sidebar/Sidebar";
+import Header from "./header/Header";
 
 export default (props) => {
     return (
@@ -14,7 +14,6 @@ export default (props) => {
                 <Col xs={15} md={10}>
                     { props.children }
                 </Col>
-
             </Row>
         </Grid>
     )

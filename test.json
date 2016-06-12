@@ -1,156 +1,36 @@
 {
-  "type": "se.cygni.snake.eventapi.model.TournamentGamePlan",
-  "noofLevels": 5,
-  "players": [
-    {
-      "name": "#emil_163",
-      "id": "bc6ab6c0-3c20-49d2-b70c-bc29b0edaf03"
-    },
-    {
-      "name": "#emil_807",
-      "id": "099aa6c4-74f6-4e2e-9163-80abc8f4406c"
-    },
-    {
-      "name": "#emil_142",
-      "id": "60a2eda3-52d4-495a-8400-82c69e80f388"
-    },
-    {
-      "name": "#emil_430",
-      "id": "60079f08-d071-476e-a47f-e91cdced41c4"
-    },
-    {
-      "name": "#emil_352",
-      "id": "84000e3c-1f04-4b52-a38c-ff82337730ac"
-    },
-    {
-      "name": "#emil_541",
-      "id": "8f12a681-8227-4ed1-b6db-35b2116ba4a2"
-    },
-    {
-      "name": "#emil_87",
-      "id": "e7d25beb-d683-46a9-bf4a-42e839323c22"
-    },
-    {
-      "name": "#emil_271",
-      "id": "a2ad45b2-9faa-4b52-a211-6d541e85759f"
-    },
-    {
-      "name": "#emil_942",
-      "id": "318a1fb1-104f-438c-91bc-1e1268435af8"
-    },
-    {
-      "name": "#emil_173",
-      "id": "5b8a2272-c4a0-4676-9d79-4d8c183737f0"
-    },
-    {
-      "name": "#emil_299",
-      "id": "776470dc-8952-4de0-8585-48c675063e3e"
-    },
-    {
-      "name": "#emil_260",
-      "id": "21a1f7b8-4a35-4a67-948b-72e68b1d1e8f"
-    },
-    {
-      "name": "#emil_899",
-      "id": "d136a99a-95cb-4a5e-bfd5-43b9479bdb4e"
-    },
-    {
-      "name": "#emil_628",
-      "id": "8267faec-41ad-4ac5-8830-f123b96b3255"
-    }
+  "id": "260d0a02-8ea8-4de5-8ae2-4680298da737",
+  "gameFeatures": {
+    "width": "SMALL",
+    "height": "SMALL",
+    "maxNoofPlayers": 10,
+    "startSnakeLength": 1,
+    "timeInMsPerTick": 250,
+    "obstaclesEnabled": true,
+    "foodEnabled": true,
+    "edgeWrapsAround": false,
+    "headToTailConsumes": true,
+    "tailConsumeGrows": false,
+    "addFoodLikelihood": 15,
+    "removeFoodLikelihood": 5,
+    "addObstacleLikelihood": 10,
+    "removeObstacleLikelihood": 5,
+    "spontaneousGrowthEveryNWorldTick": 3,
+    "trainingGame": true,
+    "pointsPerLength": 1,
+    "pointsPerFood": 2,
+    "pointsPerCausedDeath": 5,
+    "pointsPerNibble": 10,
+    "pointsLastSnakeLiving": 10,
+    "noofRoundsTailProtectedAfterNibble": 3,
+    "pointsSuicide": -10
+  },
+  "color": [
+    "#9C27B0",
+    "#BA68C8"
   ],
-  "tournamentName": "xedas",
-  "tournamentId": "1c8e02df-a298-42cf-bc08-3d0be0982ee2",
-  "tournamentLevels": [
-    {
-      "level": 0,
-      "expectedNoofPlayers": 14,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 5,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 5,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": []
-        }
-      ]
-    },
-    {
-      "level": 1,
-      "expectedNoofPlayers": 11,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 3,
-          "players": []
-        }
-      ]
-    },
-    {
-      "level": 2,
-      "expectedNoofPlayers": 8,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": []
-        }
-      ]
-    },
-    {
-      "level": 3,
-      "expectedNoofPlayers": 6,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 3,
-          "players": []
-        },
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 3,
-          "players": []
-        }
-      ]
-    },
-    {
-      "level": 4,
-      "expectedNoofPlayers": 4,
-      "players": [],
-      "tournamentGames": [
-        {
-          "gameId": null,
-          "expectedNoofPlayers": 4,
-          "players": []
-        }
-      ]
-    }
-  ]
+  "players": [],
+  "currentFrame": 0,
+  "mapEvents": [],
+  "updateFrequency": 500
 }

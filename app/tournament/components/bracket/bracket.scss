@@ -1,58 +1,26 @@
-.bracket {
-    /*
-     *  Flex Layout Specifics
-    */
-    main{
-      display:flex;
-      flex-direction:row;
+main {
+  display: flex;
+  flex-direction: row;
+  margin-top: 15px;
+  .panel {
+    margin-right: 30px;
+    &:last-child {
+      margin-right: 0px;
+      &:before {
+        border-color: transparent transparent transparent transparent;
+      }
     }
-    .round{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      width:200px;
-      list-style:none;
-      padding:0;
+    &:before {
+      content: "";
+      border-style: solid;
+      border-width: 15px 0 15px 15px;
+      border-color: transparent transparent transparent #d9edf7;
+      position: absolute;
+      right: -15px;
+      top: 5px;
     }
-      .round .spacer{ flex-grow:1; }
-      .round .spacer:first-child,
-      .round .spacer:last-child{ flex-grow:.5; }
-
-      .round .game-spacer{
-        flex-grow:1;
-      }
-
-    /*
-     *  General Styles
-    */
-    body{
-      font-family:sans-serif;
-      font-size:small;
-      padding:10px;
-      line-height:1.4em;
-    }
-
-    li.game{
-      padding-left:20px;
-    }
-
-      li.game.winner{
-        font-weight:bold;
-      }
-      li.game span{
-        float:right;
-        margin-right:5px;
-      }
-
-      li.game-top{ border-bottom:1px solid #aaa; }
-
-      li.game-spacer{
-        border-right:1px solid #aaa;
-        min-height:40px;
-      }
-
-      li.game-bottom{
-        border-top:1px solid #aaa;
-      }
-
+  }
+  .panel-heading {
+    margin: 0 -15px;
+  }
 }
