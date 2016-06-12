@@ -1,14 +1,14 @@
-import React from 'react'
-import Tile from '../../../common/gamecomponents/Tile'
-import {Grid, Row, Col} from 'react-bootstrap';
-import Immutable from 'immutable'
-import TournamentStore from '../../../baseStore/BaseStore'
-import StoreWatch from '../../watch/StoreWatch'
-import TileUtils from '../../../util/TileUtils'
-import BoardUtils from '../../../util/BoardUtils'
-import TournamentAction from '../../action/tournament-actions'
-import {Button} from 'react-bootstrap'
-import ActivePlayerList from '../players/ActivePlayerList'
+import React from "react";
+import Tile from "../../../common/gamecomponents/Tile";
+import {Grid, Row, Col, Button} from "react-bootstrap";
+import Immutable from "immutable";
+import TournamentStore from "../../../baseStore/BaseStore";
+import StoreWatch from "../../watch/StoreWatch";
+import TileUtils from "../../../util/TileUtils";
+import BoardUtils from "../../../util/BoardUtils";
+import TournamentAction from "../../action/tournament-actions";
+import ActivePlayerList from "../players/ActivePlayerList";
+
 
 function getActiveGame() {
     let game = TournamentStore.getActiveGame();
@@ -18,21 +18,14 @@ function getActiveGame() {
 class GameBoard extends React.Component {
     constructor(props) {
         super(props);
-        this.startGame = this.startGame.bind(this);
+        GameBoard.startGame = GameBoard.startGame.bind(this);
         this.state = {
-            shouldRender: false,
             mapEvents: [],
             snakes: [],
-            currentFrame: 0,
-            gameStarted: false
+            currentFrame: 0
         }
     }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
-    }
-
-
+    
     componentWillReceiveProps(nextProps) {
         if (nextProps.game) {
             this.setState({
@@ -42,19 +35,14 @@ class GameBoard extends React.Component {
         }
     };
 
-    startGame() {
-        this.setState({
-            gameStarted: true
-        });
+    static startGame() {
         TournamentAction.startGame();
-
     }
 
     render() {
         let tiles = [];
         let map = this.state.mapEvents[this.state.currentFrame];
-
-
+        
         let size = {width: 0, height: 0};
         let tileSize = 0;
 
@@ -79,13 +67,11 @@ class GameBoard extends React.Component {
                 tiles.push(tileRow);
             }
         }
-
-        var immutTiles = Immutable.List(tiles);
-
-        if (this.state.gameStarted) {
-            return (
-                <Grid fluid>
-                    <Row>
+        let immutTiles = Immutable.List(tiles);
+        
+        return (
+            <Grid fluid>
+                <Row>
                     <Col xs={14} md={9}>
                         <Grid >
                             <Row className="show-grid">
@@ -107,29 +93,19 @@ class GameBoard extends React.Component {
                             </Row>
                         </Grid>
                     </Col>
-                        <Col xs={4} md={3}>
-                            <ActivePlayerList/>
-                        </Col>
-                        </Row>
-                </Grid>
-            )
-        }
-        else {
-            return (
-                <Grid>
-                    <Row>
-                        <Col md={2} mdPush={5}>
-                            <div className="center-block" style={{paddingTop: "30px"}}>
-                                <Button onClick={this.startGame} className="btn btn-primary btn-lg">Start game</Button>
-                            </div>
-                        </Col>
-                    </Row>
-                </Grid>
-
-            )
-        }
-
-
+                    <Col xs={4} md={3}>
+                        <ActivePlayerList/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={2} mdPush={5}>
+                        <div className="center-block" style={{paddingTop: "30px"}}>
+                            <Button onClick={GameBoard.startGame} className="btn btn-primary btn-lg">Start game</Button>
+                        </div>
+                    </Col>
+                </Row>
+            </Grid>
+        )
     }
 }
 

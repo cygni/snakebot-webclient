@@ -1,12 +1,11 @@
-import React from 'react';
-import GameTemplate from '../training/components/GameTemplate'
-import Gameboard from '../training/components/GameBoard'
-import TournamentTemplate from '../tournament/components/TournamentTemplate'
-import Settings from '../tournament/components/settings/Settings'
-import Bracket from '../tournament/components/bracket/Bracket'
-import TournamentGameBoard from '../tournament/components/gameboard/TournamentGameBoard'
-
-import { Router, Route, IndexRoute, hashHistory } from 'react-router';
+import React from "react";
+import GameTemplate from "../training/components/GameTemplate";
+import Gameboard from "../training/components/GameBoard";
+import TournamentTemplate from "../tournament/components/TournamentTemplate";
+import Settings from "../tournament/components/settings/Settings";
+import Bracket from "../tournament/components/bracket/Bracket";
+import TournamentGameBoard from "../tournament/components/gameboard/TournamentGameBoard";
+import {Router, Route, IndexRoute, hashHistory} from "react-router";
 
 export default () => {
     return (

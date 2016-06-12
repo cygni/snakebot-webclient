@@ -1,8 +1,8 @@
-import React from 'react'
-import TournamentStore from '../../../baseStore/BaseStore'
-import StoreWatch from '../../watch/StoreWatch'
-import {Table} from 'react-bootstrap'
-import GameControl from '../controls/GameControl'
+import React from "react";
+import TournamentStore from "../../../baseStore/BaseStore";
+import StoreWatch from "../../watch/StoreWatch";
+import {Table} from "react-bootstrap";
+import GameControl from "../controls/GameControl";
 
 
 function getActivePlayerList() {
@@ -14,7 +14,6 @@ class PlayerList extends React.Component {
     constructor(props) {
         super(props)
     }
-
     render() {
         return (
             <div>
@@ -38,15 +37,12 @@ class PlayerList extends React.Component {
                             </tr>
                         )
                     })}
-
                     </tbody>
                 </Table>
                 <GameControl />
             </div>
-
         )
     }
 }
-
 
 export default StoreWatch(PlayerList, getActivePlayerList)

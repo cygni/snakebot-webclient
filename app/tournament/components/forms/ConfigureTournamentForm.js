@@ -1,10 +1,10 @@
-import React from 'react';
-import {Row, Col, Input, Button, ButtonGroup} from 'react-bootstrap';
-import TournamentStore from '../../../baseStore/BaseStore'
-import StoreWatch from '../../watch/StoreWatch'
-import Action from '../../action/tournament-actions'
-import PlayerList from '../players/PlayerList'
-import './configure-tournament-form.scss';
+import React from "react";
+import {Row, Col, Input, Button, ButtonGroup} from "react-bootstrap";
+import TournamentStore from "../../../baseStore/BaseStore";
+import StoreWatch from "../../watch/StoreWatch";
+import Action from "../../action/tournament-actions";
+import PlayerList from "../players/PlayerList";
+import "./configure-tournament-form.scss";
 
 
 function getSettings() {
@@ -16,19 +16,18 @@ function getSettings() {
 class ConfigureTournamentForm extends React.Component {
     constructor(props) {
         super(props);
-        this.createTournamentTable = this.createTournamentTable.bind(this);
+        ConfigureTournamentForm.createTournamentTable = ConfigureTournamentForm.createTournamentTable.bind(this);
     }
 
-
-    createTournamentTable() {
+    static createTournamentTable() {
         Action.createTournamentTable();
     }
 
-    startTournament() {
+    static startTournament() {
         Action.startTournament();
     }
 
-    killTournament() {
+    static killTournament() {
         Action.killTournament()
     }
 
@@ -45,7 +44,7 @@ class ConfigureTournamentForm extends React.Component {
                     <div className="panel-heading">
                         <Row>
                             <Col md={3}>
-                                <Button onClick={this.killTournament} bsStyle="info" bsSize="large">Kill
+                                <Button onClick={ConfigureTournamentForm.killTournament} bsStyle="info" bsSize="large">Kill
                                     Tournament</Button>
                             </Col>
                             <Col md={6} mdPush={1}>
@@ -55,7 +54,7 @@ class ConfigureTournamentForm extends React.Component {
                             </Col>
                             <Col md={3}>
                                 <ButtonGroup>
-                                    <Button onClick={this.startTournament} bsStyle="info" bsSize="large">Setup
+                                    <Button onClick={ConfigureTournamentForm.startTournament} bsStyle="info" bsSize="large">Setup
                                         tournament bracket</Button>
                                 </ButtonGroup>
                             </Col>
@@ -67,7 +66,7 @@ class ConfigureTournamentForm extends React.Component {
                                 <div className="panel-heading">
                                     <h2 >Settings</h2>
                                 </div>
-                                <form role="form" onSubmit={this.createTournamentTable}>
+                                <form role="form" onSubmit={ConfigureTournamentForm.createTournamentTable}>
                                     <Col md={6}>
                                         <Row className="width">
                                             <Col md={6}>
@@ -347,7 +346,7 @@ class ConfigureTournamentForm extends React.Component {
                                         </Row>
                                         <Row className="tailConsumeGrows">
                                             <Col md={6} mdPush={6}>
-                                                <Button onClick={this.createTournamentTable} bsStyle="info"
+                                                <Button onClick={ConfigureTournamentForm.createTournamentTable} bsStyle="info"
                                                         bsSize="large">Update
                                                     Tournament Settings</Button>
                                             </Col>

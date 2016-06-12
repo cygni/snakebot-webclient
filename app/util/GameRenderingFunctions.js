@@ -1,6 +1,6 @@
-import React from 'react';
-import Colors from './Colors'
-import TileUtils from './TileUtils'
+import React from "react";
+import Colors from "./Colors";
+import TileUtils from "./TileUtils";
 
 export default {
     parseSnakes(oldList, snakeList) {
@@ -35,26 +35,27 @@ export default {
         }
     },
 
-    setCurrentFrame(activeGame,frame) {
+    setCurrentFrame(activeGame, frame) {
         activeGame.currentFrame = frame;
         this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
         this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
         this.parseSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame].snakeInfos);
     },
 
-    addGames (games, oldGames) {
+    addGames (games) {
+        let tmpGames = [];
         games.map((game) => {
-           
-            if (oldGames.find(g => game.gameId === g.id)) {
-                return;
-            }
-
             let players = [];
             game.players.forEach((player, index) => {
-                players.push({"index": index, "name": player.name, id: player.id, 'color': Colors.getSnakeColor()[index]});
+                players.push({
+                    "index": index,
+                    "name": player.name,
+                    id: player.id,
+                    'color': Colors.getSnakeColor()[index]
+                });
             });
 
-            oldGames.push({
+            tmpGames.push({
                 "id": game.gameId,
                 "gameFeatures": game.gameFeatures,
                 "color": Colors.getBoardColor()[games.length],
@@ -64,28 +65,27 @@ export default {
                 "updateFrequency": 500
             });
         });
-
-        return oldGames;
+        return tmpGames;
     },
 
     updateGame (map) {
-       if(map) {
-           map.foodPositions = map.foodPositions.map(function (pos) {
-               return TileUtils.getTileCoordinate(pos, map.width);
-           });
-           map.obstaclePositions = map.obstaclePositions.map(function (pos) {
-               return TileUtils.getTileCoordinate(pos, map.width);
-           });
-           map.snakeInfos.forEach(snake => {
-               snake.positions = snake.positions.map(function (pos) {
-                   return TileUtils.getTileCoordinate(pos, map.width);
-               });
-           });
-       }
+        if (map) {
+            map.foodPositions = map.foodPositions.map(function (pos) {
+                return TileUtils.getTileCoordinate(pos, map.width);
+            });
+            map.obstaclePositions = map.obstaclePositions.map(function (pos) {
+                return TileUtils.getTileCoordinate(pos, map.width);
+            });
+            map.snakeInfos.forEach(snake => {
+                snake.positions = snake.positions.map(function (pos) {
+                    return TileUtils.getTileCoordinate(pos, map.width);
+                });
+            });
+        }
     },
 
     changeFrame (activeGame) {
-        if(activeGame.mapEvents.length > 0) {
+        if (activeGame.mapEvents.length > 0) {
             activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
             this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
             this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);

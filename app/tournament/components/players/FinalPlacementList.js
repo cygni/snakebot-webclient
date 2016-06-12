@@ -1,7 +1,7 @@
-import React from 'react'
-import TournamentStore from '../../../baseStore/BaseStore'
-import StoreWatch from '../../watch/StoreWatch'
-import {Table} from 'react-bootstrap'
+import React from "react";
+import TournamentStore from "../../../baseStore/BaseStore";
+import StoreWatch from "../../watch/StoreWatch";
+import {Table} from "react-bootstrap";
 
 
 function getFinalPlacement() {
@@ -51,6 +51,5 @@ class FinalPlacementList extends React.Component {
         }
     }
 }
-
 
 export default StoreWatch(FinalPlacementList, getFinalPlacement)

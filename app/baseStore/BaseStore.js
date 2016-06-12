@@ -1,13 +1,12 @@
-import {EventEmitter} from 'events'
+import {EventEmitter} from "events";
+import Socket from "../websocket/WebSocket";
+import {register} from "../dispatchers/AppDispatcher";
+import Constants from "../constants/Constants";
+import GameRenderingFunction from "../util/GameRenderingFunctions";
+import Colors from "../util/Colors";
+import {hashHistory} from "react-router";
+
 const CHANGE_EVENT = 'change';
-import Socket from '../websocket/WebSocket'
-import {register} from '../dispatchers/AppDispatcher'
-import Constants from '../constants/Constants'
-import GameRenderingFunction from '../util/GameRenderingFunctions'
-import Colors from '../util/Colors'
-import {hashHistory} from 'react-router'
-
-
 let _activeGame = undefined;
 let finalPlacement = {
     winner: {},
@@ -18,15 +17,9 @@ let tournament = {};
 let tournamentGameplan = {
     tournamentLevels: []
 };
-let activeTournamentGame = undefined;
+
 let games = [];
-
 let playerMap = new Map();
-
-// let activeGameSettings = {
-//     started: false,
-//     running: false
-// };
 let startedGame = {};
 let gameEvents = {};
 
@@ -43,21 +36,17 @@ const _initWS = () => {
 
 
 const _addGames = (gamesList) => {
-    GameRenderingFunction.addGames(gamesList, games);
+    games = GameRenderingFunction.addGames(gamesList);
+    if (_activeGame && !games.find(game => game.id == _activeGame.id)) {
+        games.push(_activeGame);
+    }
+    localStorage.setItem("games", JSON.stringify(games));
 };
-
-
-// const _startGame = () => {
-//     Socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
-//     Socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
-//
-// };
 
 const _setActiveGame = (id) => {
     _activeGame = games.find(game => game.id === id);
     localStorage.setItem("activeGame", JSON.stringify(_activeGame))
 };
-
 
 const _createTournament = (name) => {
     Socket.init();
@@ -95,14 +84,16 @@ const _updatePlayers = (players) => {
 };
 
 const _setActiveTournamentGame = (gameId) => {
-    let game = games.find(game => game.gameId == gameId);
+    let tmp = localStorage.getItem("games");
+    games = JSON.parse(tmp);
+    let game = games.find(game => game.id == gameId);
     let players = [];
     game.players.forEach((player, index) => {
         players.push({"index": index, "name": player.name, id: player.id, 'color': Colors.getSnakeColor()[index]});
     });
 
-    activeTournamentGame = {
-        "id": game.gameId,
+    _activeGame = {
+        "id": game.id,
         "gameFeatures": game.gameFeatures,
         "color": Colors.getBoardColor()[0],
         "players": players,
@@ -110,34 +101,13 @@ const _setActiveTournamentGame = (gameId) => {
         "mapEvents": [],
         "updateFrequency": 250
     };
-    localStorage.setItem("activeTournamentGame", JSON.stringify(activeTournamentGame));
+    localStorage.setItem("activeGame", JSON.stringify(_activeGame));
     hashHistory.push('/tournament/activeTournamentGame');
 };
-
-
-// const _updateSnakes = (playerList, frame) => {
-//     if (frame) {
-//         frame.snakeInfos.forEach(snake => {
-//             var player = playerList.find(p => p.id === snake.id);
-//             if (!player) {
-//                 console.log("unable to find player");
-//                 return;
-//             }
-//             player.points = snake.points;
-//             player.length = snake.positions.length;
-//             player.alive = snake.positions.length > 0;
-//         });
-//     }
-// };
 
 function _setUpdateFrequency(freq) {
     _activeGame.updateFrequency = freq;
 }
-
-// function _setCurrentFrame(frame) {
-//     activeTournamentGame.currentFrame = frame;
-//     _updateSnakes(activeTournamentGame.players, activeTournamentGame.mapEvents[activeTournamentGame.currentFrame]);
-// }
 
 const _setCurrentFrame = (frame) => {
     GameRenderingFunction.setCurrentFrame(_activeGame, frame)
@@ -149,10 +119,8 @@ const _updateSettings = (key, value) => {
 };
 
 const _changeFrame = () => {
-    console.log("Change frame: " + JSON.stringify(_activeGame.running));
     if (_activeGame && _activeGame.started && _activeGame.running &&
         (_activeGame.currentFrame == 0 || _activeGame.currentFrame < _activeGame.mapEvents.length - 1)) {
-        console.log(_activeGame.currentFrame);
         GameRenderingFunction.changeFrame(_activeGame);
         setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
         BaseStore.emitChange();
@@ -160,27 +128,14 @@ const _changeFrame = () => {
 };
 
 const _addMapUpdate = (event) => {
-    var updatedGame = games.find(game => game.id === event.gameId);
-    updatedGame.mapEvents.push(event.map);
+    if (event.gameId == _activeGame.id) {
+        _activeGame.mapEvents.push(event.map);
+    }
+    else {
+        let updatedGame = games.find(game => game.id === event.gameId);
+        updatedGame.mapEvents.push(event.map);
+    }
 };
-
-// const _addMapUpdate = (event) => {
-//     _parseSnakes(activeTournamentGame.players, event.map.snakeInfos);
-//
-//     event.map.foodPositions = event.map.foodPositions.map(function (pos) {
-//         return TileUtils.getTileCoordinate(pos, event.map.width);
-//     });
-//     event.map.obstaclePositions = event.map.obstaclePositions.map(function (pos) {
-//         return TileUtils.getTileCoordinate(pos, event.map.width);
-//     });
-//     event.map.snakeInfos.forEach(snake => {
-//         snake.positions = snake.positions.map(function (pos) {
-//             return TileUtils.getTileCoordinate(pos, event.map.width);
-//         });
-//     });
-//
-//     activeTournamentGame.mapEvents.push(event.map);
-// };
 
 const _tournamentEnded = (event) => {
     finalPlacement.list = event.gameResult;
@@ -189,26 +144,9 @@ const _tournamentEnded = (event) => {
 };
 
 const _killTournament = () => {
-    Socket.send('{"tournamentId":"' + activeTournamentGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"token-here"}');
-    localStorage.removeItem("activeTournamentGame")
+    Socket.send('{"tournamentId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"token-here"}');
+    localStorage.removeItem("_activeGame")
 };
-
-// function _parseSnakes(oldList, snakeList) {
-//     snakeList.forEach(snake => {
-//         if (oldList.find(existingSnake => snake.id === existingSnake.id)) {
-//             return;
-//         }
-//
-//         oldList.push({
-//             "id": snake.id,
-//             "name": snake.name,
-//             "length": snake.positions.length,
-//             "color": Colors.getSnakeColor()[oldList.length],
-//             "alive": snake.positions.length <= 0,
-//             "points": snake.points
-//         });
-//     })
-// }
 
 
 const BaseStore = Object.assign(EventEmitter.prototype, {
@@ -233,6 +171,10 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     getActiveTournamentGame() {
+        if (!_activeGame && localStorage.getItem("activeGame")) {
+            let tmp = localStorage.getItem("activeGame");
+            _activeGame = JSON.parse(tmp);
+        }
         return _activeGame;
     },
 
@@ -264,7 +206,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     getActivePlayers() {
-        return activeTournamentGame.players.sort((a, b) => {
+        return _activeGame.players.sort((a, b) => {
             return b.points - a.points
         });
     },
@@ -277,16 +219,12 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     getUpdateFrequencyForTournament() {
-        if (activeTournamentGame)
-            return activeTournamentGame.updateFrequency;
+        if (_activeGame)
+            return _activeGame.updateFrequency;
         return 100;
     },
 
     getTrainingGames() {
-        return games;
-    },
-
-    getTournamentGames() {
         return games;
     },
 
@@ -314,8 +252,8 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     dispatherIndex: register(action => {
         switch (action.actionType) {
             case Constants.START_TOURNAMENT_GAME:
-                _startGame(action.id);
-                _changeFrame(action.id);
+                _startGame();
+                _changeFrame();
                 break;
             case Constants.ADD_GAMES:
                 _addGames(action.games);
@@ -382,9 +320,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
             case Constants.MAP_UPDATE_EVENT:
                 _addMapUpdate(action.event);
                 break;
-
         }
-
         BaseStore.emitChange();
     })
 });

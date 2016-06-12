@@ -1,13 +1,13 @@
-import React from 'react';
-import TournamentStore from '../../../baseStore/BaseStore'
-import StoreWatch from '../../watch/StoreWatch'
-import TournamentAction from '../../action/tournament-actions'
-import FinalPlacementList from '../players/FinalPlacementList'
+import React from "react";
+import TournamentStore from "../../../baseStore/BaseStore";
+import StoreWatch from "../../watch/StoreWatch";
+import TournamentAction from "../../action/tournament-actions";
+import FinalPlacementList from "../players/FinalPlacementList";
 require('./bracket.scss');
 
 
 function getGamePlan() {
-   let gameplan = TournamentStore.getTournamentGameplan();
+    let gameplan = TournamentStore.getTournamentGameplan();
     return {gameplan: gameplan}
 }
 
@@ -16,33 +16,33 @@ class Bracket extends React.Component {
         super(props);
     }
 
-    startGame(gameId) {
+    static chooseGame(gameId) {
         TournamentAction.setActiveGame(gameId);
     }
 
     render() {
         return (
-           <main id="tournament">
+            <main id="tournament">
                 {
-                    this.props.gameplan.tournamentLevels.map((level,i) => {
-
+                    this.props.gameplan.tournamentLevels.map((level, i) => {
                         return (
                             <div className="panel panel-info col-sm-3" key={i}>
                                 <div className="panel-heading">Round {level.level}</div>
                                 {
-                                    level.tournamentGames.map((game,i) => {
+                                    level.tournamentGames.map((game, i) => {
                                         return (
                                             <div className="panel-body" key={i}>
                                                 <h4> Game {i} </h4>
                                                 <ul className="list-group player">
-                                                {
-                                                    game.players.map((player,i) => {
-                                                        var boundClick = this.startGame.bind(this, game.gameId);
-                                                        return (
-                                                            <li className="list-group-item" key={i} onClick={boundClick}>{player.name} </li>
-                                                        )
-                                                    })
-                                                }
+                                                    {
+                                                        game.players.map((player, i) => {
+                                                            var boundClick = Bracket.chooseGame.bind(this, game.gameId);
+                                                            return (
+                                                                <li className="list-group-item" key={i}
+                                                                    onClick={boundClick}>{player.name} </li>
+                                                            )
+                                                        })
+                                                    }
                                                 </ul>
                                             </div>
                                         )
@@ -52,7 +52,7 @@ class Bracket extends React.Component {
                         )
                     })
                 }
-               <FinalPlacementList />
+                <FinalPlacementList />
             </main>
         )
     }

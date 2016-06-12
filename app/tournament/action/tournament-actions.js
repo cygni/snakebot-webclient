@@ -1,5 +1,5 @@
-import Constants from'../../constants/Constants'
-import {dispatch} from '../../dispatchers/AppDispatcher'
+import Constants from "../../constants/Constants";
+import {dispatch} from "../../dispatchers/AppDispatcher";
 
 
 export default {
@@ -57,12 +57,6 @@ export default {
         })
     },
 
-    mapUpdateEvent (event) {
-        dispatch({
-            actionType: Constants.TOURNAMENT_MAP_UPDATE_EVENT, event
-        })
-    },
-
     startGame () {
         dispatch({
             actionType: Constants.START_TOURNAMENT_GAME
@@ -75,24 +69,18 @@ export default {
         })
     },
 
-    setUpdateFrequencyTournament ( freq ) {
+    setUpdateFrequencyTournament (freq) {
         dispatch({
             actionType: Constants.SET_UPDATE_FREQUENCY_TOURNAMENT, freq
         })
     },
 
-    setCurrentFrameTournament ( frame ) {
+    setCurrentFrameTournament (frame) {
         dispatch({
             actionType: Constants.SET_CURRENT_TOURNAMENT_FRAME, frame
         })
     },
 
-    updateActiveGamesList (games) {
-        dispatch({
-            actionType: Constants.UPDATE_ACTIVE_GAMES_LIST, games
-        })
-    },
-    
     getActiveTournament () {
         dispatch({
             actionType: Constants.GET_ACTIVE_TOURNAMENT

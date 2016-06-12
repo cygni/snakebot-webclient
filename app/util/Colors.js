@@ -30,23 +30,6 @@ var snakeColors = [
     '#BF360C'
 ];
 
-
-
-
-// var snakeColors = [
-//     '#B71C1C',
-//     '#880E4F',
-//     '#4A148C',
-//     '#0D47A1',
-//     '#006064',
-//     '#004D40',
-//     '#33691E',
-//     '#827717',
-//     '#FF6F00',
-//     '#E65100',
-//     '#BF360C'
-// ];
-
 export default {
     getBoardColor() {
         return boardColors;

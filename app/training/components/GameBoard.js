@@ -1,11 +1,11 @@
-import React from 'react'
-import Tile from '../../common/gamecomponents/Tile'
-import {Grid, Row, Col} from 'react-bootstrap';
-import Immutable from 'immutable'
-import Store from '../../baseStore/BaseStore'
-import StoreWatch from './watch/StoreWatch'
-import TileUtils from '../../util/TileUtils'
-import BoardUtils from '../../util/BoardUtils'
+import React from "react";
+import Tile from "../../common/gamecomponents/Tile";
+import {Grid, Row, Col} from "react-bootstrap";
+import Immutable from "immutable";
+import Store from "../../baseStore/BaseStore";
+import StoreWatch from "./watch/StoreWatch";
+import TileUtils from "../../util/TileUtils";
+import BoardUtils from "../../util/BoardUtils";
 
 function getActiveGame() {
     let game = Store.getActiveGame();
@@ -23,9 +23,9 @@ class GameBoard extends React.Component {
         }
     }
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
-    // }
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
+    }
 
     componentDidMount() {
         Store.initWS();
@@ -41,7 +41,6 @@ class GameBoard extends React.Component {
     };
 
     render() {
-        // console.log("active game: " + JSON.stringify(this.props.game.currentFrame));
         let tiles = [];
         let map = this.state.mapEvents[this.props.game.currentFrame];
 
@@ -49,7 +48,6 @@ class GameBoard extends React.Component {
         let tileSize = 0;
 
         if (map != undefined && map.width != undefined) {
-
             size = BoardUtils.calculateSize(map);
             tileSize = BoardUtils.getTileSize(map);
 

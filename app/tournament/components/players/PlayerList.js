@@ -1,8 +1,7 @@
-import React from 'react'
-import TournamentStore from '../../../baseStore/BaseStore'
-import StoreWatch from '../../watch/StoreWatch'
-import {ListGroup, ListGroupItem} from 'react-bootstrap'
-
+import React from "react";
+import TournamentStore from "../../../baseStore/BaseStore";
+import StoreWatch from "../../watch/StoreWatch";
+import {ListGroup, ListGroupItem} from "react-bootstrap";
 
 
 function getPlayerList() {
@@ -14,8 +13,8 @@ class PlayerList extends React.Component {
     constructor(props) {
         super(props)
     }
-    
-    render () {
+
+    render() {
         return (
             <ListGroup>
                 { this.props.playerList.map((player, index) => {
@@ -25,6 +24,5 @@ class PlayerList extends React.Component {
         )
     }
 }
-
 
 export default StoreWatch(PlayerList, getPlayerList)
