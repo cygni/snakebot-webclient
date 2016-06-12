@@ -25,7 +25,8 @@ class Sidebar extends React.Component {
             <Accordion style={{marginTop: "10px"}}>
                 <h3>Active Games</h3>
                 {this.props.games.map((game, index) => {
-                    var boundClick = Sidebar.selectedGame.bind(this, game.id);
+
+                    let boundClick = Sidebar.selectedGame.bind(this, game.id);
 
                     return (
                         <Panel header={game.id} eventKey={index} key={game.id} onClick={boundClick}>
