@@ -1,3 +1,11 @@
+var argv = require('minimist')(process.argv.slice(2));
+
+var configuration = {
+   server: argv.server != undefined ? argv.server : "http://snake.cygni.se/events"
+}
+
+console.log("Using snake server host: " + configuration.server)
+
 module.exports = {
     entry: "./app/App.js",
     output: {
@@ -24,5 +32,9 @@ module.exports = {
                 loaders: ['style', 'css', 'sass']
             }
         ]
+    },
+    externals: {
+        'Config' : JSON.stringify(configuration)      
     }
 };
+

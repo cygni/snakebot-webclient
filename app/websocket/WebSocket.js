@@ -2,8 +2,9 @@ import React from "react";
 import SockJS from "sockjs-client";
 import TournamentAction from "../tournament/action/tournament-actions";
 import AppAction from "../training/action/training-actions";
+import Config from "Config";
 
-let socket = new SockJS('http://localhost:8080/events');
+let socket = new SockJS(Config.server);
 
 const listen = () => {
     socket.onopen = function () {
