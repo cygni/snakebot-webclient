@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --port 8090 --host=0.0.0.0",
+    "start": "./node_modules/.bin/webpack-dev-server --port 8090 --host=0.0.0.0",
+    "build": "./node_modules/.bin/webpack -p",
     "local": "npm start -- --server http://localhost:8080/events"
   },
   "author": "",
