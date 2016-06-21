@@ -30,8 +30,6 @@ class GameBoard extends React.Component {
 
     componentDidMount() {
         GameStore.initWS();
-        const context = this.refs.canvas.getContext('2d');
-        this.setState({context: context});
     }
 
     componentWillReceiveProps(nextProps) {
@@ -61,7 +59,7 @@ class GameBoard extends React.Component {
                             <div className={mapIsEmpty ? 'hidden' : ''} id="map"
                                  style={{marginTop: 20}}>
                                 <canvas ref="canvas" width={size.width} height={size.height}/>
-                                {this.renderGameBoard(map, mapIsEmpty, size, tileSize)}
+                                {this.renderGameBoard(map, mapIsEmpty, tileSize)}
                             </div>
                         </Row>
                     </Grid>
@@ -70,28 +68,23 @@ class GameBoard extends React.Component {
         )
     };
 
-    renderGameBoard(map, mapIsEmpty, size, tileSize) {
-        var ctx = this.state.context;
-
-        if (mapIsEmpty || ctx === null || ctx === undefined) {
+    renderGameBoard(map, mapIsEmpty, tileSize) {
+        if (mapIsEmpty || this.refs.canvas.getContext('2d') === undefined) {
             return;
         }
 
-        this.width = size.width;
-        this.height = size.height;
+        let ctx = this.refs.canvas.getContext('2d');
         ctx.strokeStyle = "#D2D7D3";
         let activeGame = getActiveGame();
 
         for (let y = 0; y < map.height; y++) {
-            for (var x = 0; x < map.width; x++) {
+            for (let x = 0; x < map.width; x++) {
                 let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game);
                 let yPos = y * tile.width;
                 let xPos = x * tile.width;
-                if (tile.tileType !== "empty") {
-                    ctx.fillStyle = tile.color;
-                    ctx.fillRect(xPos, yPos, tile.width, tile.height);
-                    ctx.fillStyle = "#FFFFFF";
-                }
+                ctx.fillStyle = tile.color;
+                ctx.fillRect(xPos, yPos, tile.width, tile.height);
+                ctx.fillStyle = "#FFFFFF";
                 ctx.strokeRect(xPos, yPos, tile.width, tile.height);
             }
         }
