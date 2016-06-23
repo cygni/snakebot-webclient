@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "react": "^15.0.1",
+    "react": "^15.1.0",
     "events": "^1.1.0",
     "flux": "^2.1.1",
     "history": "^2.0.1",
@@ -25,7 +25,10 @@
     "react-router": "^2.1.1",
     "sockjs-client": "^1.0.3",
     "webpack": "^1.12.15",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "jwt-decode": "^2.0.1",
+    "reqwest": "^2.0.5",
+    "when": "^3.7.7"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",

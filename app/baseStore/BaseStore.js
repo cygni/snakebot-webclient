@@ -6,6 +6,9 @@ import GameRenderingFunction from "../util/GameRenderingFunctions";
 import Colors from "../util/Colors";
 import {hashHistory} from "react-router";
 
+let _user = null;
+let _token = null;
+
 const CHANGE_EVENT = 'change';
 let _activeGame = undefined;
 let finalPlacement = {
@@ -50,22 +53,22 @@ const _setActiveGame = (id) => {
 
 const _createTournament = (name) => {
     Socket.init();
-    Socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"token-here"}');
+    Socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"' + _token + '"}');
 };
 
 const _createTournamentTable = () => {
-    Socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"token-here", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"' + _token + '", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
 };
 
 const _startTournament = () => {
     localStorage.removeItem("gameplan");
     localStorage.removeItem("finalPlacement");
-    Socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"token-here", "tournamentId":"' + tournament.tournamentId + '"}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"' + _token + '", "tournamentId":"' + tournament.tournamentId + '"}');
     hashHistory.push('tournament/tournamentbracket');
 };
 
 const _getActiveTournament = () => {
-    Socket.send('{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"token-here"}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"' + _token + '"}');
 };
 
 const _tournamentCreated = (jsonData) => {
@@ -144,9 +147,40 @@ const _tournamentEnded = (event) => {
 };
 
 const _killTournament = () => {
-    Socket.send('{"tournamentId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"token-here"}');
+    Socket.send('{"tournamentId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"' + _token + '"}');
     localStorage.removeItem("_activeGame")
 };
+
+const _loginUser = (action) => {
+    var savedToken = localStorage.getItem('token');
+    var savedUser = localStorage.getItem('savedUser');
+    _token = action.token;
+    _user = action.user;
+
+    if (savedToken !== _token) {
+        hashHistory.push('/tournament');
+        localStorage.setItem('token', _token);
+        localStorage.setItem('savedUser', _user);
+    }
+};
+
+const _logOutUser = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('savedUser');
+    _user = null;
+    _token = null;
+    hashHistory.push('/');
+};
+
+function _isLoggedIn() {
+    var savedToken = localStorage.getItem('token');
+    var savedUser = localStorage.getItem('savedUser');
+    if (savedToken !== null) {
+        _token = savedToken;
+        _user = savedUser;
+    }
+    return _user !== null && _user !== undefined && _token !== null && _token !== undefined;
+}
 
 
 const BaseStore = Object.assign(EventEmitter.prototype, {
@@ -248,6 +282,27 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         return gameEvents;
     },
 
+    getUser() {
+        return _user;
+    },
+
+    getToken() {
+        return _token;
+    },
+
+    isLoggedIn() {
+        return _isLoggedIn();
+    },
+
+    requireAuth(nextState, replace) {
+        console.log("Auth: " + _isLoggedIn());
+        if (!_isLoggedIn()) {
+            replace({
+                pathname: '/auth',
+                state: {nextPathname: nextState.location.pathname}
+            })
+        }
+    },
 
     dispatherIndex: register(action => {
         switch (action.actionType) {
@@ -319,6 +374,12 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
                 break;
             case Constants.MAP_UPDATE_EVENT:
                 _addMapUpdate(action.event);
+                break;
+            case Constants.LOGIN_USER:
+                _loginUser(action);
+                break;
+            case Constants.LOGOUT_USER:
+                _logOutUser();
                 break;
         }
         BaseStore.emitChange();
