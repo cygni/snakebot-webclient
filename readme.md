@@ -11,9 +11,9 @@ After cloning the repository, cd into the root path and restore all dependencies
 > npm install
 ```
 
-The application can be configured to connect to a specified snake game server using
+The application can be configured to connect to a specified snake game server on http://<host>:<port>/events using the following command:
 ```
-> npm start -- --server <url>
+> npm start -- --server-host <host> --server-port <port>
 ```
 
 To run the application against a local game server listening on port 8080, you can use:
@@ -24,7 +24,7 @@ To run the application against a local game server listening on port 8080, you c
 ## Build application
 To build application for production, run
 ```
-> npm run build -- --server <url>
+> npm run build -- --server-host <host>
 ```
 
 The minified output will be copied to dist/bundle.js.

@@ -1,15 +1,22 @@
 var argv = require('minimist')(process.argv.slice(2));
-
-var configuration = {
-   server: argv.server != undefined ? argv.server : "http://snake.cygni.se/events"
+var getServerUrl = function () {
+    var host = argv['server-host'] != undefined ? argv['server-host'] : "snake.cygni.se";
+    if (argv['server-port'] != undefined) {
+        return "http://" + host + ":" + argv['server-port'] + "/events"
+    }
+    return "http://" + host + "/events";
 }
 
-console.log("Using snake server host: " + configuration.server)
+var configuration = {
+    server: getServerUrl()
+}
+
+console.log("Using snake server host: " + configuration.server);
 
 module.exports = {
     entry: "./app/App.js",
     output: {
-        path:'./dist',
+        path: './dist',
         filename: "bundle.js",
         publicPath: '/'
     },
@@ -34,7 +41,7 @@ module.exports = {
         ]
     },
     externals: {
-        'Config' : JSON.stringify(configuration)      
+        'Config': JSON.stringify(configuration)
     }
 };
 
