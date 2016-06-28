@@ -42,7 +42,7 @@ class GameBoard extends React.Component {
 
     render() {
         let tiles = [];
-        let map = this.state.mapEvents[this.props.game.currentFrame];
+        let map = this.props.game != undefined ? this.state.mapEvents[this.props.game.currentFrame] : undefined;
 
         let size = {width: 0, height: 0};
         let tileSize = 0;
