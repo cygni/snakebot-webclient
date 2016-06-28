@@ -85,5 +85,19 @@ export default {
         dispatch({
             actionType: Constants.GET_ACTIVE_TOURNAMENT
         })
+    },
+
+    loginUser (token, user) {
+        dispatch({
+            actionType: Constants.LOGIN_USER,
+            token: token,
+            user: user
+        });
+    },
+
+    logoutUser () {
+        dispatch({
+            actionType: Constants.LOGOUT_USER
+        });
     }
 }
