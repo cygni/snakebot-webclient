@@ -20,7 +20,8 @@ class CreateTournamentForm extends React.Component {
         );
     }
 
-    createTournament() {
+    createTournament(e) {
+        e.preventDefault();
         Action.createTournament(this.state.tempGameName);
     };
 
