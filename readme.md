@@ -1,4 +1,5 @@
 #Cygni SnakeBot WebClient
+[![Build Status](http://jenkins.snake.cygni.se/buildStatus/icon?job=snakebot-webclient)](http://jenkins.snake.cygni.se/job/snakebot-webclient/)
 This repository contains the source code for the SnakeBot web client. The application communicates with a snakebot game server using a websocket.
 
 ## System requirements
