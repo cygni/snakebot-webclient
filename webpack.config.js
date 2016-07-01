@@ -2,9 +2,9 @@ var argv = require('minimist')(process.argv.slice(2));
 var getServerUrl = function () {
     var host = argv['server-host'] != undefined ? argv['server-host'] : "snake.cygni.se";
     if (argv['server-port'] != undefined) {
-        return "http://" + host + ":" + argv['server-port'] + "/events"
+        return "http://" + host + ":" + argv['server-port']
     }
-    return "http://" + host + "/events";
+    return "http://" + host;
 }
 
 var configuration = {
