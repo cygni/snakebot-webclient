@@ -6,9 +6,6 @@ import GameRenderingFunction from "../util/GameRenderingFunctions";
 import Colors from "../util/Colors";
 import {hashHistory} from "react-router";
 
-let _user = null;
-let _token = null;
-
 const CHANGE_EVENT = 'change';
 let _activeGame = undefined;
 let finalPlacement = {
@@ -53,22 +50,22 @@ const _setActiveGame = (id) => {
 
 const _createTournament = (name) => {
     Socket.init();
-    Socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"' + _token + '"}');
+    Socket.send('{"tournamentName":"' + name + '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"' + _getToken() + '"}');
 };
 
 const _createTournamentTable = () => {
-    Socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"' + _token + '", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"' + _getToken() + '", "gameSettings": ' + JSON.stringify(tournament.gameSettings) + '}');
 };
 
 const _startTournament = () => {
     localStorage.removeItem("gameplan");
     localStorage.removeItem("finalPlacement");
-    Socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"' + _token + '", "tournamentId":"' + tournament.tournamentId + '"}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"' + _getToken() + '", "tournamentId":"' + tournament.tournamentId + '"}');
     hashHistory.push('tournament/tournamentbracket');
 };
 
 const _getActiveTournament = () => {
-    Socket.send('{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"' + _token + '"}');
+    Socket.send('{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"' + _getToken() + '"}');
 };
 
 const _tournamentCreated = (jsonData) => {
@@ -147,39 +144,44 @@ const _tournamentEnded = (event) => {
 };
 
 const _killTournament = () => {
-    Socket.send('{"tournamentId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"' + _token + '"}');
+    Socket.send('{"tournamentId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"' + _getToken() + '"}');
     localStorage.removeItem("_activeGame")
 };
 
 const _loginUser = (action) => {
-    var savedToken = localStorage.getItem('token');
-    var savedUser = localStorage.getItem('savedUser');
-    _token = action.token;
-    _user = action.user;
-
-    if (savedToken !== _token) {
+    if (_getToken() !== action.token) {
+        localStorage.setItem('token', action.token);
+        localStorage.setItem('savedUser', action.user);
         hashHistory.push('/tournament');
-        localStorage.setItem('token', _token);
-        localStorage.setItem('savedUser', _user);
     }
+};
+
+const _getToken = () => {
+    return localStorage.getItem('token');
+};
+
+const _getUser = () => {
+    return localStorage.getItem('savedUser');
 };
 
 const _logOutUser = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('savedUser');
-    _user = null;
-    _token = null;
+    _clearCredentials();
     hashHistory.push('/');
 };
 
+const _invalidToken = () => {
+    _clearCredentials();
+    hashHistory.push('/auth');
+};
+
+const _clearCredentials = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('savedUser');
+};
+
 function _isLoggedIn() {
-    var savedToken = localStorage.getItem('token');
-    var savedUser = localStorage.getItem('savedUser');
-    if (savedToken !== null) {
-        _token = savedToken;
-        _user = savedUser;
-    }
-    return _user !== null && _user !== undefined && _token !== null && _token !== undefined;
+    let _token = _getToken();
+    return _token !== null && _token !== undefined;
 }
 
 
@@ -283,11 +285,11 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     getUser() {
-        return _user;
+        return _getUser();
     },
 
     getToken() {
-        return _token;
+        return _getToken();
     },
 
     isLoggedIn() {
@@ -380,6 +382,9 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
                 break;
             case Constants.LOGOUT_USER:
                 _logOutUser();
+                break;
+            case Constants.INVALID_TOKEN:
+                _invalidToken();
                 break;
         }
         BaseStore.emitChange();

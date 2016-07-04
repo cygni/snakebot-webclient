@@ -99,5 +99,11 @@ export default {
         dispatch({
             actionType: Constants.LOGOUT_USER
         });
+    },
+
+    invalidToken () {
+        dispatch({
+            actionType: Constants.INVALID_TOKEN
+        });
     }
 }

@@ -31,6 +31,8 @@ const listen = () => {
         }
         else if (jsonData.type == "se.cygni.snake.api.event.TournamentEndedEvent") {
             TournamentAction.tournamentEndedEvent(jsonData)
+        } else if (jsonData.type == "se.cygni.snake.eventapi.exception.Unauthorized") {
+            TournamentAction.invalidToken();
         }
         else {
             console.log("Unrecognized datatype: " + jsonData.type);
