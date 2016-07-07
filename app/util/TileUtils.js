@@ -1,16 +1,18 @@
-function isConnectingPart(me, tiles, x, y) {
-    let tile = tiles[y][x];
-    return tile && tile.playerId === me.playerId && Math.abs(tile.order - me.order) <= 1;
+import React from "react";
+
+function isConnectingPart(me, map, x, y) {
+    let tile = _getTileAt(x, y, map);
+    return tile.playerId === me.playerId && Math.abs(tile.order - me.order) <= 1;
 }
 
-function getTileType(me, x, y, tiles) {
+function getTileType(me, x, y, map) {
     if (!me.playerId)
         return "none";
 
-    var hasTop = isConnectingPart(me, tiles, x, y - 1) ? 0x1000 : 0;
-    var hasRight = isConnectingPart(me, tiles, x + 1, y) ? 0x0100 : 0;
-    var hasBot = isConnectingPart(me, tiles, x, y + 1) ? 0x0010 : 0;
-    var hasLeft = isConnectingPart(me, tiles, x - 1, y) ? 0x0001 : 0;
+    var hasTop = isConnectingPart(me, map, x, y - 1) ? 0x1000 : 0;
+    var hasRight = isConnectingPart(me, map, x + 1, y) ? 0x0100 : 0;
+    var hasBot = isConnectingPart(me, map, x, y + 1) ? 0x0010 : 0;
+    var hasLeft = isConnectingPart(me, map, x - 1, y) ? 0x0001 : 0;
 
     var config = hasTop | hasBot | hasLeft | hasRight;
 
@@ -42,101 +44,120 @@ function getTileType(me, x, y, tiles) {
     return "none"
 }
 
-function createTile(contentType, pos, tileSize, snake) {
-	let key = "" + pos.x + "-" + pos.y;
-    let tile = {
-		"key": key,
-		"height": tileSize,
-		"width": tileSize,
-		"type": contentType
-	};
 
-    switch (contentType) {
-        case "empty": {
-            tile.color = "";
-            break;
+function _getTileAt(x, y, map) {
+    let tile = {content: "empty"};
+
+    map.foodPositions.forEach(foodPosition => {
+        if (foodPosition.x == x && foodPosition.y == y) {
+            tile = {content: "food"};
         }
-        case "snakebody":
-        case "snakehead":
-        {
-            tile.color = snake && snake.alive ? snake.color : "grey";
-            break;
+    });
+
+    map.obstaclePositions.forEach(obstaclePosition => {
+        if (obstaclePosition.x == x && obstaclePosition.y == y) {
+            tile = {content: "obstacle"};
         }
-        case "obstacle": {
-            tile.color = "black";
-            break;
-        }
-        case "food":  {
-            tile.color = "green";
-            break;
-        }
-    }
+    });
+
+    map.snakeInfos.forEach(snakeInfo => {
+        var head = true;
+
+        snakeInfo.positions.forEach((snakePosition, index) => {
+            let type = "snakebody";
+
+            if (head) {
+                type = "snakehead";
+                head = false;
+            }
+
+            if (snakePosition.x == x && snakePosition.y == y)
+                tile = {content: type, playerId: snakeInfo.id, order: index};
+        })
+    });
+
     return tile;
 }
 
+function buildTileObject(tile, key, tileSize, _activeGame) {
+    let item = {};
 
-function setTilesContent(tiles, map, tileSize, activeGame) {
+    switch (tile.content) {
+        case "empty":
+        {
+            item = {
+                "key": key,
+                "height": tileSize,
+                "width": tileSize,
+                "color": "",
+                "type": "empty"
+            };
+            break;
+        }
+        case "snakebody" :
+        {
+            let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
 
-    map.foodPositions.forEach(pos => {
-        tiles[pos.y][pos.x] = createTile("food", pos, tileSize);
-    });
+            item = {
+                "key": key,
+                "height": tileSize,
+                "width": tileSize,
+                "color": snake && snake.alive ? snake.color : "grey",
+                "type": "snakebody",
+                "tileType": tile.tileType
+            };
+            break;
+        }
+        case "snakehead" :
+        {
+            let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
+            item = {
+                "key": key,
+                "height": tileSize,
+                "width": tileSize,
+                "color": snake && snake.alive ? snake.color : "grey",
+                "type": "snakehead"
+            };
+            break;
+        }
 
-    map.obstaclePositions.forEach(pos => {
-        tiles[pos.y][pos.x] = createTile("obstacle", pos, tileSize);
-    });
+        case "obstacle" :
+        {
+            item = {
+                "key": key,
+                "height": tileSize,
+                "width": tileSize,
+                "color": "black",
+                "type": "obstacle"
+            };
+            break;
+        }
 
-    map.snakeInfos.forEach(snakeInfo => {
-        snakeInfo.positions.forEach((pos, index) => {
-            let type = index > 0 ? "snakebody" : "snakehead";
-
-			let snake = activeGame.players.find(snake => snake.id === snakeInfo.id);
-			let tile = createTile(type, pos, tileSize, snake);
-			tiles[pos.y][pos.x] = tile;
-
-            tile.playerId = snakeInfo.id;
-            tile.order = index;
-        })
-    });
-
-	// decorate with tileType (needs playerId and order)
-    map.snakeInfos.forEach(snakeInfo => {
-        snakeInfo.positions.forEach(pos => {
-			let tile = tiles[pos.y][pos.x];
-			if (tile.type === "snakebody") {
-				tile.tileType = getTileType(tile, pos.x, pos.y, tiles);
-			}
-        })
-    });
-    map.snakeInfos.forEach(snakeInfo => {
-        snakeInfo.positions.forEach(pos => {
-			let tile = tiles[pos.y][pos.x];
-			delete tile.playerId;
-			delete tile.order;
-        })
-    });
-
-	for (let y = 0; y < map.height; y++) {
-		for (let x = 0; x < map.width; x++) {
-			let tile = tiles[y][x];
-			if (tile === undefined) {
-				tiles[y][x] = createTile("empty", {x:x, y:y}, tileSize);
-			}
-		}
-	}
-
-}
-
-function gameBoardTiles(map, tileSize, activeGame) {
-    let tiles=[]; 
-	for (let y = 0; y < map.height; y++) {
-		tiles.push(new Array(map.width));
-	}
-	setTilesContent(tiles, map, tileSize, activeGame);
-	return tiles;
+        case "food" :
+        {
+            item = {
+                "key": key,
+                "height": tileSize,
+                "width": tileSize,
+                "color": "green",
+                "type": "food"
+            };
+            break;
+        }
+    }
+    return item;
 }
 
 export default {
-	gameBoardTiles,
+    getTileAt(x, y, map, tileSize, activeGame){
+        let key = "" + x + "-" + y;
+        let tile = _getTileAt(x, y, map);
+
+        if (tile.content == "snakebody")
+            tile.tileType = getTileType(tile, x, y, map);
+
+        return buildTileObject(tile, key, tileSize, activeGame);
+    },
     getTileCoordinate(absolutePos, mapWidth){
         let y = Math.floor(absolutePos / mapWidth);
         let x = absolutePos - y * mapWidth;

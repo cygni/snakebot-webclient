@@ -53,23 +53,22 @@ class GameBoard extends React.Component {
 
             let activeGame = getActiveGame();
 
-			let tileRows = TileUtils.gameBoardTiles(map, tileSize, activeGame.game);
-			tileRows.forEach(row => {
+            for (let y = 0; y < map.height; y++) {
                 let tileRow = [];
 
-				row.forEach(tile => {
-					tileRow.push(<Tile key={tile.key}
+                for (var x = 0; x < map.width; x++) {
+                    let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game);
+                    tileRow.push(<Tile key={tile.key}
                                        color={tile.color}
                                        height={tile.height}
                                        width={tile.width}
                                        type={tile.type}
                                        tileType={tile.tileType}
                         />
-                    );
-				});
-				tiles.push(tileRow);
-			});
-
+                    )
+                }
+                tiles.push(tileRow);
+            }
         }
 
         var immutTiles = Immutable.List(tiles);
