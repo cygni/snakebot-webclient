@@ -4,12 +4,9 @@ import Action from '../../tournament/action/tournament-actions';
 import Config from "Config";
 
 class AuthService {
-
     login(username, password) {
         return when(request({
-            url: (Config.server + '/login?login=$username&password=$password')
-                .replace("$username", username)
-                .replace("$password", password),
+        url: `${Config.server}/login?login=${username}&password=${password}`,
             method: 'GET',
             type: 'text/html',
             crossOrigin: true
@@ -23,4 +20,4 @@ class AuthService {
     }
 }
 
-export default new AuthService()
+export default AuthService;
