@@ -5,28 +5,32 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --port 8090 --host=0.0.0.0"
+    "start": "./node_modules/.bin/webpack-dev-server --port 8090 --host=0.0.0.0",
+    "build": "./node_modules/.bin/webpack -p",
+    "local": "npm start -- --server-host localhost --server-port 8080"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "react": "^15.1.0",
     "events": "^1.1.0",
     "flux": "^2.1.1",
     "history": "^2.0.1",
     "i": "^0.3.4",
     "immutable": "^3.7.6",
     "lodash": "^3.10.1",
-    "react": "^15.0.1",
-    "react-addons-linked-state-mixin": "^15.0.1",
     "react-bootstrap": "^0.28.5",
     "react-bootstrap-native-slider": "^1.1.6",
-    "react-bootstrap-validation": "^0.1.11",
+    "react-countdown-clock": "^1.0.5",
     "react-dom": "^15.0.1",
     "react-input-range": "^0.6.2",
     "react-router": "^2.1.1",
     "sockjs-client": "^1.0.3",
     "webpack": "^1.12.15",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "jwt-decode": "^2.0.1",
+    "reqwest": "^2.0.5",
+    "when": "^3.7.7"
   },
   "devDependencies": {
     "babel-core": "^6.7.6",
@@ -37,6 +41,7 @@
     "node-sass": "^3.4.2",
     "sass-loader": "^3.2.0",
     "style-loader": "^0.13.1",
-    "webpack": "^1.12.10"
+    "webpack": "^1.12.10",
+    "minimist": "1.2.0" 
   }
 }

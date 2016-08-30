@@ -1,10 +1,10 @@
-import React from 'react'
-import GameStore from '../../stores/GameStore'
+import React from "react";
+import GameStore from "../../../baseStore/BaseStore";
 
-export default (InnerComponent, stateCallback ) => class extends React.Component {
+export default (InnerComponent, stateCallback) => class extends React.Component {
     constructor(props) {
         super(props);
-        this.state = stateCallback ();
+        this.state = stateCallback();
         this._onChange = this._onChange.bind(this);
     }
 
@@ -17,8 +17,9 @@ export default (InnerComponent, stateCallback ) => class extends React.Component
     }
 
     _onChange() {
-        this.setState(stateCallback (this.props))
+        this.setState(stateCallback(this.props))
     }
+
     render() {
         return <InnerComponent {...this.state} {...this.props} />
     }
