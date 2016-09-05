@@ -17,17 +17,10 @@ var boardColors = [
 ];
 
 var snakeColors = [
-    '#F43FA5',
-    '#A04F11',
-    '#F9E24C',
-    '#3044B5',
-    '#006064',
-    '#004D40',
-    '#33691E',
-    '#827717',
-    '#FF6F00',
-    '#E65100',
-    '#BF360C'
+    '#3cc321',
+    '#ff8f35',
+    '#0ebde7',
+    '#ffdf4a'
 ];
 
 export default {
