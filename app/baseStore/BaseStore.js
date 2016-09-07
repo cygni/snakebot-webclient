@@ -45,7 +45,6 @@ const _addGames = (gamesList) => {
 
 const _setActiveGame = (id) => {
     _activeGame = games.find(game => game.id === id);
-    localStorage.setItem("activeGame", JSON.stringify(_activeGame))
 };
 
 const _createTournament = (name) => {
@@ -129,10 +128,12 @@ const _changeFrame = () => {
 
 const _addMapUpdate = (event) => {
     if (event.gameId == _activeGame.id) {
+        event.map.rendered = false;
         _activeGame.mapEvents.push(event.map);
     }
     else {
         let updatedGame = games.find(game => game.id === event.gameId);
+        event.map.rendered = false;
         updatedGame.mapEvents.push(event.map);
     }
 };
@@ -199,10 +200,6 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     getActiveGame() {
-        if (!_activeGame && localStorage.getItem("activeGame")) {
-            let tmp = localStorage.getItem("activeGame");
-            _activeGame = JSON.parse(tmp);
-        }
         return _activeGame;
     },
 
@@ -297,7 +294,6 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     requireAuth(nextState, replace) {
-        console.log("Auth: " + _isLoggedIn());
         if (!_isLoggedIn()) {
             replace({
                 pathname: '/auth',

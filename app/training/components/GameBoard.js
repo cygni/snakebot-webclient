@@ -16,16 +16,15 @@ class GameBoard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            shouldRender: false,
             mapEvents: [],
             snakes: [],
             currentFrame: 0
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return this.state.mapEvents != undefined && this.state.mapEvents.length > 0 && this.state.currentFrame < this.state.mapEvents.length;
+    // }
 
     componentDidMount() {
         Store.initWS();
