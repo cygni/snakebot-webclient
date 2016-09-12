@@ -98,7 +98,7 @@ export default {
     },
 
     changeFrame (activeGame) {
-        console.log(activeGame);
+        //console.log(activeGame);
         if (activeGame.mapEvents.length > 0) {
 
             activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
