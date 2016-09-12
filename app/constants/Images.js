@@ -14,7 +14,7 @@ const starImg = new Image();
 starImg.onload = function () {
     console.log("Loaded starImg");
 };
-starImg.src = "img/star/star.png";
+starImg.src = "img/star/star.svg";
 
 const snakeHeadBlueImg = new Image();
 snakeHeadBlueImg.onload = function () {

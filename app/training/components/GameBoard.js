@@ -1,13 +1,11 @@
 import React from "react";
-import Tile from "../../common/gamecomponents/Tile";
 import {Grid, Row, Col} from "react-bootstrap";
-import Immutable from "immutable";
 import Store from "../../baseStore/BaseStore";
 import StoreWatch from "./watch/StoreWatch";
 import TileUtils from "../../util/TileUtils";
 import BoardUtils from "../../util/BoardUtils";
 import Images from "../../constants/Images";
-
+import TileTypes from "../../constants/TileTypes";
 
 let stage;
 
@@ -88,9 +86,9 @@ class GameBoard extends React.Component {
                 let tile = TileUtils.getTileAt(x, y, map, tileSize, activeGame.game);
                 let yPos = y * tile.width;
                 let xPos = x * tile.width;
-                if (tile.type !== undefined && tile.type !== "empty") {
+                if (tile.type !== undefined && tile.type !== TileTypes.EMPTY) {
                     switch (tile.type) {
-                        case "snakehead":
+                        case TileTypes.SNAKE_HEAD:
                             //TODO render head correct rotate etc!
                             let bitmap = new createjs.Bitmap(Images.SNAKE_HEAD_BLUE);
                             bitmap.scaleX = tile.width / bitmap.image.width;
@@ -99,25 +97,24 @@ class GameBoard extends React.Component {
                             bitmap.y = yPos;
                             stage.addChild(bitmap);
                             break;
-                        case "food":
+                        case TileTypes.FOOD:
                             //TODO change to star bitmap
-                            /*                            let star = new createjs.Bitmap(Images.STAR);
-                             star.scaleX = tile.width / star.image.width;
-                             star.scaleY = tile.height / star.image.height;
-                             star.x = xPos;
-                             star.y = yPos;
-                             stage.addChild(star);*/
+/*                            let star = new createjs.Bitmap(Images.STAR);
+                            star.scaleX = tile.width / star.image.width;
+                            star.scaleY = tile.height / star.image.height;
+                            star.x = xPos;
+                            star.y = yPos;
+                            stage.addChild(star);*/
                             let blackHole = new lib.blackhole();
                             blackHole.x = xPos;
                             blackHole.y = yPos;
                             stage.addChild(blackHole);
                             break;
-                        case "obstacle":
-                            //TODO change to blackhole!
-                            /*                            let blackHole = new lib.blackhole();
-                             blackHole.x = xPos;
-                             blackHole.y = yPos;
-                             stage.addChild(blackHole);*/
+                        case TileTypes.OBSTACLE:
+/*                            let blackHole = new lib.blackhole();
+                            blackHole.x = xPos;
+                            blackHole.y = yPos;
+                            stage.addChild(blackHole);*/
                             break;
                         default:
                             let rect = new createjs.Shape();

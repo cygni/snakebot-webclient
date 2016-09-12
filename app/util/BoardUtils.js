@@ -8,16 +8,16 @@ export default {
 
     calculateSize (map) {
         if (map.width === map.height) {
-            return {width: 800, height: 800};
+            return {width: 1000, height: 1000};
         }
         else {
             if (map.width > map.height) {
                 let ratio = map.width / map.height;
-                return {width: 800, height: 800 / ratio};
+                return {width: 1000, height: 1000 / ratio};
             }
             else {
                 let ratio = map.height / map.width;
-                return {width: 800 / ratio, height: 800};
+                return {width: 1000 / ratio, height: 1000};
             }
         }
     },

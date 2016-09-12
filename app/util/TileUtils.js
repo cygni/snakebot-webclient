@@ -1,4 +1,5 @@
 import React from "react";
+import TileTypes from "../constants/TileTypes";
 
 function isConnectingPart(me, map, x, y) {
     let tile = _getTileAt(x, y, map);
@@ -46,17 +47,17 @@ function getTileType(me, x, y, map) {
 
 
 function _getTileAt(x, y, map) {
-    let tile = {content: "empty"};
+    let tile = {content: TileTypes.EMPTY};
 
     map.foodPositions.forEach(foodPosition => {
         if (foodPosition.x == x && foodPosition.y == y) {
-            tile = {content: "food"};
+            tile = {content: TileTypes.FOOD};
         }
     });
 
     map.obstaclePositions.forEach(obstaclePosition => {
         if (obstaclePosition.x == x && obstaclePosition.y == y) {
-            tile = {content: "obstacle"};
+            tile = {content: TileTypes.OBSTACLE};
         }
     });
 
@@ -65,10 +66,10 @@ function _getTileAt(x, y, map) {
         var head = true;
 
         snakeInfo.positions.forEach((snakePosition, index) => {
-            let type = "snakebody";
+            let type = TileTypes.SNAKE_BODY;
 
             if (head) {
-                type = "snakehead";
+                type = TileTypes.SNAKE_HEAD;
                 head = false;
             }
 
@@ -84,18 +85,18 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
     let item = {};
 
     switch (tile.content) {
-        case "empty":
+        case TileTypes.EMPTY:
         {
             item = {
                 "key": key,
                 "height": tileSize,
                 "width": tileSize,
                 "color": "",
-                "type": "empty"
+                "type": TileTypes.EMPTY
             };
             break;
         }
-        case "snakebody" :
+        case TileTypes.SNAKE_BODY :
         {
             let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
 
@@ -104,12 +105,12 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
                 "height": tileSize,
                 "width": tileSize,
                 "color": snake && snake.alive ? snake.color : "grey",
-                "type": "snakebody",
+                "type": TileTypes.SNAKE_BODY,
                 "tileType": tile.tileType
             };
             break;
         }
-        case "snakehead" :
+        case TileTypes.SNAKE_HEAD :
         {
             let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
             item = {
@@ -117,31 +118,31 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
                 "height": tileSize,
                 "width": tileSize,
                 "color": snake && snake.alive ? snake.color : "grey",
-                "type": "snakehead"
+                "type": TileTypes.SNAKE_HEAD
             };
             break;
         }
 
-        case "obstacle" :
+        case TileTypes.OBSTACLE :
         {
             item = {
                 "key": key,
                 "height": tileSize,
                 "width": tileSize,
                 "color": "black",
-                "type": "obstacle"
+                "type": TileTypes.OBSTACLE
             };
             break;
         }
 
-        case "food" :
+        case TileTypes.FOOD :
         {
             item = {
                 "key": key,
                 "height": tileSize,
                 "width": tileSize,
                 "color": "green",
-                "type": "food"
+                "type": TileTypes.FOOD
             };
             break;
         }
@@ -154,7 +155,7 @@ export default {
         let key = "" + x + "-" + y;
         let tile = _getTileAt(x, y, map);
 
-        if (tile.content == "snakebody")
+        if (tile.content == TileTypes.SNAKE_BODY)
             tile.tileType = getTileType(tile, x, y, map);
 
         return buildTileObject(tile, key, tileSize, activeGame);
