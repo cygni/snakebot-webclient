@@ -60,6 +60,7 @@ function _getTileAt(x, y, map) {
         }
     });
 
+
     map.snakeInfos.forEach(snakeInfo => {
         var head = true;
 

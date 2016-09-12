@@ -68,8 +68,6 @@ class GameBoard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            context: null,
-            shouldRender: false,
             mapEvents: [],
             snakes: [],
             currentFrame: 0

@@ -14,9 +14,11 @@ export default {
                 "length": snake.positions.length,
                 "color": Colors.getSnakeColor()[oldList.length],
                 "alive": snake.positions.length <= 0,
-                "points": snake.points
+                "points": snake.points,
+                "positions": snake.positions
             });
-        })
+        });
+        return oldList
     },
 
     updateSnakes (playerList, frame) {
@@ -33,13 +35,22 @@ export default {
                 player.alive = snake.positions.length > 0;
             });
         }
+        return frame
     },
 
     setCurrentFrame(activeGame, frame) {
-        activeGame.currentFrame = frame;
-        this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
-        this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
-        this.parseSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame].snakeInfos);
+        if(activeGame.currentFrame < frame) {
+            activeGame.currentFrame = frame;
+            let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
+            if(!currentFrame.rendered) {
+                currentFrame = this.updateGame(currentFrame);
+                currentFrame = this.updateSnakes(activeGame.players, currentFrame);
+                this.parseSnakes(activeGame.players, currentFrame.snakeInfos);
+            }
+        }
+        else {
+            activeGame.currentFrame = frame;
+        }
     },
 
     addGames (games) {
@@ -70,6 +81,7 @@ export default {
 
     updateGame (map) {
         if (map) {
+            map.rendered = true;
             map.foodPositions = map.foodPositions.map(function (pos) {
                 return TileUtils.getTileCoordinate(pos, map.width);
             });
@@ -82,14 +94,20 @@ export default {
                 });
             });
         }
+        return map
     },
 
     changeFrame (activeGame) {
+        console.log(activeGame);
         if (activeGame.mapEvents.length > 0) {
+
             activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
-            this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
-            this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
-            this.parseSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame].snakeInfos);
+            let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
+            if(!currentFrame.rendered) {
+                this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
+                this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
+                this.parseSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame].snakeInfos);
+            }
         }
     }
 }

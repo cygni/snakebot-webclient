@@ -5,8 +5,8 @@ lib.webFontTxtFilters = {};
 
 // library properties:
 lib.properties = {
-	width: 40,
-	height: 40,
+	width: 20,
+	height: 20,
 	fps: 24,
 	color: "#FFFFFF",
 	opacity: 1.00,
@@ -44,7 +44,7 @@ lib.webfontAvailable = function(family) {
 	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(59));
 
 }).prototype = p = new cjs.MovieClip();
-p.nominalBounds = new cjs.Rectangle(-20,-19,40.1,38.1);
+p.nominalBounds = new cjs.Rectangle(-20,-19,20,20);
 
 
 // stage content:
@@ -58,7 +58,7 @@ p.nominalBounds = new cjs.Rectangle(-20,-19,40.1,38.1);
 	this.timeline.addTween(cjs.Tween.get(this.instance).wait(1));
 
 }).prototype = p = new cjs.MovieClip();
-p.nominalBounds = new cjs.Rectangle(20.1,21,40,38.1);
+p.nominalBounds = new cjs.Rectangle(20.1,21,20,20);
 
 })(lib = lib||{}, images = images||{}, createjs = createjs||{}, ss = ss||{});
 var lib, images, createjs, ss;
