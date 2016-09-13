@@ -1,4 +1,5 @@
 import React from "react";
+import TileTypes from "../../constants/TileTypes";
 
 var borders = new Map([["horizontal", "none solid none solid"],
     ["vertical", "solid none solid none"],
@@ -80,19 +81,19 @@ class Tile extends React.Component {
         {
             (() => {
                 switch (this.props.type) {
-                    case "empty":
+                    case TileTypes.EMPTY:
                         tile = styles.empty;
                         break;
-                    case "food":
+                    case TileTypes.FOOD:
                         tile = styles.food;
                         break;
-                    case "obstacle":
+                    case TileTypes.OBSTACLE:
                         tile = styles.obstacle;
                         break;
-                    case "snakebody":
+                    case TileTypes.SNAKE_BODY:
                         tile = styles.snakebody;
                         break;
-                    case "snakehead":
+                    case TileTypes.SNAKE_HEAD:
                         tile = styles.snakehead;
                         break;
                 }
