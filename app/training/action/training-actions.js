@@ -25,9 +25,9 @@ export default {
         })
     },
 
-    activeGame (id) {
+    activeGame (gameId) {
         dispatch({
-            actionType: Constants.SET_ACTIVE_TRAINING_GAME, id
+            actionType: Constants.SET_ACTIVE_TRAINING_GAME, gameId
         })
     },
 

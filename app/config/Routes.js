@@ -22,7 +22,7 @@ export default () => {
             <Route path="/" component={PageTemplate}>
                 <IndexRoute component={HomePage}/>
             </Route>
-            <Route path="/training" component={GameTemplate}>
+            <Route path="/viewgame/:trainingGameId" component={GameTemplate} >
                 <IndexRoute component={Gameboard}/>
             </Route>
             <Route path="/auth" component={PageTemplate}>

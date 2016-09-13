@@ -4,6 +4,8 @@ import Store from "../../baseStore/BaseStore";
 import StoreWatch from "./watch/StoreWatch";
 import BoardUtils from "../../util/BoardUtils";
 import TileUtils from "../../util/TileUtils";
+import TrainingAction from "../../training/action/training-actions"
+
 
 let stage;
 
@@ -32,7 +34,9 @@ class GameBoard extends React.Component {
         createjs.Ticker.setFPS(lib.properties.fps);
         createjs.Ticker.addEventListener("tick", stage);
         Store.initWS();
-    };
+        Store.initWS(this.props.params.trainingGameId);
+        TrainingAction.activeGame(this.props.params.trainingGameId);
+    }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.game) {
