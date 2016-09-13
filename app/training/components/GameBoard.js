@@ -98,17 +98,12 @@ class GameBoard extends React.Component {
                             stage.addChild(bitmap);
                             break;
                         case TileTypes.FOOD:
-                            //TODO change to star bitmap
-/*                            let star = new createjs.Bitmap(Images.STAR);
+                            let star = new createjs.Bitmap(Images.STAR);
                             star.scaleX = tile.width / star.image.width;
                             star.scaleY = tile.height / star.image.height;
                             star.x = xPos;
                             star.y = yPos;
-                            stage.addChild(star);*/
-                            let blackHole = new lib.blackhole();
-                            blackHole.x = xPos;
-                            blackHole.y = yPos;
-                            stage.addChild(blackHole);
+                            stage.addChild(star);
                             break;
                         case TileTypes.OBSTACLE:
 /*                            let blackHole = new lib.blackhole();
