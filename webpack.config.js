@@ -7,10 +7,23 @@ var getServerUrl = function () {
     return "http://" + host;
 }
 
-var configuration = {
-    server: getServerUrl()
+var getVersionNumber = function () {
+    var versionNumber = require('./package.json').version;
+    var buildNumber = process.env.BUILD_NUMBER;
+    if(buildNumber != undefined) {
+        return versionNumber + "+build" + buildNumber;
+    } else {
+        return versionNumber + "+local";
+    }
 }
 
+var configuration = {
+    server: getServerUrl(),
+    version: getVersionNumber(),
+    buildDate: new Date(),
+}
+
+console.log("Building version: " + configuration.version);
 console.log("Using snake server host: " + configuration.server);
 
 module.exports = {
