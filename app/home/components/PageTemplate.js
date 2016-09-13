@@ -2,6 +2,7 @@ import React from "react";
 import {Grid, Row, Col} from "react-bootstrap";
 import Header from "./header/PageHeader";
 import Store from '../../baseStore/BaseStore';
+import Config from "Config";
 
 export default (props) => {
     return (
@@ -14,7 +15,10 @@ export default (props) => {
                         { props.children }
                     </Col>
                 </Row>
-            </Grid>
+                <Row>
+                    <p>Cygni snakebot-webclient <b>v{Config.version}</b> from {Config.buildDate}</p>
+                </Row>
+            </Grid>           
         </div>
     )
 };
