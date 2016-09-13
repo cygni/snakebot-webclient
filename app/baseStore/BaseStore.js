@@ -5,6 +5,8 @@ import Constants from "../constants/Constants";
 import GameRenderingFunction from "../util/GameRenderingFunctions";
 import Colors from "../util/Colors";
 import {hashHistory} from "react-router";
+import Rest from "rest"
+import Config from "Config";
 
 const CHANGE_EVENT = 'change';
 let _activeGame = undefined;
@@ -42,7 +44,12 @@ const _addGames = (gamesList) => {
     if(!_activeGame && activeGameId) {
         _activeGame = games.find(game => game.id === activeGameId);
         if(!_activeGame) {
-            
+            Rest(Config.server + "/history/" + activeGameId).then(function(response) {
+                let test = JSON.parse(response.entity);
+                let game = test.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
+                _activeGame = GameRenderingFunction.addOldGame(game);
+                BaseStore.emitChange()
+            });
         }
     }
 };
