@@ -25,6 +25,9 @@ export default () => {
             <Route path="/viewgame/:trainingGameId" component={GameTemplate} >
                 <IndexRoute component={Gameboard}/>
             </Route>
+            <Route path="/viewgame" component={GameTemplate} >
+                <IndexRoute component={Gameboard}/>
+            </Route>
             <Route path="/auth" component={PageTemplate}>
                 <IndexRoute component={AuthPage}/>
             </Route>
