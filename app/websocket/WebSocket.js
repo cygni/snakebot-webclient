@@ -7,6 +7,9 @@ import Config from "Config";
 let socket = new SockJS(Config.server + "/events");
 
 const listen = (gameid) => {
+    if(socket.readyState === 1) {
+        socket.send('{"includedGameIds": ["' + gameid + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    }
     socket.onopen = function () {
         socket.send('{"includedGameIds": ["' + gameid + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
     };
@@ -40,7 +43,7 @@ const listen = (gameid) => {
     };
 
     socket.onclose = function () {
-        console.log('close');
+        console.log("Socket connection closed");
     };
 };
 
@@ -50,6 +53,8 @@ export default {
     },
     send(msg) {
         socket.send(msg);
-        listen();
+    },
+    state() {
+        return socket.readyState;
     }
 };

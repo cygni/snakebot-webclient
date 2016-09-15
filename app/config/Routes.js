@@ -15,6 +15,7 @@ import Bracket from "../tournament/components/bracket/Bracket";
 import TournamentGameBoard from "../tournament/components/gameboard/TournamentGameBoard";
 import {Router, Route, IndexRoute, hashHistory} from "react-router";
 import TournamentStore from "../baseStore/BaseStore";
+import GameSearch from "../training/search/GameSearch"
 
 export default () => {
     return (
@@ -26,7 +27,7 @@ export default () => {
                 <IndexRoute component={Gameboard}/>
             </Route>
             <Route path="/viewgame" component={GameTemplate} >
-                <IndexRoute component={Gameboard}/>
+                <IndexRoute component={GameSearch}/>
             </Route>
             <Route path="/auth" component={PageTemplate}>
                 <IndexRoute component={AuthPage}/>

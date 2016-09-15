@@ -22,6 +22,8 @@ let tournamentGameplan = {
 
 let activeGameId = "";
 
+let oldGames = [];
+
 let games = [];
 let playerMap = new Map();
 let startedGame = {};
@@ -51,14 +53,38 @@ const _addGames = (gamesList) => {
                 BaseStore.emitChange()
             });
         }
+        else {
+            BaseStore.emitChange()
+        }
     }
+
+};
+
+const _searchForOldGames = (name) => {
+    Rest(Config.server + "/history/search/" + name).then(function(response) {
+        oldGames = JSON.parse(response.entity);
+        BaseStore.emitChange()
+    });
 };
 
 const _setActiveGame = (gameid) => {
     if(games.length > 0) {
         _activeGame = games.find(game => game.id === gameid);
     }else {
-        activeGameId = gameid
+        if(Socket.state() === 1) {
+            Rest(Config.server + "/history/" + gameid).then(function (response) {
+                let test = JSON.parse(response.entity);
+                let game = test.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
+                _activeGame = GameRenderingFunction.addOldGame(game);
+                BaseStore.emitChange()
+            });
+
+        }
+        else {
+            if (!_activeGame) {
+                activeGameId = gameid
+            }
+        }
     }
 
 };
@@ -228,9 +254,9 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         return _getActiveGame();
     },
 
-    // _setActiveGame setActiveGame(gameId) {
-    //    (gameId)
-    // },
+    getOldGames() {
+        return oldGames
+    },
 
     getActiveTournamentGame() {
         if (!_activeGame && localStorage.getItem("activeGame")) {
@@ -410,6 +436,9 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
                 break;
             case Constants.INVALID_TOKEN:
                 _invalidToken();
+                break;
+            case Constants.SEARCH_FOR_OLD_GAMES_FOR_USER:
+                _searchForOldGames(action.name);
                 break;
         }
         BaseStore.emitChange();

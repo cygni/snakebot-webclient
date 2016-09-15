@@ -73,7 +73,7 @@ export default {
                 "players": players,
                 "currentFrame": 0,
                 "mapEvents": [],
-                "updateFrequency": 500
+                "updateFrequency": 200
             });
         });
         return tmpGames;

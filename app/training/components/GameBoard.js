@@ -28,9 +28,9 @@ class GameBoard extends React.Component {
         stage = new createjs.Stage(this.refs.canvas);
         createjs.Ticker.setFPS(lib.properties.fps);
         createjs.Ticker.addEventListener("tick", stage);
-        Store.initWS();
-        Store.initWS(this.props.params.trainingGameId);
         TrainingAction.activeGame(this.props.params.trainingGameId);
+        Store.initWS(this.props.params.trainingGameId);
+
     }
 
     componentWillReceiveProps(nextProps) {

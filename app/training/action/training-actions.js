@@ -47,5 +47,11 @@ export default {
         dispatch({
             actionType: Constants.SET_CURRENT_FRAME, frame
         })
+    },
+
+    searchForOldGames (name) {
+        dispatch({
+            actionType: Constants.SEARCH_FOR_OLD_GAMES_FOR_USER, name
+        })
     }
 }
