@@ -11,18 +11,16 @@ class PageFooter extends React.Component {
 
     render() {
         return (
-            <div>
-                <footer>
-                    <p>JAKOBSBERGSGATAN 22 </p>
-                    <p> 111 44 STOCKHOLM</p>
-                    <Link to="http://www.cygni.se">
-                        <img src={require('../../../design/images/cygni-logo.png')} alt="saaa"/>
-                    </Link>
-                </footer>
-            </div>
-    )
+            <footer>
+                <p>JAKOBSBERGSGATAN 22 </p>
+                <p> 111 44 STOCKHOLM</p>
+                <Link to="http://www.cygni.se">
+                    <img src={require('../../../design/images/cygni-logo.png')} alt="Cygni-logo"/>
+                </Link>
+            </footer>
+        )
     }
-    }
+}
 
 
-    export default PageFooter;
+export default PageFooter;

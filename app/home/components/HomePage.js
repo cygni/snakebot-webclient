@@ -1,5 +1,6 @@
 import React from "react";
-import {Link} from 'react-router'
+require("../../design/styles/stylesheet.scss");
+
 
 class HomePage extends React.Component {
     constructor(props) {
@@ -8,12 +9,9 @@ class HomePage extends React.Component {
 
     render() {
         return (
-            <div className="jumbotron">
-                <h1>Welcome</h1>
-                <p>To Cygni Snake</p>
-                <p><Link to="/training" className="btn btn-primary btn-lg">Start training</Link></p>
-                <p><Link to="/tournament" className="btn btn-primary btn-lg">Start a tournament</Link></p>
-            </div>
+            <section>
+                <p>Nulla nec lectus vel erat. Sed sit amet magna ac ipsum sagittis consectetur at ac magna. Aliquam erat volutpat.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis aliquam eros non elit efficitur, ut euismod sapien eleifend. Curabitur sodales enim lacinia orci congue convallis. Nulla nec lectus vel erat venenatis finibus a at nisi. In ac leo mattis, dapibus velit at, gravida diam. Suspendisse ultrices maximus facilisis. Sed sit amet magna ac ipsum  sagittis consectetur at ac magna. Aliquam erat volutpat. Nunc eget augue quis lectus</p>
+            </section>
         )
     }
 }
