@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
 	NOTES:
 	1. All tokens are represented by '$' sign in the template.
@@ -6,7 +7,6 @@
 	4. Blank lines will be removed automatically.
 	5. Remove unnecessary comments before creating your template.
 -->
-<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -37,7 +37,7 @@ function handleComplete() {
 		function resizeCanvas() {			
 			var w = lib.properties.width, h = lib.properties.height;			
 			var iw = window.innerWidth, ih=window.innerHeight;			
-			var pRatio = window.devicePixelRatio, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
+			var pRatio = window.devicePixelRatio || 1, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
 			if(isResp) {                
 				if((respDim=='width'&&lastW==iw) || (respDim=='height'&&lastH==ih)) {                    
 					sRatio = lastS;                
@@ -61,7 +61,7 @@ function handleComplete() {
 			stage.scaleY = pRatio*sRatio;			
 			lastW = iw; lastH = ih; lastS = sRatio;		
 		}
-	})(false,'both',false,1);	
+	})(false,'both',false,2);	
 }
 </script>
 <!-- write your code here -->
