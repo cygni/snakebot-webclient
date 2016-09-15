@@ -1,6 +1,7 @@
 import React from "react";
 import {Grid, Row, Col} from "react-bootstrap";
 import Header from "./header/PageHeader";
+import PageFooter from "./footer/PageFooter"
 
 export default (props) => {
     return (
@@ -13,7 +14,8 @@ export default (props) => {
                     </Col>
                 </Row>
 
-            </Grid>           
+            </Grid>
+            <PageFooter />
         </div>
     )
 };
