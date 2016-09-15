@@ -6,9 +6,12 @@ import Config from "Config";
 
 let socket = new SockJS(Config.server + "/events");
 
-const listen = () => {
+const listen = (gameid) => {
+    if(socket.readyState === 1) {
+        socket.send('{"includedGameIds": ["' + gameid + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    }
     socket.onopen = function () {
-        TournamentAction.getActiveTournament();
+        socket.send('{"includedGameIds": ["' + gameid + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
     };
 
     socket.onmessage = function (e) {
@@ -40,16 +43,18 @@ const listen = () => {
     };
 
     socket.onclose = function () {
-        console.log('close');
+        console.log("Socket connection closed");
     };
 };
 
 export default {
-    init() {
-        listen()
+    init(gameid) {
+        listen(gameid)
     },
     send(msg) {
         socket.send(msg);
-        listen();
+    },
+    state() {
+        return socket.readyState;
     }
 };

@@ -4,6 +4,8 @@ import Store from "../../baseStore/BaseStore";
 import StoreWatch from "./watch/StoreWatch";
 import BoardUtils from "../../util/BoardUtils";
 import TileUtils from "../../util/TileUtils";
+import TrainingAction from "../../training/action/training-actions"
+
 
 let stage;
 
@@ -15,12 +17,7 @@ function getActiveGame() {
 class GameBoard extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            mapEvents: [],
-            snakes: [],
-            currentFrame: 0
-        }
-    };
+    }
 
     shouldComponentUpdate(nextProps, nextState) {
         /*This is important for performance!*/
@@ -31,8 +28,10 @@ class GameBoard extends React.Component {
         stage = new createjs.Stage(this.refs.canvas);
         createjs.Ticker.setFPS(lib.properties.fps);
         createjs.Ticker.addEventListener("tick", stage);
-        Store.initWS();
-    };
+        TrainingAction.activeGame(this.props.params.trainingGameId);
+        Store.initWS(this.props.params.trainingGameId);
+
+    }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.game) {

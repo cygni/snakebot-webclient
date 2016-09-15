@@ -25,9 +25,9 @@ export default {
         })
     },
 
-    activeGame (id) {
+    activeGame (gameId) {
         dispatch({
-            actionType: Constants.SET_ACTIVE_TRAINING_GAME, id
+            actionType: Constants.SET_ACTIVE_TRAINING_GAME, gameId
         })
     },
 
@@ -46,6 +46,12 @@ export default {
     setCurrentFrame (frame) {
         dispatch({
             actionType: Constants.SET_CURRENT_FRAME, frame
+        })
+    },
+
+    searchForOldGames (name) {
+        dispatch({
+            actionType: Constants.SEARCH_FOR_OLD_GAMES_FOR_USER, name
         })
     }
 }

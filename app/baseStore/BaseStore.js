@@ -5,6 +5,8 @@ import Constants from "../constants/Constants";
 import GameRenderingFunction from "../util/GameRenderingFunctions";
 import Colors from "../util/Colors";
 import {hashHistory} from "react-router";
+import Rest from "rest"
+import Config from "Config";
 
 const CHANGE_EVENT = 'change';
 let _activeGame = undefined;
@@ -18,6 +20,10 @@ let tournamentGameplan = {
     tournamentLevels: []
 };
 
+let activeGameId = "";
+
+let oldGames = [];
+
 let games = [];
 let playerMap = new Map();
 let startedGame = {};
@@ -30,21 +36,57 @@ const _startGame = () => {
     Socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
 };
 
-const _initWS = () => {
-    Socket.init()
+const _initWS = (gameid) => {
+    Socket.init(gameid)
 };
 
 
 const _addGames = (gamesList) => {
     games = GameRenderingFunction.addGames(gamesList);
-    if (_activeGame && !games.find(game => game.id == _activeGame.id)) {
-        games.push(_activeGame);
+    if(!_activeGame && activeGameId) {
+        _activeGame = games.find(game => game.id === activeGameId);
+        if(!_activeGame) {
+            Rest(Config.server + "/history/" + activeGameId).then(function(response) {
+                let test = JSON.parse(response.entity);
+                let game = test.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
+                _activeGame = GameRenderingFunction.addOldGame(game);
+                BaseStore.emitChange()
+            });
+        }
+        else {
+            BaseStore.emitChange()
+        }
     }
-    localStorage.setItem("games", JSON.stringify(games));
+
 };
 
-const _setActiveGame = (id) => {
-    _activeGame = games.find(game => game.id === id);
+const _searchForOldGames = (name) => {
+    Rest(Config.server + "/history/search/" + name).then(function(response) {
+        oldGames = JSON.parse(response.entity);
+        BaseStore.emitChange()
+    });
+};
+
+const _setActiveGame = (gameid) => {
+    if(games.length > 0) {
+        _activeGame = games.find(game => game.id === gameid);
+    }else {
+        if(Socket.state() === 1) {
+            Rest(Config.server + "/history/" + gameid).then(function (response) {
+                let test = JSON.parse(response.entity);
+                let game = test.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
+                _activeGame = GameRenderingFunction.addOldGame(game);
+                BaseStore.emitChange()
+            });
+
+        }
+        else {
+            if (!_activeGame) {
+                activeGameId = gameid
+            }
+        }
+    }
+
 };
 
 const _createTournament = (name) => {
@@ -80,6 +122,16 @@ const _updateGameplan = (jsonData) => {
 
 const _updatePlayers = (players) => {
     playerList = players;
+};
+
+
+const _getActiveGame = (gameid) => {
+    if (_activeGame) {
+        return _activeGame
+    }
+    else {
+        _activeGame = games.find(game => game.id === gameid);
+    }
 };
 
 const _setActiveTournamentGame = (gameId) => {
@@ -146,7 +198,6 @@ const _tournamentEnded = (event) => {
 
 const _killTournament = () => {
     Socket.send('{"tournamentId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"' + _getToken() + '"}');
-    localStorage.removeItem("_activeGame")
 };
 
 const _loginUser = (action) => {
@@ -200,7 +251,11 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     },
 
     getActiveGame() {
-        return _activeGame;
+        return _getActiveGame();
+    },
+
+    getOldGames() {
+        return oldGames
     },
 
     getActiveTournamentGame() {
@@ -273,8 +328,8 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         return startedGame;
     },
 
-    initWS() {
-        _initWS();
+    initWS(gameid) {
+        _initWS(gameid);
     },
 
     getSocketEvents() {
@@ -365,7 +420,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
                 _changeFrame();
                 break;
             case Constants.SET_ACTIVE_TRAINING_GAME:
-                _setActiveGame(action.id);
+                _setActiveGame(action.gameId);
                 break;
             case Constants.SET_CURRENT_FRAME:
                 _setCurrentFrame(action.frame);
@@ -381,6 +436,9 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
                 break;
             case Constants.INVALID_TOKEN:
                 _invalidToken();
+                break;
+            case Constants.SEARCH_FOR_OLD_GAMES_FOR_USER:
+                _searchForOldGames(action.name);
                 break;
         }
         BaseStore.emitChange();

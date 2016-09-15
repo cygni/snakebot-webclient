@@ -39,10 +39,10 @@ export default {
     },
 
     setCurrentFrame(activeGame, frame) {
-        if(activeGame.currentFrame < frame) {
+        if (activeGame.currentFrame < frame) {
             activeGame.currentFrame = frame;
             let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
-            if(!currentFrame.rendered) {
+            if (!currentFrame.rendered) {
                 currentFrame = this.updateGame(currentFrame);
                 currentFrame = this.updateSnakes(activeGame.players, currentFrame);
                 this.parseSnakes(activeGame.players, currentFrame.snakeInfos);
@@ -73,10 +73,31 @@ export default {
                 "players": players,
                 "currentFrame": 0,
                 "mapEvents": [],
-                "updateFrequency": 500
+                "updateFrequency": 200
             });
         });
         return tmpGames;
+    },
+
+    addOldGame (game) {
+        let newGame = {};
+        let gameMap = game[0];
+        let players = [];
+        gameMap.snakeInfos.forEach((player, index) => {
+            players.push({
+                "index": index,
+                "name": player.name,
+                id: player.id,
+                'color': Colors.getSnakeColor()[index]
+            });
+        });
+
+        newGame.id = gameMap.gameId;
+        newGame.players = players;
+        newGame.currentFrame = 0;
+        newGame.mapEvents = game;
+        newGame.updateFrequency = 200;
+        return newGame;
     },
 
     updateGame (map) {
@@ -98,12 +119,12 @@ export default {
     },
 
     changeFrame (activeGame) {
-        //console.log(activeGame);
         if (activeGame.mapEvents.length > 0) {
 
+        if (activeGame.mapEvents.length > 0) {
             activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
             let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
-            if(!currentFrame.rendered) {
+            if (!currentFrame.rendered) {
                 this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
                 this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
                 this.parseSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame].snakeInfos);
