@@ -1,6 +1,5 @@
 import React from "react";
-require("../design/styles/stylesheet.scss");
-
+import "../design/styles/stylesheet.scss";
 
 class GettingStartedPage extends React.Component {
     constructor(props) {

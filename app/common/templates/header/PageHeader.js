@@ -3,8 +3,7 @@ import AuthService from "../../../security/services/AuthService";
 import Store from "../../../baseStore/BaseStore";
 import {Link} from "react-router";
 import Config from "Config";
-
-require("../../../design/styles/stylesheet.scss");
+import "../../../design/styles/stylesheet.scss";
 
 
 class PageHeader extends React.Component {

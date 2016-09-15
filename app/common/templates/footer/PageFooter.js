@@ -1,7 +1,6 @@
 import React from "react";
 import {Link} from "react-router";
-require("../../../design/styles/stylesheet.scss");
-
+import "../../../design/styles/stylesheet.scss";
 
 class PageFooter extends React.Component {
     constructor(props) {

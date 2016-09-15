@@ -53,7 +53,7 @@ module.exports = {
                 loaders: ['style', 'css', 'sass']
             },
             {
-                test: /\.(jpe?g|png|gif|svg)$/i,
+                test: /\.(jpe?g|gif|svg)$/i,
                 loaders: [
                     'url?limit=8192',
                     'img'
