@@ -33,7 +33,7 @@ class PageHeader extends React.Component {
                     <ul>
                         <li><Link to="/about">ABOUT</Link></li>
                         <li><Link to="/gettingstarted">GETTING STARTED</Link></li>
-                        <li><Link to="/training">GAMES</Link></li>
+                        <li><Link to="/viewgame">GAMES</Link></li>
                         <li><Link to="/tournament">TOURNAMENT</Link></li>
                         <li><Link to="/status">STATUS</Link></li>
                     </ul>
