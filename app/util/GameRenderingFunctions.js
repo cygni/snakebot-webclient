@@ -120,8 +120,6 @@ export default {
 
     changeFrame (activeGame) {
         if (activeGame.mapEvents.length > 0) {
-
-        if (activeGame.mapEvents.length > 0) {
             activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
             let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
             if (!currentFrame.rendered) {

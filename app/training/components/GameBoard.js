@@ -17,6 +17,11 @@ function getActiveGame() {
 class GameBoard extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            mapEvents: [],
+            snakes: [],
+            currentFrame: 0
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
