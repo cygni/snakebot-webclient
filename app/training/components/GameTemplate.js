@@ -1,7 +1,7 @@
 import React from "react";
 import {Grid, Row, Col} from "react-bootstrap";
 import Sidebar from "./sidebar/Sidebar";
-import Header from "../../home/components/header/PageHeader";
+import Header from "../../common/templates/header/PageHeader";
 import Store from "../../baseStore/BaseStore";
 
 export default (props) => {

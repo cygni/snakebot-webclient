@@ -3,8 +3,7 @@ import TournamentStore from "../../../baseStore/BaseStore";
 import StoreWatch from "../../watch/StoreWatch";
 import TournamentAction from "../../action/tournament-actions";
 import FinalPlacementList from "../players/FinalPlacementList";
-require('./bracket.scss');
-
+import "./bracket.scss";
 
 function getGamePlan() {
     let gameplan = TournamentStore.getTournamentGameplan();

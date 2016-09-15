@@ -5,23 +5,23 @@ var getServerUrl = function () {
         return "http://" + host + ":" + argv['server-port']
     }
     return "http://" + host;
-}
+};
 
 var getVersionNumber = function () {
     var versionNumber = require('./package.json').version;
     var buildNumber = process.env.BUILD_NUMBER;
-    if(buildNumber != undefined) {
+    if (buildNumber != undefined) {
         return versionNumber + "+build" + buildNumber;
     } else {
         return versionNumber + "+local";
     }
-}
+};
 
 var configuration = {
     server: getServerUrl(),
     version: getVersionNumber(),
     buildDate: new Date(),
-}
+};
 
 console.log("Building version: " + configuration.version);
 console.log("Using snake server host: " + configuration.server);
@@ -53,16 +53,22 @@ module.exports = {
                 loaders: ['style', 'css', 'sass']
             },
             {
-                test: /\.(jpe?g|png|gif|svg)$/i,
+                test: /\.(jpe?g|gif|svg)$/i,
                 loaders: [
                     'url?limit=8192',
                     'img'
                 ]
-            }
+            },
+            {
+                test: /\.png$/,
+                loader: "url-loader",
+                query: {mimetype: "image/png"}
+            },
         ]
     },
     externals: {
         'Config': JSON.stringify(configuration)
     }
-};
+}
+;
 
