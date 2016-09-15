@@ -1,8 +1,11 @@
 import React from "react";
-import {Row, Col, Button} from "react-bootstrap";
-import AuthService from '../../../security/services/AuthService';
-import Store from '../../../baseStore/BaseStore';
-import {Link} from 'react-router';
+import AuthService from "../../../security/services/AuthService";
+import Store from "../../../baseStore/BaseStore";
+import {Link} from "react-router";
+import Config from "Config";
+
+require("../../../design/styles/stylesheet.scss");
+
 
 class PageHeader extends React.Component {
     constructor(props) {
@@ -23,33 +26,25 @@ class PageHeader extends React.Component {
 
     render() {
         return (
-            <nav className="navbar navbar-inverse navbar-fixed-top">
-                <div className="container">
-                    <div className="navbar-header">
-                        <button type="button"
-                            className="navbar-toggle collapsed"
-                            data-toggle="collapse"
-                            data-target="#navbar"
-                            aria-expanded="false"
-                            aria-controls="navbar">
-                            <span className="sr-only">Toggle navigation</span>
-                            <span className="icon-bar"></span>
-                            <span className="icon-bar"></span>
-                            <span className="icon-bar"></span>
-                        </button>
-                        <Link to="/" className="navbar-brand">Cygni Snake</Link>
-                    </div>
-                    <div id="navbar" className="collapse navbar-collapse">
-                        <ul className="nav navbar-nav">
-                            <li><Link to="/training">Training</Link></li>
-                            <li><Link to="/tournament">Tournament</Link></li>
-                            <li>
-                                <Link onClick={this.tryLogout} to="/login">{this.isLoggedIn() ? "Sign out" : "Sign in"}</Link>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <header>
+                <Link to="/">
+                    <img src={require("../../../design/images/snakelogo.png")} alt="Snakebot-logo"/>
+                </Link>
+                <nav>
+                    <ul>
+                        <li><a href="#">ABOUT</a></li>
+                        <li><a href="#">GETTING STARTED</a></li>
+                        <li><Link to="/training">GAMES</Link></li>
+                        <li><Link to="/tournament">TOURNAMENT</Link></li>
+                        <li><a href="#">STATUS</a></li>
+                    </ul>
+                </nav>
+                <div> {Store.isLoggedIn() ?
+                    <p><span className="glyphicon glyphicon-user" aria-hidden="true"></span> User: {Store.getUser()}
+                    </p> : ""}</div>
+                <div>{Store.isLoggedIn() ?
+                    <p>Cygni snakebot-webclient <b>v{Config.version}</b> from {Config.buildDate}</p> : ""}</div>
+            </header>
         )
     }
 }

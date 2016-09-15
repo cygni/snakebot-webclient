@@ -10,7 +10,7 @@ var getServerUrl = function () {
 var getVersionNumber = function () {
     var versionNumber = require('./package.json').version;
     var buildNumber = process.env.BUILD_NUMBER;
-    if(buildNumber != undefined) {
+    if (buildNumber != undefined) {
         return versionNumber + "+build" + buildNumber;
     } else {
         return versionNumber + "+local";
@@ -58,6 +58,11 @@ module.exports = {
                     'url?limit=8192',
                     'img'
                 ]
+            },
+            {
+                test: /\.png$/,
+                loader: "url-loader",
+                query: {mimetype: "image/png"}
             }
         ]
     },
