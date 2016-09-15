@@ -1,5 +1,6 @@
 import React from "react";
 import TileTypes from "../constants/TileTypes";
+import Images from "../constants/Images";
 
 function isConnectingPart(me, map, x, y) {
     let tile = _getTileAt(x, y, map);
@@ -85,8 +86,7 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
     let item = {};
 
     switch (tile.content) {
-        case TileTypes.EMPTY:
-        {
+        case TileTypes.EMPTY: {
             item = {
                 "key": key,
                 "height": tileSize,
@@ -96,8 +96,7 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
             };
             break;
         }
-        case TileTypes.SNAKE_BODY :
-        {
+        case TileTypes.SNAKE_BODY : {
             let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
 
             item = {
@@ -110,8 +109,7 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
             };
             break;
         }
-        case TileTypes.SNAKE_HEAD :
-        {
+        case TileTypes.SNAKE_HEAD : {
             let snake = _activeGame.players.find(snake => snake.id === tile.playerId);
             item = {
                 "key": key,
@@ -123,8 +121,7 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
             break;
         }
 
-        case TileTypes.OBSTACLE :
-        {
+        case TileTypes.OBSTACLE : {
             item = {
                 "key": key,
                 "height": tileSize,
@@ -135,8 +132,7 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
             break;
         }
 
-        case TileTypes.FOOD :
-        {
+        case TileTypes.FOOD : {
             item = {
                 "key": key,
                 "height": tileSize,
@@ -150,7 +146,69 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
     return item;
 }
 
+function _renderSnakes(stage, map, tileSize, _activeGame) {
+    map.snakeInfos.forEach(snakeInfo => {
+        var head = true;
+        let snake = _activeGame.game.players.find(snake => snake.id === snakeInfo.id);
+        snakeInfo.positions.forEach((snakePosition) => {
+            let yPos = snakePosition.y * tileSize;
+            let xPos = snakePosition.x * tileSize;
+            if (head) {
+                head = false;
+                let bitmap = new createjs.Bitmap(Images.SNAKE_HEAD_BLUE);
+                bitmap.scaleX = tileSize / bitmap.image.width;
+                bitmap.scaleY = tileSize / bitmap.image.height;
+                bitmap.x = xPos;
+                bitmap.y = yPos;
+                stage.addChild(bitmap);
+            } else {
+                let rect = new createjs.Shape();
+                rect.graphics.beginStroke("#000000")
+                    .beginFill(snake.color).drawRect(xPos, yPos, tileSize, tileSize);
+                stage.addChild(rect);
+            }
+        })
+    });
+}
+
+function _renderFood(stage, map, tileSize) {
+    map.foodPositions.forEach(foodPosition => {
+        let yPos = foodPosition.y * tileSize;
+        let xPos = foodPosition.x * tileSize;
+        let star = new createjs.Bitmap(Images.STAR);
+        star.scaleX = tileSize / star.image.width;
+        star.scaleY = tileSize / star.image.height;
+        star.x = xPos;
+        star.y = yPos;
+        stage.addChild(star);
+    });
+};
+
+function _renderObstacles(stage, map, tileSize) {
+    map.obstaclePositions.forEach(obstaclePosition => {
+        let yPos = obstaclePosition.y * tileSize;
+        let xPos = obstaclePosition.x * tileSize;
+        let blackHole = new lib.blackhole();
+        blackHole.x = xPos;
+        blackHole.y = yPos;
+        stage.addChild(blackHole);
+    });
+}
+
 export default {
+
+    renderSnakes(stage, map, tileSize, _activeGame){
+        _renderSnakes(stage, map, tileSize, _activeGame);
+    },
+
+    renderFood(stage, map, tileSize) {
+        _renderFood(stage, map, tileSize);
+    },
+
+    renderObstacles(stage, map, tileSize) {
+        _renderObstacles(stage, map, tileSize);
+    },
+
     getTileAt(x, y, map, tileSize, activeGame){
         let key = "" + x + "-" + y;
         let tile = _getTileAt(x, y, map);
