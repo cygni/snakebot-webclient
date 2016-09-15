@@ -32,11 +32,11 @@ class PageHeader extends React.Component {
                 </Link>
                 <nav>
                     <ul>
-                        <li><a href="#">ABOUT</a></li>
-                        <li><a href="#">GETTING STARTED</a></li>
+                        <li><Link to="/about">ABOUT</Link></li>
+                        <li><Link to="/gettingstarted">GETTING STARTED</Link></li>
                         <li><Link to="/training">GAMES</Link></li>
                         <li><Link to="/tournament">TOURNAMENT</Link></li>
-                        <li><a href="#">STATUS</a></li>
+                        <li><Link to="/status">STATUS</Link></li>
                     </ul>
                 </nav>
                 <div> {Store.isLoggedIn() ?
