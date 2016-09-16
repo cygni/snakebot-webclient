@@ -1,4 +1,6 @@
 var argv = require('minimist')(process.argv.slice(2));
+var webpack = require('webpack');
+
 var getServerUrl = function () {
     var host = argv['server-host'] != undefined ? argv['server-host'] : "snake.cygni.se";
     if (argv['server-port'] != undefined) {
@@ -37,6 +39,14 @@ module.exports = {
         inline: true,
         contentBase: './dist'
     },
+
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                'NODE_ENV': JSON.stringify('production')
+            }
+        })
+    ],
     module: {
         loaders: [
             {
