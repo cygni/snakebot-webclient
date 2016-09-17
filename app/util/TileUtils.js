@@ -155,12 +155,7 @@ function _renderSnakes(stage, map, tileSize, _activeGame) {
             let xPos = snakePosition.x * tileSize;
             if (head) {
                 head = false;
-                let bitmap = new createjs.Bitmap(Images.SNAKE_HEAD_BLUE);
-                bitmap.scaleX = tileSize / bitmap.image.width;
-                bitmap.scaleY = tileSize / bitmap.image.height;
-                bitmap.x = xPos;
-                bitmap.y = yPos;
-                stage.addChild(bitmap);
+                _setHeadDirection(stage, snakeInfo.positions, tileSize, xPos, yPos);
             } else {
                 let rect = new createjs.Shape();
                 rect.graphics.beginStroke("#000000")
@@ -182,7 +177,7 @@ function _renderFood(stage, map, tileSize) {
         star.y = yPos;
         stage.addChild(star);
     });
-};
+}
 
 function _renderObstacles(stage, map, tileSize) {
     map.obstaclePositions.forEach(obstaclePosition => {
@@ -193,6 +188,34 @@ function _renderObstacles(stage, map, tileSize) {
         blackHole.y = yPos;
         stage.addChild(blackHole);
     });
+}
+
+function _setHeadDirection(stage, snakePositions, tileSize, xPos, yPos) {
+    let snakePosition1 = snakePositions[0];
+    let snakePosition2 = snakePositions[1];
+    if (snakePosition1 === undefined || snakePosition2 === undefined) {
+        return;
+    }
+
+    //TODO correct color for head
+    if (snakePosition1.x === snakePosition2.x && snakePosition1.y > snakePosition2.y) {
+        _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE_DOWN);
+    } else if (snakePosition1.x > snakePosition2.x) {
+        _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE_RIGHT);
+    } else if (snakePosition1.x < snakePosition2.x) {
+        _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE_LEFT);
+    } else {
+        _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE);
+    }
+}
+
+function _addHeadImage(stage, tileSize, xPos, yPos, image) {
+    let bitmap = new createjs.Bitmap(image);
+    bitmap.scaleX = tileSize / bitmap.image.width;
+    bitmap.scaleY = tileSize / bitmap.image.height;
+    bitmap.x = xPos;
+    bitmap.y = yPos;
+    stage.addChild(bitmap);
 }
 
 export default {

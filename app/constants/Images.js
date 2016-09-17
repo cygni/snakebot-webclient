@@ -22,6 +22,24 @@ snakeHeadBlueImg.onload = function () {
 };
 snakeHeadBlueImg.src = "img/Snakes/blue/Blue-0ebde7-head.png";
 
+const snakeHeadBlueDownImg = new Image();
+snakeHeadBlueDownImg.onload = function () {
+    console.log("Loaded snakeHeadBlueDownImg");
+};
+snakeHeadBlueDownImg.src = "img/Snakes/blue/Blue-0ebde7-head_down.png";
+
+const snakeHeadBlueRightImg = new Image();
+snakeHeadBlueRightImg.onload = function () {
+    console.log("Loaded snakeHeadBlueImg");
+};
+snakeHeadBlueRightImg.src = "img/Snakes/blue/Blue-0ebde7-head_right.png";
+
+const snakeHeadBlueLeftImg = new Image();
+snakeHeadBlueLeftImg.onload = function () {
+    console.log("Loaded snakeHeadBlueImg");
+};
+snakeHeadBlueLeftImg.src = "img/Snakes/blue/Blue-0ebde7-head_left.png";
+
 const snakeHeadGreenImg = new Image();
 snakeHeadGreenImg.onload = function () {
     console.log("Loaded snakeHeadGreenImg");
@@ -45,6 +63,9 @@ export default {
     SQUARE_2: squareImg2,
     STAR: starImg,
     SNAKE_HEAD_BLUE: snakeHeadBlueImg,
+    SNAKE_HEAD_BLUE_DOWN: snakeHeadBlueDownImg,
+    SNAKE_HEAD_BLUE_RIGHT: snakeHeadBlueRightImg,
+    SNAKE_HEAD_BLUE_LEFT: snakeHeadBlueLeftImg,
     SNAKE_HEAD_GREEN: snakeHeadGreenImg,
     SNAKE_HEAD_ORANGE: snakeHeadOrangeImg,
     SNAKE_HEAD_YELLOW: snakeHeadYellowImg
