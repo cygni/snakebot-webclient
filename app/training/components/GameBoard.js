@@ -7,7 +7,9 @@ import TileUtils from "../../util/TileUtils";
 import TrainingAction from "../../training/action/training-actions"
 
 
-let stage;
+let worldLayer;
+let snakeLayer;
+let renderObstacles = true;
 
 function getActiveGame() {
     let game = Store.getActiveGame();
@@ -22,7 +24,7 @@ class GameBoard extends React.Component {
             snakes: [],
             currentFrame: 0
         }
-    }
+    };
 
     shouldComponentUpdate(nextProps, nextState) {
         /*This is important for performance!*/
@@ -30,9 +32,11 @@ class GameBoard extends React.Component {
     };
 
     componentDidMount() {
-        stage = new createjs.Stage(this.refs.canvas);
+        worldLayer = new createjs.Stage(this.refs.canvas);
+        snakeLayer = new createjs.Container();
         createjs.Ticker.setFPS(lib.properties.fps);
-        createjs.Ticker.addEventListener("tick", stage);
+        createjs.Ticker.addEventListener("tick", worldLayer);
+        worldLayer.addChild(snakeLayer);
         TrainingAction.activeGame(this.props.params.trainingGameId);
         Store.initWS(this.props.params.trainingGameId);
 
@@ -87,10 +91,15 @@ class GameBoard extends React.Component {
             return;
         }
         let activeGame = getActiveGame();
-        stage.removeAllChildren();
-        TileUtils.renderSnakes(stage, map, tileSize, activeGame);
-        TileUtils.renderFood(stage, map, tileSize);
-        TileUtils.renderObstacles(stage, map, tileSize);
+        snakeLayer.removeAllChildren();
+        TileUtils.renderSnakes(snakeLayer, map, tileSize, activeGame);
+        TileUtils.renderFood(snakeLayer, map, tileSize);
+        if (renderObstacles) {
+            if (map.obstaclePositions[0].y !== undefined) {
+                TileUtils.renderObstacles(worldLayer, map, tileSize);
+                renderObstacles = false;
+            }
+        }
     }
 }
 
