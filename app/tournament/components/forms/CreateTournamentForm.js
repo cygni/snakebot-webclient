@@ -33,9 +33,9 @@ class CreateTournamentForm extends React.Component {
                 </Col>
                 <Col xs={10} md={6}>
                     <form role="form" onSubmit={this.createTournament}>
-                        <Input value={this.state.tempGameName} onChange={this.handleTextChange} type="text"
+                        <input value={this.state.tempGameName} onChange={this.handleTextChange} type="text"
                                label="Tournament name" placeholder="Enter name"/>
-                        <ButtonInput type="submit" value="Create Tournament"/>
+                        <input type="submit" value="Create Tournament"/>
                     </form>
                 </Col>
             </Row>
