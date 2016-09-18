@@ -1,6 +1,6 @@
 import React from "react";
 import {Grid, Row, Col} from "react-bootstrap";
-import Header from "./header/TournamentHeader";
+import Header from "../../common/templates/header/PageHeader";
 
 export default (props) => {
     return (
