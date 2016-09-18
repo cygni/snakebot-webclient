@@ -1,13 +1,13 @@
 import React from "react";
-import {Row, Col, Input, ButtonInput} from "react-bootstrap";
-import AuthService from '../services/AuthService';
-import Store from '../../baseStore/BaseStore'
+import {Row, Col} from "react-bootstrap";
+import AuthService from "../services/AuthService";
+import Store from "../../baseStore/BaseStore";
 
 class LoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.auth = new AuthService();
-        this.state = { user: '', password: '' };
+        this.state = {user: '', password: ''};
 
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
@@ -17,6 +17,7 @@ class LoginPage extends React.Component {
 
     login(e) {
         e.preventDefault();
+        console.log(this.state);
         this.auth.login(this.state.user, this.state.password)
             .catch(function (err) {
                 alert("There was an error logging in");
@@ -46,7 +47,7 @@ class LoginPage extends React.Component {
                 <Row>
                     <Col xs={10} md={6}>
                         <form role="form" onSubmit={this.logout}>
-                            <ButtonInput type="submit" value="Sign out"/>
+                            <button type="submit">Sign out</button>
                         </form>
                     </Col>
                 </Row>
@@ -60,11 +61,11 @@ class LoginPage extends React.Component {
                 </Col>
                 <Col xs={10} md={6}>
                     <form role="form" onSubmit={this.login}>
-                        <Input value={this.state.user} onChange={this.handleUserChange} type="text"
+                        <input value={this.state.user} onChange={this.handleUserChange} type="text"
                             label="Username" placeholder="username"/>
-                        <Input onChange={this.handlePasswordChange} type="text"
+                        <input onChange={this.handlePasswordChange}
                             label="Password" type="password" placeholder="password"/>
-                        <ButtonInput type="submit" value="Sign in"/>
+                        <button type="submit">Sign in</button>
                     </form>
                 </Col>
             </Row>
