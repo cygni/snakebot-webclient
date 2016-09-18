@@ -7,8 +7,9 @@ import {Link} from 'react-router';
 
 function getOldGames() {
     let games = GameStore.getOldGames();
+    let results = GameStore.hasResults();
 
-    return {games: games}
+    return {games: games, results: results}
 }
 
 class GameSearch extends React.Component {
@@ -46,6 +47,7 @@ class GameSearch extends React.Component {
                 <form className="commentForm" onSubmit={this.handleSubmit}>
                     <input type="text" value={this.props.text} placeholder="Your name" onChange={this.handleChange}/>
                     <input type="submit" value="Post"/>
+                    <label className={this.props.results ? 'show' : 'hidden'} style={{color: "red"}}>No result found</label>
                 </form>
                 <div><h2>Old games</h2></div>
                 <ul>

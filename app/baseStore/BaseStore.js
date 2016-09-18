@@ -21,6 +21,7 @@ let tournamentGameplan = {
 };
 
 let activeGameId = "";
+let noResultsFound = false;
 
 let oldGames = [];
 
@@ -63,6 +64,7 @@ const _addGames = (gamesList) => {
 const _searchForOldGames = (name) => {
     Rest(Config.server + "/history/search/" + name).then(function(response) {
         oldGames = JSON.parse(response.entity);
+        noResultsFound = oldGames.length == 0;
         BaseStore.emitChange()
     });
 };
@@ -256,6 +258,10 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
 
     getOldGames() {
         return oldGames
+    },
+
+    hasResults() {
+        return noResultsFound
     },
 
     getActiveTournamentGame() {
