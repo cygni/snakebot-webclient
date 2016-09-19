@@ -21,11 +21,6 @@ function getActiveGame() {
 class GameBoard extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            mapEvents: [],
-            snakes: [],
-            currentFrame: 0
-        }
     };
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -41,17 +36,20 @@ class GameBoard extends React.Component {
         worldLayer.addChild(snakeLayer);
         TrainingAction.activeGame(this.props.params.trainingGameId);
         Store.initWS(this.props.params.trainingGameId);
-
     }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.game) {
-            this.setState({
-                mapEvents: nextProps.game.mapEvents,
-                currentFrame: nextProps.game.currentFrame
-            });
+            let map;
+            if(this.props.game) {
+                map = this.props.game.mapEvents[this.props.game.currentFrame];
+            }
+            else {
+                map = nextProps.game.mapEvents[nextProps.game.currentFrame];
+            }
 
-            let map = this.state.mapEvents[this.state.currentFrame];
+
+
             let size = {width: 0, height: 0};
             let tileSize = 0;
             let mapIsEmpty = BoardUtils.mapIsEmpty(map);

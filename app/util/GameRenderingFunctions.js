@@ -24,7 +24,7 @@ export default {
     updateSnakes (playerList, frame) {
         if (frame) {
             frame.snakeInfos.forEach(snake => {
-                var player = playerList.find(p => p.id === snake.id);
+                let player = playerList.find(p => p.id === snake.id);
                 if (!player) {
                     console.log("unable to find player");
                     return;
@@ -120,12 +120,12 @@ export default {
 
     changeFrame (activeGame) {
         if (activeGame.mapEvents.length > 0) {
-            activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length - 1));
+            activeGame.currentFrame = Math.max(0, Math.min(activeGame.currentFrame + 1, activeGame.mapEvents.length -1));
             let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
             if (!currentFrame.rendered) {
-                this.updateGame(activeGame.mapEvents[activeGame.currentFrame]);
-                this.updateSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame]);
-                this.parseSnakes(activeGame.players, activeGame.mapEvents[activeGame.currentFrame].snakeInfos);
+                this.updateGame(currentFrame);
+                this.updateSnakes(activeGame.players, currentFrame);
+                this.parseSnakes(activeGame.players, currentFrame.snakeInfos);
             }
         }
     }

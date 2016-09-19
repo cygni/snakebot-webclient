@@ -2,7 +2,7 @@ import React from "react";
 import {Table} from "react-bootstrap";
 import StoreWatch from "../watch/StoreWatch";
 import GameStore from "../../../baseStore/BaseStore";
-import GameControl from "../header/GameControl";
+import GameControl from "./GameControl";
 
 
 function getActiveGame() {
