@@ -12,10 +12,11 @@ var getServerUrl = function () {
 var getVersionNumber = function () {
     var versionNumber = require('./package.json').version;
     var buildNumber = process.env.BUILD_NUMBER;
+    var env = process.env.NODE_ENV;
     if (buildNumber != undefined) {
-        return versionNumber + "+build" + buildNumber;
+        return versionNumber + "+build" + buildNumber + " " + env;
     } else {
-        return versionNumber + "+local";
+        return versionNumber + "+local " + env;
     }
 };
 
