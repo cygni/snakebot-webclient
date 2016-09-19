@@ -12,18 +12,22 @@ var getServerUrl = function () {
 var getVersionNumber = function () {
     var versionNumber = require('./package.json').version;
     var buildNumber = process.env.BUILD_NUMBER;
-    var env = process.env.NODE_ENV;
     if (buildNumber != undefined) {
-        return versionNumber + "+build" + buildNumber + " " + env;
+        return versionNumber + "+build" + buildNumber + " " + getEnvironment();
     } else {
-        return versionNumber + "+local " + env;
+        return versionNumber + "+local " + getEnvironment();
     }
+};
+
+let getEnvironment = () => {
+    return process.env.NODE_ENV === 'production' ? 'production' : 'development';
 };
 
 var configuration = {
     server: getServerUrl(),
     version: getVersionNumber(),
     buildDate: new Date(),
+    environment: getEnvironment()
 };
 
 console.log("Building version: " + configuration.version);
@@ -41,13 +45,14 @@ module.exports = {
         contentBase: './dist'
     },
 
-    // plugins: [
-    //     new webpack.DefinePlugin({
-    //         'process.env': {
-    //             'NODE_ENV': JSON.stringify('production')
-    //         }
-    //     })
-    // ],
+    plugins: [
+        new webpack.DefinePlugin({
+                'process.env': {
+                    'NODE_ENV': JSON.stringify(configuration.environment)
+                }
+            }
+        )
+    ],
     module: {
         loaders: [
             {
@@ -76,7 +81,8 @@ module.exports = {
                 query: {mimetype: "image/png"}
             },
         ]
-    },
+    }
+    ,
     externals: {
         'Config': JSON.stringify(configuration)
     }
