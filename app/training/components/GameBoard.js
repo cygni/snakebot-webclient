@@ -103,7 +103,7 @@ class GameBoard extends React.Component {
         TileUtils.renderSnakes(snakeLayer, map, tileSize, activeGame);
         TileUtils.renderFood(snakeLayer, map, tileSize);
         if (renderObstacles) {
-            if (map.obstaclePositions[0].y !== undefined) {
+            if (map.obstaclePositions[0] !== undefined && map.obstaclePositions[0].y !== undefined) {
                 TileUtils.renderObstacles(worldLayer, map, tileSize);
                 renderObstacles = false;
             }
