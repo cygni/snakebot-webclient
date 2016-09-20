@@ -3,6 +3,11 @@ body
 	background-image: url('img/space.png');
 	margin: 0;
 }
+body.activeGame
+{
+	background-image: url('img/background.png');
+}
+
 
 header ul
 {
@@ -29,6 +34,13 @@ header, footer
       padding: 2rem 1,7rem;
 
 }
+header.activeGame
+{
+	background-color: rgba(0,0,0,0);
+	margin-left: 40%;
+	width: 100%;
+
+}
 header nav
 {
 	float: right;
@@ -51,15 +63,15 @@ section p
 }
 section
 {
-	  background-color: rgba(255,255,255,0.5);
-      width: 50%;
-      margin: 200px 25%;
+	 background-color: rgba(255,255,255,0.5);
+     width: 50%;
+     margin: 200px 25%;
 }
 .snakebotGame-img
 {
 	width: 50%;
-	margin-top: 2%;
-	margin-left: 27%;
+	margin: 2% auto 0;
+	display: block;
 }
 footer img
 {
@@ -70,16 +82,17 @@ footer
 {
 	margin-top: 20rem;
 }
-.activePlayers
+.activePlayers, activePlayer img
 {
 	width: 17%;
-	background-color: white;
-	opacity: 0.6;
-    padding: 25px;
-    margin: 25px;
-    height: 480px;
-    margin-top: -37%;
+    background-color: rgba(255,255,255,0.2);
+    padding: 3px;
+    box-sizing: border-box;
+    position: absolute;
+    top:0;
+
 }
+
 footer p 
 {
 	color: black;
@@ -88,24 +101,56 @@ footer p
 	font-size: 25px;
 
 }
-.activePlayers p
+.snakeImg p
 {
-	font-size: 25px;
-	margin-left: -14px;
-	margin-top: -20px;
-	font-family: Courier New;
+    color: white;
+    font-size: 16px;
+    font-family: fira sans;
+	font-weight: 700;
 }
-.startResumeButton
+.snake img
 {
-	position: absolute;
-	z-index: 4;
-	left: 45%;
-	bottom: -17%;
-	background-color: #5AA03F;
-	border: none;
-	color: white;
-	text-align: center;
-	font-size: 20px;
-	font-family: Courier New;
-	padding: 13px;
+	max-width: 25%;
+	float: left;
+}
+.snake
+{
+	overflow: auto;
+}
+.activePlayerGameBackground
+{
+	position: relative;
+}
+.controlpanel
+{
+	background-color: rgba(255,255,255,0.2);
+	width: 30%;
+	margin: 2% auto 0;
+	display: block;
+}
+.playButton
+{
+	margin: 2% auto 0;
+	display: block;
+	width: 20%;
+}
+.frameButtonRight
+{
+	margin: -26% auto 0;
+	width: 20%;
+	float: right;
+	padding: 11%;
+}
+.frameButtonLeft
+{
+	margin: -26% auto 0;
+	width: 20%;
+	float: left;
+	padding: 11%;
+}
+.progressbarGame
+{
+	margin: 2% auto 0;
+	display: block;
+	width: 50%;
 }
