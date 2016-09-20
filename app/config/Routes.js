@@ -23,7 +23,7 @@ export default () => {
             <Route path="/" component={PageTemplate}>
                 <IndexRoute component={HomePage}/>
             </Route>
-            <Route path="/viewgame/:trainingGameId" component={GameTemplate} >
+            <Route path="/viewgame/:gameId" component={GameTemplate} >
                 <IndexRoute component={Gameboard}/>
             </Route>
             <Route path="/viewgame" component={GameTemplate} >
@@ -47,7 +47,7 @@ export default () => {
             <Route path="/tournament" component={PageTemplate} onEnter={TournamentStore.requireAuth}>
                 <IndexRoute component={Settings}/>
                 <Route name='bracket' path="/tournament/tournamentbracket" component={Bracket}/>
-                <Route name='activeGame' path="/tournament/activeTournamentGame" component={TournamentGameBoard}/>
+                <Route name='activeGame' path="/tournament/:gameId" component={Gameboard}/>
             </Route>
         </Router>
     );

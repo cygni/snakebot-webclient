@@ -34,11 +34,12 @@ class GameBoard extends React.Component {
         createjs.Ticker.setFPS(lib.properties.fps);
         createjs.Ticker.addEventListener("tick", worldLayer);
         worldLayer.addChild(snakeLayer);
-        TrainingAction.activeGame(this.props.params.trainingGameId);
-        Store.initWS(this.props.params.trainingGameId);
+        TrainingAction.activeGame(this.props.params.gameId);
+        Store.initWS(this.props.params.gameId);
     }
 
     componentWillReceiveProps(nextProps) {
+
         if (nextProps.game) {
             let map;
             if(this.props.game) {

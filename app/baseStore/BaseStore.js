@@ -49,6 +49,7 @@ const _addGames = (gamesList) => {
         if(!_activeGame) {
             Rest(Config.server + "/history/" + activeGameId).then(function(response) {
                 let test = JSON.parse(response.entity);
+                console.log(test);
                 let game = test.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
                 _activeGame = GameRenderingFunction.addOldGame(game);
                 BaseStore.emitChange()
@@ -137,25 +138,7 @@ const _getActiveGame = (gameid) => {
 };
 
 const _setActiveTournamentGame = (gameId) => {
-    let tmp = localStorage.getItem("games");
-    games = JSON.parse(tmp);
-    let game = games.find(game => game.id == gameId);
-    let players = [];
-    game.players.forEach((player, index) => {
-        players.push({"index": index, "name": player.name, id: player.id, 'color': Colors.getSnakeColor()[index]});
-    });
-
-    _activeGame = {
-        "id": game.id,
-        "gameFeatures": game.gameFeatures,
-        "color": Colors.getBoardColor()[0],
-        "players": players,
-        "currentFrame": 0,
-        "mapEvents": [],
-        "updateFrequency": 250
-    };
-    localStorage.setItem("activeGame", JSON.stringify(_activeGame));
-    hashHistory.push('/tournament/activeTournamentGame');
+    hashHistory.push('/tournament/' + gameId);
 };
 
 function _setUpdateFrequency(freq) {
@@ -396,9 +379,9 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
             case Constants.SET_ACTIVE_TOURNAMENT_GAME:
                 _setActiveTournamentGame(action.gameId);
                 break;
-            case Constants.TOURNAMENT_MAP_UPDATE_EVENT:
-                _addMapUpdate(action.event);
-                break;
+            // case Constants.TOURNAMENT_MAP_UPDATE_EVENT:
+            //     _addMapUpdate(action.event);
+            //     break;
             case Constants.TOURNAMENT_ENDED_EVENT:
                 _tournamentEnded(action.event);
                 break;

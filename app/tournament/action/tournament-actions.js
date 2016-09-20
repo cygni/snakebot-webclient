@@ -51,11 +51,11 @@ export default {
         })
     },
 
-    setActiveTrainingGame (gameId) {
-        dispatch({
-            actionType: Constants.SET_ACTIVE_TRAINING_GAME, gameId
-        })
-    },
+    // setActiveTrainingGame (gameId) {
+    //     dispatch({
+    //         actionType: Constants.SET_ACTIVE_TRAINING_GAME, gameId
+    //     })
+    // },
 
     setActiveTournamentGame (gameId) {
         dispatch({
