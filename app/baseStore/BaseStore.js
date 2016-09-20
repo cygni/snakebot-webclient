@@ -50,7 +50,7 @@ const _addGames = (gamesList) => {
             Rest(Config.server + "/history/" + activeGameId).then(function(response) {
                 let test = JSON.parse(response.entity);
                 console.log(test);
-                let game = test.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
+                let game = test.messages.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
                 _activeGame = GameRenderingFunction.addOldGame(game);
                 BaseStore.emitChange()
             });
@@ -77,7 +77,8 @@ const _setActiveGame = (gameid) => {
         if(Socket.state() === 1) {
             Rest(Config.server + "/history/" + gameid).then(function (response) {
                 let test = JSON.parse(response.entity);
-                let game = test.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
+                console.log(JSON.stringify(test.messages));
+                let game = test.messages.filter(event => event.type == 'se.cygni.snake.api.event.MapUpdateEvent').map(type => type.map);
                 _activeGame = GameRenderingFunction.addOldGame(game);
                 BaseStore.emitChange()
             });
