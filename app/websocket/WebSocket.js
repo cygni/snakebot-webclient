@@ -10,6 +10,7 @@ const listen = (gameid) => {
     socket.send('{"includedGameIds": ["' + gameid +
       '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
   }
+
   socket.onopen = function onSocketOpen() {
     socket.send('{"includedGameIds": ["' + gameid +
       '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
@@ -17,6 +18,7 @@ const listen = (gameid) => {
 
   socket.onmessage = function onSocketMessage(e) {
     const jsonData = JSON.parse(e.data);
+    console.log('Received json message', jsonData);
     if (jsonData.type ===
       'se.cygni.snake.eventapi.response.TournamentCreated') {
       TournamentAction.tournamentCreated(jsonData);

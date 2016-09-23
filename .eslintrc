@@ -18,6 +18,7 @@
     "new-cap": ["error", {
       "properties": false
     }],
-    "class-methods-use-this": ["warn"]
+    "class-methods-use-this": ["warn"],
+    "no-console": ["off"]
   }
 }

@@ -29,6 +29,8 @@ const configuration = {
   environment: getEnvironment(),
 };
 
+const prod = () => configuration.environment === 'production';
+
 console.log('Building version: ' + configuration.version);
 console.log('Using snake server host: ' + configuration.server);
 
@@ -43,7 +45,6 @@ module.exports = {
     inline: true,
     contentBase: './dist',
   },
-
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
@@ -52,12 +53,19 @@ module.exports = {
     }),
   ],
   module: {
+    preLoaders: [{
+      test: /\.(js|jsx)$/,
+      exclude: /node_modules/,
+      loader: 'eslint-loader',
+      cache: true,
+    }],
     loaders: [{
       test: /\.jsx?$/,
       exclude: /node_modules/,
       loader: 'babel',
       query: {
         presets: ['react', 'es2015'],
+        plugins: prod() ? ['transform-remove-console'] : [],
       },
     }, {
       test: /\.scss$/,
