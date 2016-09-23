@@ -1,0 +1,23 @@
+{
+  "extends": "airbnb",
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "createjs": true,
+    "lib": true,
+    "blackhole": true
+  },
+  "rules": {
+    "no-underscore-dangle": ["off"],
+    "prefer-template": 0,
+    "no-use-before-define": ["error", "nofunc"],
+    "no-param-reassign": ["error", {
+      "props": false
+    }],
+    "new-cap": ["error", {
+      "properties": false
+    }],
+    "class-methods-use-this": ["warn"]
+  }
+}
