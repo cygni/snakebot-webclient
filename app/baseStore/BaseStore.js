@@ -5,7 +5,9 @@ import {
   hashHistory,
 } from 'react-router';
 import rest from 'rest';
+import _ from 'lodash';
 import Config from 'Config'; // eslint-disable-line
+
 // For now, let's ignore this rule until a proper fix can be done
 /* eslint-disable no-use-before-define */
 
@@ -48,9 +50,11 @@ const _startGame = () => {
 
 const _addGames = (gamesList) => {
   games = GameRenderingFunction.addGames(gamesList);
-  if (!_activeGame && activeGameId) {
+
+  if (_.isEmpty(_activeGame) && activeGameId) {
     _activeGame = games.find(game => game.id === activeGameId);
-    if (!_activeGame) {
+
+    if (_.isEmpty(_activeGame)) {
       rest(Config.server + '/history/' + activeGameId)
         .then((response) => {
           const test = JSON.parse(response.entity);
@@ -91,7 +95,7 @@ const _setActiveGame = (gameid) => {
         _activeGame = GameRenderingFunction.addOldGame(game);
         BaseStore.emitChange();
       });
-  } else if (!_activeGame) {
+  } else if (_.isEmpty(_activeGame)) {
     activeGameId = gameid;
   }
 };
@@ -168,7 +172,7 @@ const _updatePlayers = (players) => {
 };
 
 const _getActiveGame = (gameid) => {
-  if (!_activeGame) {
+  if (_.isEmpty(_activeGame)) {
     _activeGame = games.find(game => game.id === gameid);
   }
   return _activeGame;
@@ -259,7 +263,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
   },
 
   getActiveTournamentGame() {
-    if (!_activeGame && localStorage.getItem('activeGame')) {
+    if (_.isEmpty(_activeGame) && localStorage.getItem('activeGame')) {
       const tmp = localStorage.getItem('activeGame');
       _activeGame = JSON.parse(tmp);
     }
@@ -322,7 +326,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
   },
 
   hasActiveGame() {
-    return !!_activeGame;
+    return !_.isEmpty(_activeGame);
   },
 
   getSnakes() {

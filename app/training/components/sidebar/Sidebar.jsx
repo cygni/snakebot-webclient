@@ -11,15 +11,14 @@ function getActiveGame() {
 }
 
 const propTypes = {
-  game: React.PropTypes.object.isRequired,
+  game: React.PropTypes.object,
 };
 
 const Sidebar = function Sidebar(props) {
-  if (props.game.players) {
+  if (props.game) {
     return (
       <div>
         <h3>Active Game</h3>
-
         <Table striped bordered condensed>
           <thead>
             <tr>
@@ -28,12 +27,13 @@ const Sidebar = function Sidebar(props) {
               </th>
             </tr>
           </thead>
-          <tbody> {
+          <tbody>{
             props.game.players.map(snake => (
               <tr key={snake.id}>
                 <td style={{ background: snake.alive ? snake.color : 'grey', color: 'white' }}>
                   Name: {snake.name}
-                  Length: {snake.length} Points: {snake.points} </td>
+                  Length: {snake.length}
+                  Points: {snake.points}</td>
               </tr>
             ))}
           </tbody>

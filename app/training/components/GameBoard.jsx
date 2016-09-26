@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import { Grid, Row, Col } from 'react-bootstrap';
 import Store from '../../baseStore/BaseStore';
 import StoreWatch from './watch/StoreWatch.jsx';
@@ -18,7 +19,7 @@ function getActiveGame() {
 }
 
 const propTypes = {
-  game: React.PropTypes.object.isRequired,
+  game: React.PropTypes.object,
   params: React.PropTypes.object.isRequired,
 };
 
@@ -31,8 +32,8 @@ class GameBoard extends React.Component {
     }
   }
 
-  static renderGameBoard(map, mapIsEmpty, tileSize) {
-    if (mapIsEmpty || this.canvas.getContext('2d') === undefined) {
+  static renderGameBoard(canvas, map, mapIsEmpty, tileSize) {
+    if (mapIsEmpty || canvas.getContext('2d') === undefined) {
       return;
     }
     const activeGame = getActiveGame();
@@ -58,9 +59,9 @@ class GameBoard extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.game.mapEvents && nextProps.game.currentFrame) {
+    if (!_.isEmpty(nextProps.game)) {
       let map;
-      if (this.props.game.mapEvents && this.props.game.currentFrame) {
+      if (this.props.game) {
         map = this.props.game.mapEvents[this.props.game.currentFrame];
       } else {
         map = nextProps.game.mapEvents[nextProps.game.currentFrame];
@@ -74,7 +75,7 @@ class GameBoard extends React.Component {
         tileSize = BoardUtils.getTileSize(map);
       }
       GameBoard.validateCanvas(this.canvas, size);
-      GameBoard.renderGameBoard(map, mapIsEmpty, tileSize);
+      GameBoard.renderGameBoard(this.canvas, map, mapIsEmpty, tileSize);
     }
   }
 

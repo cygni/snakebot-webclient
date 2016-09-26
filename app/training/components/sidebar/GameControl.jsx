@@ -13,32 +13,32 @@ function gameControlStateCallback() {
 }
 
 const propTypes = {
-  id: React.PropTypes.string.isRequired,
+  id: React.PropTypes.string,
   game: React.PropTypes.object.isRequired,
   frameInfo: React.PropTypes.object.isRequired,
 };
 
 class GameControl extends React.Component {
-  static startGame() {
-    AppAction.startGame(this.props.id);
+  static startGame(id) {
+    AppAction.startGame(id);
   }
 
-  static pauseGame() {
-    AppAction.pauseGame(this.props.id);
+  static pauseGame(id) {
+    AppAction.pauseGame(id);
   }
 
-  static resumeGame() {
-    AppAction.resumeGame(this.props.id);
+  static resumeGame(id) {
+    AppAction.resumeGame(id);
   }
 
-  static getState() {
-    if (this.props.game.started) {
-      if (this.props.game.running) {
-        return { text: 'Pause Game', action: GameControl.pauseGame };
+  static getState(game, id) {
+    if (game.started) {
+      if (game.running) {
+        return { text: 'Pause Game', action: () => GameControl.pauseGame(id) };
       }
-      return { text: 'Resume Game', action: GameControl.resumeGame };
+      return { text: 'Resume Game', action: () => GameControl.resumeGame(id) };
     }
-    return { text: 'Start Game', action: GameControl.startGame };
+    return { text: 'Start Game', action: () => GameControl.startGame(id) };
   }
 
   static updateFrequencyChanged(event) {
@@ -51,7 +51,7 @@ class GameControl extends React.Component {
 
   render() {
     if (this.props.game) {
-      const state = this.getState();
+      const state = GameControl.getState(this.props.game, this.props.id);
       const text = state.text;
       const action = state.action;
       return (
