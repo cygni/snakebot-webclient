@@ -58,9 +58,9 @@ class GameBoard extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.game) {
+    if (nextProps.game.mapEvents && nextProps.game.currentFrame) {
       let map;
-      if (this.props.game) {
+      if (this.props.game.mapEvents && this.props.game.currentFrame) {
         map = this.props.game.mapEvents[this.props.game.currentFrame];
       } else {
         map = nextProps.game.mapEvents[nextProps.game.currentFrame];

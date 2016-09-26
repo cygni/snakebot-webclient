@@ -10,8 +10,12 @@ function getActiveGame() {
   return { game };
 }
 
-function Sidebar() {
-  if (this.props.game) {
+const propTypes = {
+  game: React.PropTypes.object.isRequired,
+};
+
+const Sidebar = function Sidebar(props) {
+  if (props.game.players) {
     return (
       <div>
         <h3>Active Game</h3>
@@ -25,7 +29,7 @@ function Sidebar() {
             </tr>
           </thead>
           <tbody> {
-            this.props.game.players.map(snake => (
+            props.game.players.map(snake => (
               <tr key={snake.id}>
                 <td style={{ background: snake.alive ? snake.color : 'grey', color: 'white' }}>
                   Name: {snake.name}
@@ -34,13 +38,14 @@ function Sidebar() {
             ))}
           </tbody>
         </Table>
-
-
-        <GameControl id={this.props.game.id} />
+        <GameControl id={props.game.id} />
       </div>
     );
   }
+
   return (<div />);
-}
+};
+
+Sidebar.propTypes = propTypes;
 
 export default new StoreWatch(Sidebar, getActiveGame);

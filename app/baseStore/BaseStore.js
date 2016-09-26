@@ -94,7 +94,6 @@ const _setActiveGame = (gameid) => {
   } else if (!_activeGame) {
     activeGameId = gameid;
   }
-  console.log(_activeGame);
 };
 
 const _initWS = (gameid) => {
