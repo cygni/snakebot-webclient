@@ -3,44 +3,61 @@ import SockJS from 'sockjs-client';
 import TournamentAction from '../tournament/action/tournament-actions';
 import AppAction from '../training/action/training-actions';
 
+const TOURNAMENT_CREATED = 'se.cygni.snake.eventapi.response.TournamentCreated';
+const TOURNAMENT_GAME_PLAN = 'se.cygni.snake.eventapi.model.TournamentGamePlan';
+const ACTIVE_GAMES_LIST = 'se.cygni.snake.eventapi.response.ActiveGamesList';
+const MAP_UPDATE_EVENT = 'se.cygni.snake.api.event.MapUpdateEvent';
+const GAME_ENDED_EVENT = 'se.cygni.snake.api.event.GameEndedEvent';
+const TOURNAMENT_ENDED_EVENT = 'se.cygni.snake.api.event.TournamentEndedEvent';
+const UNAUTHORIZED = 'se.cygni.snake.eventapi.exception.Unauthorized';
+
 const socket = new SockJS(Config.server + '/events');
 
 const listen = (gameid) => {
   if (socket.readyState === 1) {
-    socket.send('{"includedGameIds": ["' + gameid +
-      '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    socket.send({
+      includedGameIds: [gameid],
+      type: 'se.cygni.snake.eventapi.request.SetGameFiler',
+    });
   }
 
   socket.onopen = function onSocketOpen() {
-    socket.send('{"includedGameIds": ["' + gameid +
-      '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
+    socket.send({
+      includedGameIds: [gameid],
+      type: 'se.cygni.snake.eventapi.request.SetGameFilter',
+    });
   };
 
   socket.onmessage = function onSocketMessage(e) {
     const jsonData = JSON.parse(e.data);
     console.log('Received json message', jsonData);
-    if (jsonData.type ===
-      'se.cygni.snake.eventapi.response.TournamentCreated') {
-      TournamentAction.tournamentCreated(jsonData);
-    } else if (jsonData.type ===
-      'se.cygni.snake.eventapi.model.TournamentGamePlan') {
-      TournamentAction.tournamentGamePlanReceived(jsonData);
-      TournamentAction.updatePlayers(jsonData.players);
-    } else if (jsonData.type ===
-      'se.cygni.snake.eventapi.response.ActiveGamesList') {
-      AppAction.addGames(jsonData.games);
-    } else if (jsonData.type === 'se.cygni.snake.api.event.MapUpdateEvent') {
-      AppAction.mapUpdateEvent(jsonData);
-    } else if (jsonData.type === 'se.cygni.snake.api.event.GameEndedEvent') {
-      AppAction.mapUpdateEvent(jsonData);
-    } else if (jsonData.type ===
-      'se.cygni.snake.api.event.TournamentEndedEvent') {
-      TournamentAction.tournamentEndedEvent(jsonData);
-    } else if (jsonData.type ===
-      'se.cygni.snake.eventapi.exception.Unauthorized') {
-      TournamentAction.invalidToken();
-    } else {
-      console.log('Unrecognized datatype: ' + jsonData.type);
+
+    switch (jsonData.type) {
+      case TOURNAMENT_CREATED:
+        TournamentAction.tournamentCreated(jsonData);
+        break;
+      case TOURNAMENT_GAME_PLAN:
+        TournamentAction.tournamentGamePlanReceived(jsonData);
+        TournamentAction.updatePlayers(jsonData.players);
+        break;
+      case ACTIVE_GAMES_LIST:
+        AppAction.addGames(jsonData.games);
+        break;
+      case MAP_UPDATE_EVENT:
+        AppAction.mapUpdateEvent(jsonData);
+        break;
+      case GAME_ENDED_EVENT:
+        AppAction.mapUpdateEvent(jsonData);
+        break;
+      case TOURNAMENT_ENDED_EVENT:
+        TournamentAction.tournamentEndedEvent(jsonData);
+        break;
+      case UNAUTHORIZED:
+        TournamentAction.invalidToken();
+        break;
+      default:
+        console.log('Unrecognized datatype: ', jsonData.type);
+        break;
     }
   };
 
@@ -51,10 +68,12 @@ const listen = (gameid) => {
 
 export default {
   init(gameid) {
+    console.log('Initialized socket with with gameid:', gameid);
     listen(gameid);
   },
   send(msg) {
-    socket.send(msg);
+    console.log('Sending message to socket:', msg);
+    socket.send(JSON.stringify(msg));
   },
   state() {
     return socket.readyState;
