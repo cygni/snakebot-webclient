@@ -44,8 +44,17 @@ let _activeGame = {};
 const _startGame = () => {
   _activeGame.started = true;
   _activeGame.running = true;
-  Socket.send('{"includedGameIds": ["' + _activeGame.id + '"],"type":"se.cygni.snake.eventapi.request.SetGameFilter"}');
-  Socket.send('{"gameId":"' + _activeGame.id + '","type":"se.cygni.snake.eventapi.request.StartGame"}');
+
+  if (_activeGame.id) {
+    Socket.send({
+      includedGameIds: [_activeGame.id],
+      type: 'se.cygni.snake.eventapi.request.SetGameFilter',
+    });
+    Socket.send({
+      gameId: _activeGame.id,
+      type: 'se.cygni.snake.eventapi.request.StartGame',
+    });
+  }
 };
 
 const _addGames = (gamesList) => {
@@ -129,31 +138,37 @@ function _isLoggedIn() {
 
 const _createTournament = (name) => {
   Socket.init();
-  Socket.send('{"tournamentName":"' + name +
-    '","type":"se.cygni.snake.eventapi.request.CreateTournament", "token":"' +
-    _getToken() + '"}');
+  Socket.send({
+    tournamentName: name,
+    type: 'se.cygni.snake.eventapi.request.CreateTournament',
+    token: _getToken(),
+  });
 };
 
 const _createTournamentTable = () => {
-  Socket.send(
-    '{"type":"se.cygni.snake.eventapi.request.UpdateTournamentSettings", "token":"' +
-    _getToken() + '", "gameSettings": ' + JSON.stringify(tournament.gameSettings) +
-    '}');
+  Socket.send({
+    type: 'se.cygni.snake.eventapi.request.UpdateTournamentSettings',
+    token: _getToken(),
+    gameSettings: tournament.gameSettings,
+  });
 };
 
 const _startTournament = () => {
   localStorage.removeItem('gameplan');
   localStorage.removeItem('finalPlacement');
-  Socket.send(
-    '{"type":"se.cygni.snake.eventapi.request.StartTournament", "token":"' +
-    _getToken() + '", "tournamentId":"' + tournament.tournamentId + '"}');
+  Socket.send({
+    type: 'se.cygni.snake.eventapi.request.StartTournament',
+    token: _getToken(),
+    tournamentId: tournament.tournamentId,
+  });
   hashHistory.push('tournament/tournamentbracket');
 };
 
 const _getActiveTournament = () => {
-  Socket.send(
-    '{"type":"se.cygni.snake.eventapi.request.GetActiveTournament", "token":"' +
-    _getToken() + '"}');
+  Socket.send({
+    type: 'se.cygni.snake.eventapi.request.GetActiveTournament',
+    token: _getToken(),
+  });
 };
 
 const _tournamentCreated = (jsonData) => {
@@ -224,9 +239,11 @@ const _tournamentEnded = (event) => {
 };
 
 const _killTournament = () => {
-  Socket.send('{"tournamentId":"' + tournament.tournamentId +
-    '","type":"se.cygni.snake.eventapi.request.KillTournament", "token":"' +
-    _getToken() + '"}');
+  Socket.send({
+    tournamentId: tournament.tournamentId,
+    type: 'se.cygni.snake.eventapi.request.KillTournament',
+    token: _getToken(),
+  });
 };
 
 const _loginUser = (action) => {
