@@ -4,3 +4,6 @@
 /node_modules
 /dist/bundle.js
 npm-debug.log
+
+# Ignore the eslint cache
+.eslintcache
