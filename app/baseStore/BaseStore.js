@@ -81,13 +81,20 @@ const _addGames = (gamesList) => {
 };
 
 const _searchForOldGames = (name) => {
-  rest(Config.server + '/history/search/' + name)
-    .then((response) => {
+  console.log('Searching for games with name = \'' + name + '\'');
+  rest(Config.server + '/history/search/' + name).then(
+    (response) => {
       const jsonResponse = JSON.parse(response.entity);
+      console.log('Searching for games found:', jsonResponse.items);
+
       oldGames = jsonResponse.items;
       noResultsFound = oldGames.length === 0;
       BaseStore.emitChange();
-    });
+    },
+    (response) => {
+      console.error('Search for games got error response:', response);
+    }
+  );
 };
 
 const _setActiveGame = (gameid) => {
