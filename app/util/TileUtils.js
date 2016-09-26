@@ -200,7 +200,6 @@ function _renderFood(stage, map, tileSize) {
 function _renderObstacles(stage, map, tileSize) {
   groupObstacles(map.obstaclePositions).forEach((group) => {
     if (group.length > 0) {
-      console.log(group.length);
       const groupSize = group.length;
       const firstObstacle = group[0];
       const xPos = firstObstacle.x * tileSize;
