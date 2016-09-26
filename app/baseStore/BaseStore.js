@@ -24,7 +24,7 @@ let finalPlacement = {
   list: [],
 };
 let playerList = [];
-const tournament = {};
+let tournament = {};
 let tournamentGameplan = {
   tournamentLevels: [],
 };
@@ -244,6 +244,8 @@ const _killTournament = () => {
     type: 'se.cygni.snake.eventapi.request.KillTournament',
     token: _getToken(),
   });
+
+  tournament = {};
 };
 
 const _loginUser = (action) => {
