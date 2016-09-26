@@ -1,5 +1,4 @@
 import Colors from './Colors';
-import TileUtils from './TileUtils';
 
 export default {
   parseSnakes(oldList, snakeList) {
@@ -25,7 +24,7 @@ export default {
       frame.snakeInfos.forEach((snake) => {
         const player = playerList.find(p => p.id === snake.id);
         if (!player) {
-          console.log('unable to find player');
+          console.log('unable to find player for snake:', snake);
           return;
         }
 
@@ -35,20 +34,6 @@ export default {
       });
     }
     return frame;
-  },
-
-  setCurrentFrame(activeGame, frame) {
-    if (activeGame.currentFrame < frame) {
-      activeGame.currentFrame = frame;
-      let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
-      if (!currentFrame.rendered) {
-        currentFrame = this.updateGame(currentFrame);
-        currentFrame = this.updateSnakes(activeGame.players, currentFrame);
-        this.parseSnakes(activeGame.players, currentFrame.snakeInfos);
-      }
-    } else {
-      activeGame.currentFrame = frame;
-    }
   },
 
   addGames(games) {
@@ -98,32 +83,20 @@ export default {
     return newGame;
   },
 
-  updateGame(map) {
-    if (map) {
-      map.rendered = true;
-      map.foodPositions = map.foodPositions.map(
-        pos => TileUtils.getTileCoordinate(pos, map.width));
-      map.obstaclePositions = map.obstaclePositions.map(
-        pos => TileUtils.getTileCoordinate(pos, map.width));
-      map.snakeInfos.forEach((snake) => {
-        snake.positions =
-          snake.positions.map(pos => TileUtils.getTileCoordinate(pos, map.width));
-      });
+  changeFrame(activeGame) {
+    const nextFrame = activeGame.currentFrame + 1;
+    const isValidIndex = nextFrame >= 0 && nextFrame < activeGame.mapEvents.length;
+    if (!isValidIndex) {
+      return;
     }
-    return map;
+
+    this.setCurrentFrame(activeGame, nextFrame);
   },
 
-  changeFrame(activeGame) {
-    if (activeGame.mapEvents.length > 0) {
-      activeGame.currentFrame =
-        Math.max(0, Math.min(activeGame.currentFrame + 1,
-                             activeGame.mapEvents.length - 1));
-      const currentFrame = activeGame.mapEvents[activeGame.currentFrame];
-      if (!currentFrame.rendered) {
-        this.updateGame(currentFrame);
-        this.updateSnakes(activeGame.players, currentFrame);
-        this.parseSnakes(activeGame.players, currentFrame.snakeInfos);
-      }
-    }
+  setCurrentFrame(activeGame, frame) {
+    activeGame.currentFrame = frame;
+    let currentFrame = activeGame.mapEvents[activeGame.currentFrame];
+    currentFrame = this.updateSnakes(activeGame.players, currentFrame);
+    this.parseSnakes(activeGame.players, currentFrame.snakeInfos);
   },
 };

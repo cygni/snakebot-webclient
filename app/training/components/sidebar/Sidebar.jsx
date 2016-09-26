@@ -31,8 +31,8 @@ const Sidebar = function Sidebar(props) {
             props.game.players.map(snake => (
               <tr key={snake.id}>
                 <td style={{ background: snake.alive ? snake.color : 'grey', color: 'white' }}>
-                  Name: {snake.name}
-                  Length: {snake.length}
+                  Name: {snake.name}<br />
+                  Length: {snake.length}<br />
                   Points: {snake.points}</td>
               </tr>
             ))}

@@ -222,6 +222,7 @@ const _changeFrame = () => {
   if (!_activeGame) {
     return;
   }
+
   const lastFrame = _activeGame.mapEvents.length - 1;
 
   const gameIsRunning = _activeGame.started && _activeGame.running;
@@ -232,13 +233,13 @@ const _changeFrame = () => {
   if (gameIsRunning && isWithinFrameInterval) {
     GameRenderingFunction.changeFrame(_activeGame);
     setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
-    BaseStore.emitChange();
   }
 
   if (_activeGame.currentFrame === lastFrame) {
     _activeGame.running = false;
-    BaseStore.emitChange();
   }
+
+  BaseStore.emitChange();
 };
 
 const _addMapUpdate = (event) => {
@@ -478,6 +479,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         break;
       case Constants.SET_CURRENT_FRAME:
         _setCurrentFrame(action.frame);
+        _activeGame.running = false;
         break;
       case Constants.MAP_UPDATE_EVENT:
         _addMapUpdate(action.event);

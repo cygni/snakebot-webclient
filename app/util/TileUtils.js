@@ -165,15 +165,22 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
 function _renderSnakes(stage, map, tileSize, _activeGame) {
   map.snakeInfos.forEach((snakeInfo) => {
     let head = true;
+
     const snake = _activeGame.game.players.find(s => s.id ===
       snakeInfo.id);
     snakeInfo.positions.forEach((snakePosition) => {
-      const yPos = snakePosition.y * tileSize;
-      const xPos = snakePosition.x * tileSize;
+      const pos = _getTileCoordinate(snakePosition, map);
+
+      const yPos = pos.y * tileSize;
+      const xPos = pos.x * tileSize;
+
       if (head) {
         head = false;
-        _setHeadDirection(stage, snakeInfo.positions, tileSize, xPos,
-          yPos);
+
+        if (snakeInfo.positions.length > 1) {
+          const headImage = _getHeadImage(snakeInfo.positions, map);
+          _addHeadImage(stage, tileSize, xPos, yPos, headImage);
+        }
       } else {
         const rect = new createjs.Shape();
         rect.graphics.beginStroke('#000000')
@@ -187,8 +194,10 @@ function _renderSnakes(stage, map, tileSize, _activeGame) {
 
 function _renderFood(stage, map, tileSize) {
   map.foodPositions.forEach((foodPosition) => {
-    const yPos = foodPosition.y * tileSize;
-    const xPos = foodPosition.x * tileSize;
+    const pos = _getTileCoordinate(foodPosition, map);
+
+    const yPos = pos.y * tileSize;
+    const xPos = pos.x * tileSize;
     const star = new createjs.Bitmap(Images.STAR);
     star.scaleX = tileSize / star.image.width;
     star.scaleY = tileSize / star.image.height;
@@ -200,8 +209,10 @@ function _renderFood(stage, map, tileSize) {
 
 function _renderObstacles(stage, map, tileSize) {
   map.obstaclePositions.forEach((obstaclePosition) => {
-    const yPos = obstaclePosition.y * tileSize;
-    const xPos = obstaclePosition.x * tileSize;
+    const pos = _getTileCoordinate(obstaclePosition, map);
+
+    const yPos = pos.y * tileSize;
+    const xPos = pos.x * tileSize;
     const blackHole = new lib.blackhole();
     blackHole.x = xPos;
     blackHole.y = yPos;
@@ -209,24 +220,19 @@ function _renderObstacles(stage, map, tileSize) {
   });
 }
 
-function _setHeadDirection(stage, snakePositions, tileSize, xPos, yPos) {
-  const snakePosition1 = snakePositions[0];
-  const snakePosition2 = snakePositions[1];
-  if (snakePosition1 === undefined || snakePosition2 === undefined) {
-    return;
+function _getHeadImage(snakePositions, map) {
+  const head = _getTileCoordinate(snakePositions[0], map);
+  const body = _getTileCoordinate(snakePositions[1], map);
+
+  if (head.x === body.x && head.y > body.y) {
+    return Images.SNAKE_HEAD_BLUE_DOWN;
+  } else if (head.x > body.x) {
+    return Images.SNAKE_HEAD_BLUE_RIGHT;
+  } else if (head.x < body.x) {
+    return Images.SNAKE_HEAD_BLUE_LEFT;
   }
 
-  // TODO correct color for head
-  if (snakePosition1.x === snakePosition2.x && snakePosition1.y >
-    snakePosition2.y) {
-    _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE_DOWN);
-  } else if (snakePosition1.x > snakePosition2.x) {
-    _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE_RIGHT);
-  } else if (snakePosition1.x < snakePosition2.x) {
-    _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE_LEFT);
-  } else {
-    _addHeadImage(stage, tileSize, xPos, yPos, Images.SNAKE_HEAD_BLUE);
-  }
+  return Images.SNAKE_HEAD_BLUE;
 }
 
 function _addHeadImage(stage, tileSize, xPos, yPos, image) {
@@ -238,8 +244,14 @@ function _addHeadImage(stage, tileSize, xPos, yPos, image) {
   stage.addChild(bitmap);
 }
 
-export default {
+function _getTileCoordinate(absolutePos, map) {
+  const y = Math.floor(absolutePos / map.width);
+  const x = absolutePos - (y * map.width);
 
+  return { x, y };
+}
+
+export default {
   renderSnakes(stage, map, tileSize, _activeGame) {
     _renderSnakes(stage, map, tileSize, _activeGame);
   },
@@ -261,11 +273,5 @@ export default {
     }
 
     return buildTileObject(tile, key, tileSize, activeGame);
-  },
-  getTileCoordinate(absolutePos, mapWidth) {
-    const y = Math.floor(absolutePos / mapWidth);
-    const x = absolutePos - (y * mapWidth);
-
-    return { x, y };
   },
 };
