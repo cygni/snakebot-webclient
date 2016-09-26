@@ -69,8 +69,8 @@ const _addGames = (gamesList) => {
           const test = JSON.parse(response.entity);
           console.log(test);
           const game = test.messages.filter(event => event.type ===
-                                            'se.cygni.snake.api.event.MapUpdateEvent')
-                  .map(type => type.map);
+              'se.cygni.snake.api.event.MapUpdateEvent')
+            .map(type => type.map);
           _activeGame = GameRenderingFunction.addOldGame(game);
           BaseStore.emitChange();
         });
@@ -82,19 +82,20 @@ const _addGames = (gamesList) => {
 
 const _searchForOldGames = (name) => {
   console.log('Searching for games with name = \'' + name + '\'');
-  rest(Config.server + '/history/search/' + name).then(
-    (response) => {
-      const jsonResponse = JSON.parse(response.entity);
-      console.log('Searching for games found:', jsonResponse.items);
+  rest(Config.server + '/history/search/' + name)
+    .then(
+      (response) => {
+        const jsonResponse = JSON.parse(response.entity);
+        console.log('Searching for games found:', jsonResponse.items);
 
-      oldGames = jsonResponse.items;
-      noResultsFound = oldGames.length === 0;
-      BaseStore.emitChange();
-    },
-    (response) => {
-      console.error('Search for games got error response:', response);
-    }
-  );
+        oldGames = jsonResponse.items;
+        noResultsFound = oldGames.length === 0;
+        BaseStore.emitChange();
+      },
+      (response) => {
+        console.error('Search for games got error response:', response);
+      }
+    );
 };
 
 const _setActiveGame = (gameid) => {
@@ -106,8 +107,8 @@ const _setActiveGame = (gameid) => {
         const test = JSON.parse(response.entity);
         console.log(JSON.stringify(test.messages));
         const game = test.messages.filter(event => event.type ===
-                                          'se.cygni.snake.api.event.MapUpdateEvent')
-                .map(type => type.map);
+            'se.cygni.snake.api.event.MapUpdateEvent')
+          .map(type => type.map);
         _activeGame = GameRenderingFunction.addOldGame(game);
         BaseStore.emitChange();
       });
@@ -210,6 +211,7 @@ function _setUpdateFrequency(freq) {
 
 const _setCurrentFrame = (frame) => {
   GameRenderingFunction.setCurrentFrame(_activeGame, frame);
+  BaseStore.emitChange();
 };
 
 const _updateSettings = (key, value) => {
@@ -217,12 +219,24 @@ const _updateSettings = (key, value) => {
 };
 
 const _changeFrame = () => {
-  if (_activeGame && _activeGame.started && _activeGame.running &&
-    (_activeGame.currentFrame === 0 || _activeGame.currentFrame < _activeGame
-      .mapEvents
-      .length - 1)) {
+  if (!_activeGame) {
+    return;
+  }
+  const lastFrame = _activeGame.mapEvents.length - 1;
+
+  const gameIsRunning = _activeGame.started && _activeGame.running;
+  const isWithinFrameInterval =
+    _activeGame.currentFrame >= 0 &&
+    lastFrame;
+
+  if (gameIsRunning && isWithinFrameInterval) {
     GameRenderingFunction.changeFrame(_activeGame);
     setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
+    BaseStore.emitChange();
+  }
+
+  if (_activeGame.currentFrame === lastFrame) {
+    _activeGame.running = false;
     BaseStore.emitChange();
   }
 };
@@ -452,6 +466,11 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         break;
       case Constants.RESUME_GAME:
         _activeGame.running = true;
+        _changeFrame();
+        break;
+      case Constants.RESTART_GAME:
+        _activeGame.currentFrame = 0;
+        _startGame();
         _changeFrame();
         break;
       case Constants.SET_ACTIVE_TRAINING_GAME:

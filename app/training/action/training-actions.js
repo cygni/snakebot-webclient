@@ -25,6 +25,12 @@ export default {
     });
   },
 
+  restartGame(id) {
+    dispatch({
+      actionType: Constants.RESTART_GAME, id,
+    });
+  },
+
   activeGame(gameId) {
     dispatch({
       actionType: Constants.SET_ACTIVE_TRAINING_GAME, gameId,

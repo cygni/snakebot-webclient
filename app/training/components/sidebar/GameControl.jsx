@@ -31,14 +31,8 @@ class GameControl extends React.Component {
     AppAction.resumeGame(id);
   }
 
-  static getState(game, id) {
-    if (game.started) {
-      if (game.running) {
-        return { text: 'Pause Game', action: () => GameControl.pauseGame(id) };
-      }
-      return { text: 'Resume Game', action: () => GameControl.resumeGame(id) };
-    }
-    return { text: 'Start Game', action: () => GameControl.startGame(id) };
+  static restartGame(id) {
+    AppAction.restartGame(id);
   }
 
   static updateFrequencyChanged(event) {
@@ -49,18 +43,28 @@ class GameControl extends React.Component {
     AppAction.setCurrentFrame(parseInt(event.target.value, 10));
   }
 
+  getState() {
+    if (this.props.game.started) {
+      if (this.props.game.running) {
+        return { text: 'Pause Game', action: () => GameControl.pauseGame(this.props.game.id) };
+      } else if (this.props.game.currentFrame === this.props.frameInfo.lastFrame) {
+        return { text: 'Restart Game', action: () => GameControl.restartGame(this.props.game.id) };
+      }
+      return { text: 'Resume Game', action: () => GameControl.resumeGame(this.props.game.id) };
+    }
+    return { text: 'Start Game', action: () => GameControl.startGame(this.props.game.id) };
+  }
+
   render() {
     if (this.props.game) {
-      const state = GameControl.getState(this.props.game, this.props.id);
-      const text = state.text;
-      const action = state.action;
+      const state = this.getState();
       return (
         <div>
           <div>
             <Button
-              onClick={action}
+              onClick={state.action}
               className="btn btn-default btn-lg"
-            >{text}</Button>
+            >{state.text}</Button>
           </div>
           <div>
             <h4>Frame delay: {this.props.game.updateFrequency}</h4>
