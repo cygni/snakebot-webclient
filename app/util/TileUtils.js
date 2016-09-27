@@ -1,5 +1,6 @@
 import TileTypes from '../constants/TileTypes';
 import Images from '../constants/Images';
+import Colors from '../util/Colors';
 import Directions from '../constants/Directions';
 
 function isConnectingPart(me, map, x, y) {
@@ -49,40 +50,25 @@ function getTileType(me, x, y, map) {
 }
 
 function _getTileAt(x, y, map) {
-  let tile = {
-    content: TileTypes.EMPTY,
-  };
+  const atCoordinate = pos => pos.x === x && pos.y === y;
 
-  map.foodPositions.forEach((foodPosition) => {
-    if (foodPosition.x === x && foodPosition.y === y) {
-      tile = {
-        content: TileTypes.FOOD,
-      };
-    }
-  });
+  if (map.foodPositions.some(atCoordinate)) {
+    return {
+      content: TileTypes.FOOD,
+    };
+  } else if (map.obstaclePositions.some(atCoordinate)) {
+    return {
+      content: TileTypes.OBSTACLE,
+    };
+  }
 
-  map.obstaclePositions.forEach((obstaclePosition) => {
-    if (obstaclePosition.x === x && obstaclePosition.y === y) {
-      tile = {
-        content: TileTypes.OBSTACLE,
-      };
-    }
-  });
+  let tile = { content: TileTypes.EMPTY };
 
   map.snakeInfos.forEach((snakeInfo) => {
-    let head = true;
-
     snakeInfo.positions.forEach((snakePosition, index) => {
-      let type = TileTypes.SNAKE_BODY;
-
-      if (head) {
-        type = TileTypes.SNAKE_HEAD;
-        head = false;
-      }
-
-      if (snakePosition.x === x && snakePosition.y === y) {
+      if (atCoordinate(snakePosition)) {
         tile = {
-          content: type,
+          content: index === 0 ? TileTypes.SNAKE_HEAD : TileTypes.SNAKE_BODY,
           playerId: snakeInfo.id,
           order: index,
         };
@@ -133,7 +119,6 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
       };
       break;
     }
-
     case TileTypes.OBSTACLE: {
       item = {
         key,
@@ -158,40 +143,36 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
   return item;
 }
 
-function _renderBodyPart(stage, xPos, yPos, tileSize, color) {
+function _renderBodyPart(stage, pos, tileSize, color) {
   const rect = new createjs.Shape();
   rect.graphics
     .beginFill(color)
-    .drawRect(xPos, yPos, tileSize, tileSize);
+    .drawRect(pos.x * tileSize, pos.y * tileSize, tileSize, tileSize);
   stage.addChild(rect);
 }
 
-function _renderSnakes(stage, map, tileSize, _activeGame) {
-  map.snakeInfos.forEach((snakeInfo) => {
-    const lastIndex = snakeInfo.positions.length - 1;
-    const snake = _activeGame.game.players.find(s => s.id ===
-      snakeInfo.id);
-    snakeInfo.positions.forEach((snakePosition, index) => {
-      const pos = _getTileCoordinate(snakePosition, map);
-
-      const yPos = pos.y * tileSize;
-      const xPos = pos.x * tileSize;
+function _renderSnakes(stage, map, tileSize) {
+  map.snakeInfos.forEach((snake) => {
+    const lastIndex = snake.positions.length - 1;
+    snake.positions.forEach((position, index) => {
+      const pos = _getTileCoordinate(position, map);
+      const color = Colors.getSnakeColor(snake.id);
 
       if (index === 0) {
         // ensure that we know which direction the head will be facing
-        if (snakeInfo.positions.length > 1) {
-          const direction = _getHeadDirection(snakeInfo.positions, map);
-          const image = Images.getSnakeHead(snake.color, direction);
+        if (snake.positions.length > 1) {
+          const direction = _getHeadDirection(snake.positions, map);
+          const image = Images.getSnakeHead(color, direction);
 
-          _addImage(stage, tileSize, xPos, yPos, image);
+          _addImage(stage, tileSize, pos, image);
         } else {
-          _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
+          _renderBodyPart(stage, pos, tileSize, color);
         }
       } else if (index === lastIndex) {
         // TODO: render tail!
-        _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
+        _renderBodyPart(stage, pos, tileSize, color);
       } else {
-        _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
+        _renderBodyPart(stage, pos, tileSize, color);
       }
     });
   });
@@ -282,12 +263,12 @@ function _getHeadDirection(positions, map) {
   return Directions.DOWN;
 }
 
-function _addImage(stage, tileSize, xPos, yPos, image) {
+function _addImage(stage, tileSize, pos, image) {
   const bitmap = new createjs.Bitmap(image);
   bitmap.scaleX = tileSize / bitmap.image.width;
   bitmap.scaleY = tileSize / bitmap.image.height;
-  bitmap.x = xPos;
-  bitmap.y = yPos;
+  bitmap.x = pos.x * tileSize;
+  bitmap.y = pos.y * tileSize;
   stage.addChild(bitmap);
 }
 

@@ -6,18 +6,18 @@ import StoreWatch from '../../watch/StoreWatch.jsx';
 import TournamentStore from '../../../baseStore/BaseStore';
 
 function gameControlStateCallback() {
-  const updateFrequency = TournamentStore.getUpdateFrequencyForTournament();
-  const frameInfo = TournamentStore.getFrameInfo();
-  return { updateFrequency, frameInfo };
+  const gameState = TournamentStore.getActiveGameState();
+  const frameCount = TournamentStore.getFrameCount();
+  return { gameState, frameCount };
 }
 
 class GameControl extends React.Component {
   static updateFrequencyChanged(event) {
-    AppAction.setUpdateFrequencyTournament(parseInt(event.target.value, 10));
+    AppAction.setUpdateFrequency(parseInt(event.target.value, 10));
   }
 
   static currentFrameChanged(event) {
-    AppAction.setCurrentFrameTournament(parseInt(event.target.value, 10));
+    AppAction.setCurrentFrame(parseInt(event.target.value, 10));
   }
 
   constructor(props) {
@@ -27,7 +27,6 @@ class GameControl extends React.Component {
       frequencyMaxValue: 2000,
       frequencyStep: 100,
       gameActive: false,
-      gamePaused: false,
       gameRunning: false,
       updateFrequency: 500,
       currentFrame: 0,
@@ -38,12 +37,11 @@ class GameControl extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      gameActive: nextProps.gameActive,
-      gamePaused: nextProps.gamePaused,
-      gameRunning: nextProps.gameRunning,
-      updateFrequency: nextProps.updateFrequency,
-      currentFrame: nextProps.frameInfo.currentFrame,
-      lastFrame: nextProps.frameInfo.lastFrame,
+      gameActive: nextProps.gameState.started,
+      gameRunning: nextProps.running,
+      updateFrequency: nextProps.gameState.updateFrequency,
+      currentFrame: nextProps.gameState.currentFrame,
+      lastFrame: nextProps.frameCount,
     });
   }
 

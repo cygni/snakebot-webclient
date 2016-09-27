@@ -16,7 +16,7 @@ function getActiveGame() {
 }
 
 const propTypes = {
-  game: React.PropTypes.object.isRequired,
+  game: React.PropTypes.object,
 };
 
 class GameBoard extends React.Component {
@@ -49,6 +49,7 @@ class GameBoard extends React.Component {
 
     let size = { width: 0, height: 0 };
     let tileSize = 0;
+    console.log('Rendering tournament board with state', this.state);
 
     if (map !== undefined && map.width !== undefined) {
       size = BoardUtils.calculateSize(map);

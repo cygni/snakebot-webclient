@@ -8,18 +8,19 @@ import TileUtils from '../../util/TileUtils';
 import TrainingAction from '../../training/action/training-actions';
 import Sidebar from './sidebar/Sidebar.jsx';
 
-
 let worldLayer;
 let snakeLayer;
 let renderObstacles = true;
 
 function getActiveGame() {
   const game = Store.getActiveGame();
-  return { game };
+  const state = Store.getActiveGameState();
+  return { game, state };
 }
 
 const propTypes = {
   game: React.PropTypes.object,
+  state: React.PropTypes.object,
   params: React.PropTypes.object.isRequired,
 };
 
@@ -36,9 +37,10 @@ class GameBoard extends React.Component {
     if (mapIsEmpty || canvas.getContext('2d') === undefined) {
       return;
     }
+
     const activeGame = getActiveGame();
     snakeLayer.removeAllChildren();
-    TileUtils.renderSnakes(snakeLayer, map, tileSize, activeGame);
+    TileUtils.renderSnakes(snakeLayer, map, tileSize, activeGame.game);
     TileUtils.renderFood(snakeLayer, map, tileSize);
     if (renderObstacles) {
       if (map.obstaclePositions[0] !== undefined) {
@@ -61,10 +63,10 @@ class GameBoard extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (!_.isEmpty(nextProps.game)) {
       let map;
-      if (this.props.game) {
-        map = this.props.game.mapEvents[this.props.game.currentFrame];
+      if (this.props.game && this.props.game.mapEvents) {
+        map = this.props.game.mapEvents[this.props.state.currentFrame];
       } else {
-        map = nextProps.game.mapEvents[nextProps.game.currentFrame];
+        map = nextProps.game.mapEvents[nextProps.state.currentFrame];
       }
 
       let size = { width: 0, height: 0 };

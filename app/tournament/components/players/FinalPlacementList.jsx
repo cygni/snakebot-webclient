@@ -10,11 +10,11 @@ function getFinalPlacement() {
 }
 
 const propTypes = {
-  finalPlacement: React.PropTypes.object.isRequired,
+  finalPlacement: React.PropTypes.object,
 };
 
 function FinalPlacementList(props) {
-  if (props.finalPlacement.list.length !== 0) {
+  if (props.finalPlacement && props.finalPlacement.list.length !== 0) {
     return (
       <div>
         <h2> WINNER! {props.finalPlacement.winner.name} </h2>

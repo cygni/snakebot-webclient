@@ -2,6 +2,12 @@ import Constants from '../../constants/Constants';
 import { dispatch } from '../../dispatchers/AppDispatcher';
 
 export default {
+  socketIsOpen() {
+    dispatch({
+      actionType: Constants.SOCKET_IS_OPEN,
+    });
+  },
+
   createTournament(name) {
     dispatch({
       actionType: Constants.CREATE_TOURNAMENT, name,
@@ -38,6 +44,12 @@ export default {
     });
   },
 
+  tournamentInfoReceived(jsonData) {
+    dispatch({
+      actionType: Constants.TOURNAMENT_INFO_RECEIVED, jsonData,
+    });
+  },
+
   tournamentGamePlanReceived(jsonData) {
     dispatch({
       actionType: Constants.GAME_PLAN_RECEIVED, jsonData,
@@ -68,15 +80,15 @@ export default {
     });
   },
 
-  setUpdateFrequencyTournament(freq) {
+  setUpdateFrequency(freq) {
     dispatch({
-      actionType: Constants.SET_UPDATE_FREQUENCY_TOURNAMENT, freq,
+      actionType: Constants.SET_UPDATE_FREQUENCY, freq,
     });
   },
 
-  setCurrentFrameTournament(frame) {
+  setCurrentFrame(frame) {
     dispatch({
-      actionType: Constants.SET_CURRENT_TOURNAMENT_FRAME, frame,
+      actionType: Constants.SET_CURRENT_FRAME, frame,
     });
   },
 
