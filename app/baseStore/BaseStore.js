@@ -228,7 +228,7 @@ const _changeFrame = () => {
   const gameIsRunning = _activeGame.started && _activeGame.running;
   const isWithinFrameInterval =
     _activeGame.currentFrame >= 0 &&
-    lastFrame;
+    _activeGame.currentFrame < lastFrame;
 
   if (gameIsRunning && isWithinFrameInterval) {
     GameRenderingFunction.changeFrame(_activeGame);
