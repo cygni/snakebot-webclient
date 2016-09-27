@@ -1,5 +1,6 @@
 import TileTypes from '../constants/TileTypes';
 import Images from '../constants/Images';
+import Directions from '../constants/Directions';
 
 function isConnectingPart(me, map, x, y) {
   const tile = _getTileAt(x, y, map);
@@ -98,73 +99,68 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
   switch (tile.content) {
     default:
       break;
-    case TileTypes.EMPTY:
-      {
-        item = {
-          key,
-          height: tileSize,
-          width: tileSize,
-          color: '',
-          type: TileTypes.EMPTY,
-        };
-        break;
-      }
-    case TileTypes.SNAKE_BODY:
-      {
-        const snake = _activeGame.players.find(s => s.id === tile.playerId);
+    case TileTypes.EMPTY: {
+      item = {
+        key,
+        height: tileSize,
+        width: tileSize,
+        color: '',
+        type: TileTypes.EMPTY,
+      };
+      break;
+    }
+    case TileTypes.SNAKE_BODY: {
+      const snake = _activeGame.players.find(s => s.id === tile.playerId);
 
-        item = {
-          key,
-          height: tileSize,
-          width: tileSize,
-          color: snake && snake.alive ? snake.color : 'grey',
-          type: TileTypes.SNAKE_BODY,
-          tileType: tile.tileType,
-        };
-        break;
-      }
-    case TileTypes.SNAKE_HEAD:
-      {
-        const snake = _activeGame.players.find(s => s.id === tile.playerId);
-        item = {
-          key,
-          height: tileSize,
-          width: tileSize,
-          color: snake && snake.alive ? snake.color : 'grey',
-          type: TileTypes.SNAKE_HEAD,
-        };
-        break;
-      }
+      item = {
+        key,
+        height: tileSize,
+        width: tileSize,
+        color: snake && snake.alive ? snake.color : 'grey',
+        type: TileTypes.SNAKE_BODY,
+        tileType: tile.tileType,
+      };
+      break;
+    }
+    case TileTypes.SNAKE_HEAD: {
+      const snake = _activeGame.players.find(s => s.id === tile.playerId);
+      item = {
+        key,
+        height: tileSize,
+        width: tileSize,
+        color: snake && snake.alive ? snake.color : 'grey',
+        type: TileTypes.SNAKE_HEAD,
+      };
+      break;
+    }
 
-    case TileTypes.OBSTACLE:
-      {
-        item = {
-          key,
-          height: tileSize,
-          width: tileSize,
-          color: 'black',
-          type: TileTypes.OBSTACLE,
-        };
-        break;
-      }
-    case TileTypes.FOOD:
-      {
-        item = {
-          key,
-          height: tileSize,
-          width: tileSize,
-          color: 'green',
-          type: TileTypes.FOOD,
-        };
-        break;
-      }
+    case TileTypes.OBSTACLE: {
+      item = {
+        key,
+        height: tileSize,
+        width: tileSize,
+        color: 'black',
+        type: TileTypes.OBSTACLE,
+      };
+      break;
+    }
+    case TileTypes.FOOD: {
+      item = {
+        key,
+        height: tileSize,
+        width: tileSize,
+        color: 'green',
+        type: TileTypes.FOOD,
+      };
+      break;
+    }
   }
   return item;
 }
 
 function _renderBodyPart(stage, xPos, yPos, tileSize, color) {
   const rect = new createjs.Shape();
-  rect.graphics.beginStroke('#000000')
+  rect.graphics
     .beginFill(color)
     .drawRect(xPos, yPos, tileSize, tileSize);
   stage.addChild(rect);
@@ -172,25 +168,28 @@ function _renderBodyPart(stage, xPos, yPos, tileSize, color) {
 
 function _renderSnakes(stage, map, tileSize, _activeGame) {
   map.snakeInfos.forEach((snakeInfo) => {
-    let head = true;
-
+    const lastIndex = snakeInfo.positions.length - 1;
     const snake = _activeGame.game.players.find(s => s.id ===
       snakeInfo.id);
-    snakeInfo.positions.forEach((snakePosition) => {
+    snakeInfo.positions.forEach((snakePosition, index) => {
       const pos = _getTileCoordinate(snakePosition, map);
 
       const yPos = pos.y * tileSize;
       const xPos = pos.x * tileSize;
 
-      if (head) {
-        head = false;
-
+      if (index === 0) {
+        // ensure that we know which direction the head will be facing
         if (snakeInfo.positions.length > 1) {
-          const headImage = _getHeadImage(snakeInfo.positions, map);
-          _addHeadImage(stage, tileSize, xPos, yPos, headImage);
+          const direction = _getHeadDirection(snakeInfo.positions, map);
+          const image = Images.getSnakeHead(snake.color, direction);
+
+          _addImage(stage, tileSize, xPos, yPos, image);
         } else {
           _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
         }
+      } else if (index === lastIndex) {
+        // TODO: render tail!
+        _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
       } else {
         _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
       }
@@ -214,34 +213,76 @@ function _renderFood(stage, map, tileSize) {
 }
 
 function _renderObstacles(stage, map, tileSize) {
-  map.obstaclePositions.forEach((obstaclePosition) => {
-    const pos = _getTileCoordinate(obstaclePosition, map);
+  const obstacleCoordinates = map.obstaclePositions.map(
+    obstacle => _getTileCoordinate(obstacle, map));
 
-    const yPos = pos.y * tileSize;
-    const xPos = pos.x * tileSize;
-    const blackHole = new lib.blackhole();
-    blackHole.x = xPos;
-    blackHole.y = yPos;
-    stage.addChild(blackHole);
+  _groupObstacles(obstacleCoordinates).forEach((group) => {
+    if (group.length > 0) {
+      const groupSize = group.length;
+      const firstObstacle = group[0];
+      const xPos = firstObstacle.x * tileSize;
+      const yPos = firstObstacle.y * tileSize;
+
+      let scale = 1;
+      if (groupSize === 4) {
+        scale = 2;
+      } else if (groupSize === 9) {
+        scale = 3;
+      }
+
+      const blackHole = new lib.blackhole();
+      blackHole.scaleX = (tileSize * scale) / blackHole.nominalBounds.height;
+      blackHole.scaleY = (tileSize * scale) / blackHole.nominalBounds.width;
+      blackHole.x = xPos;
+      blackHole.y = yPos;
+      stage.addChild(blackHole);
+    }
   });
 }
 
-function _getHeadImage(snakePositions, map) {
-  const head = _getTileCoordinate(snakePositions[0], map);
-  const body = _getTileCoordinate(snakePositions[1], map);
-
-  if (head.x === body.x && head.y > body.y) {
-    return Images.SNAKE_HEAD_BLUE_DOWN;
-  } else if (head.x > body.x) {
-    return Images.SNAKE_HEAD_BLUE_RIGHT;
-  } else if (head.x < body.x) {
-    return Images.SNAKE_HEAD_BLUE_LEFT;
-  }
-
-  return Images.SNAKE_HEAD_BLUE;
+function _groupObstacles(obstaclePositions) {
+  const ready = [];
+  const cluster = [];
+  obstaclePositions.forEach((obstaclePosition) => {
+    if (!ready.includes([obstaclePosition.x, obstaclePosition.y].join())) {
+      const ar = obstaclePositions.filter(o => _filterObstacles(o, obstaclePosition));
+      cluster.push(ar);
+      ar.forEach((ob) => {
+        ready.push([ob.x, ob.y].join());
+      });
+    }
+  });
+  return cluster;
 }
 
-function _addHeadImage(stage, tileSize, xPos, yPos, image) {
+function _filterObstacles(o1, o2) {
+  return Math.abs(o1.x - o2.x) < 3 && Math.abs(o1.y - o2.y) < 3;
+}
+
+function _getHeadDirection(positions, map) {
+  const head = _getTileCoordinate(positions[0], map);
+  const body = _getTileCoordinate(positions[1], map);
+
+  if (head === undefined || body === undefined) {
+    console.error('Snake is too short to find a body', positions);
+    return Directions.DOWN;
+  }
+
+  if (head.x === body.x && head.y > body.y) {
+    return Directions.DOWN;
+  } else if (head.x === body.x && head.y < body.y) {
+    return Directions.UP;
+  } else if (head.x > body.x) {
+    return Directions.RIGHT;
+  } else if (head.x < body.x) {
+    return Directions.LEFT;
+  }
+
+  console.error('Body positions don\'t match any direction', positions);
+  return Directions.DOWN;
+}
+
+function _addImage(stage, tileSize, xPos, yPos, image) {
   const bitmap = new createjs.Bitmap(image);
   bitmap.scaleX = tileSize / bitmap.image.width;
   bitmap.scaleY = tileSize / bitmap.image.height;
