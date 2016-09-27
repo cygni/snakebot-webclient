@@ -162,6 +162,14 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
   return item;
 }
 
+function _renderBodyPart(stage, xPos, yPos, tileSize, color) {
+  const rect = new createjs.Shape();
+  rect.graphics.beginStroke('#000000')
+    .beginFill(color)
+    .drawRect(xPos, yPos, tileSize, tileSize);
+  stage.addChild(rect);
+}
+
 function _renderSnakes(stage, map, tileSize, _activeGame) {
   map.snakeInfos.forEach((snakeInfo) => {
     let head = true;
@@ -180,13 +188,11 @@ function _renderSnakes(stage, map, tileSize, _activeGame) {
         if (snakeInfo.positions.length > 1) {
           const headImage = _getHeadImage(snakeInfo.positions, map);
           _addHeadImage(stage, tileSize, xPos, yPos, headImage);
+        } else {
+          _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
         }
       } else {
-        const rect = new createjs.Shape();
-        rect.graphics.beginStroke('#000000')
-          .beginFill(snake.color)
-          .drawRect(xPos, yPos, tileSize, tileSize);
-        stage.addChild(rect);
+        _renderBodyPart(stage, xPos, yPos, tileSize, snake.color);
       }
     });
   });
