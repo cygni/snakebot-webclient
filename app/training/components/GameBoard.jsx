@@ -33,14 +33,13 @@ class GameBoard extends React.Component {
     }
   }
 
-  static renderGameBoard(canvas, map, mapIsEmpty, tileSize) {
+  static renderGameBoard(canvas, map, mapIsEmpty, tileSize, colors) {
     if (mapIsEmpty || canvas.getContext('2d') === undefined) {
       return;
     }
 
-    const activeGame = getActiveGame();
     snakeLayer.removeAllChildren();
-    TileUtils.renderSnakes(snakeLayer, map, tileSize, activeGame.game);
+    TileUtils.renderSnakes(snakeLayer, map, tileSize, colors);
     TileUtils.renderFood(snakeLayer, map, tileSize);
     if (renderObstacles) {
       if (map.obstaclePositions[0] !== undefined) {
@@ -48,6 +47,17 @@ class GameBoard extends React.Component {
         renderObstacles = false;
       }
     }
+  }
+
+  static renderBoard(game, canvas, state) {
+    const map = game.mapEvents[state.currentFrame];
+    const mapIsEmpty = BoardUtils.mapIsEmpty(map);
+
+    const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
+    const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
+
+    GameBoard.validateCanvas(canvas, size);
+    GameBoard.renderGameBoard(canvas, map, mapIsEmpty, tileSize, state.colors);
   }
 
   componentDidMount() {
@@ -61,23 +71,13 @@ class GameBoard extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(this.props, nextProps);
     if (!_.isEmpty(nextProps.game)) {
-      let map;
       if (this.props.game && this.props.game.mapEvents) {
-        map = this.props.game.mapEvents[this.props.state.currentFrame];
+        GameBoard.renderBoard(this.props.game, this.canvas, this.props.state);
       } else {
-        map = nextProps.game.mapEvents[nextProps.state.currentFrame];
+        GameBoard.renderBoard(nextProps.game, this.canvas, nextProps.state);
       }
-
-      let size = { width: 0, height: 0 };
-      let tileSize = 0;
-      const mapIsEmpty = BoardUtils.mapIsEmpty(map);
-      if (!mapIsEmpty) {
-        size = BoardUtils.calculateSize(map);
-        tileSize = BoardUtils.getTileSize(map);
-      }
-      GameBoard.validateCanvas(this.canvas, size);
-      GameBoard.renderGameBoard(this.canvas, map, mapIsEmpty, tileSize);
     }
   }
 

@@ -17,11 +17,14 @@ import {
 } from '../dispatchers/AppDispatcher';
 import Constants from '../constants/Constants';
 import GameRenderingFunction from '../util/GameRenderingFunctions';
+import Colors from '../util/Colors';
 
 const CHANGE_EVENT = 'change';
 
 let oldGames = [];
 let noResultsFound = false;
+
+let colorIndex = 0;
 
 let tournament = {};
 const games = [];
@@ -66,7 +69,17 @@ const _fetchActiveGame = () => {
               .map(type => type.map);
 
       games[_activeGameState.id].mapEvents = mapEvents;
+      _assignSnakeColors(mapEvents[0]);
     }, error => console.error('Unable to fetch game', _activeGameState.id, error));
+};
+
+const _assignSnakeColors = (mapEvent) => {
+  mapEvent.snakeInfos.forEach((snake) => {
+    if (!_activeGameState.colors[snake.id]) {
+      _activeGameState.colors[snake.id] = Colors.getSnakeColor(colorIndex);
+      colorIndex += 1;
+    }
+  });
 };
 
 const _searchForOldGames = (name) => {
@@ -93,6 +106,7 @@ const _setActiveGame = (gameid) => {
   _activeGameState.running = false;
   _activeGameState.currentFrame = 0;
   _activeGameState.updateFrequency = 200;
+  _activeGameState.colors = {};
 
   if (!games[gameid]) {
     games[gameid] = {
@@ -226,6 +240,7 @@ const _addMapUpdate = (event) => {
   const game = id === _activeGameState.id ? _getActiveGame() : games[id];
 
   game.mapEvents.push(event.map);
+  _assignSnakeColors(event.map);
   _activeGameState.running = true;
   BaseStore.emitChange();
 };

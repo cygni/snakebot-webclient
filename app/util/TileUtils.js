@@ -1,6 +1,5 @@
 import TileTypes from '../constants/TileTypes';
 import Images from '../constants/Images';
-import Colors from '../util/Colors';
 import Directions from '../constants/Directions';
 
 function isConnectingPart(me, map, x, y) {
@@ -151,12 +150,12 @@ function _renderBodyPart(stage, pos, tileSize, color) {
   stage.addChild(rect);
 }
 
-function _renderSnakes(stage, map, tileSize) {
+function _renderSnakes(stage, map, tileSize, colors) {
   map.snakeInfos.forEach((snake) => {
     const lastIndex = snake.positions.length - 1;
     snake.positions.forEach((position, index) => {
       const pos = _getTileCoordinate(position, map);
-      const color = Colors.getSnakeColor(snake.id);
+      const color = colors[snake.id];
 
       if (index === 0) {
         // ensure that we know which direction the head will be facing

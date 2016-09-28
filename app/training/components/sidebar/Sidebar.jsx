@@ -3,7 +3,6 @@ import { Table } from 'react-bootstrap';
 import StoreWatch from '../watch/StoreWatch.jsx';
 import GameStore from '../../../baseStore/BaseStore';
 import GameControl from './GameControl.jsx';
-import Colors from '../../../util/Colors.js';
 
 function getActiveGame() {
   const game = GameStore.getActiveGame();
@@ -35,7 +34,7 @@ const Sidebar = function Sidebar(props) {
           <tbody>{
             snakes.map(snake => (
               <tr key={snake.id}>
-                <td style={{ background: snake.positions.length > 0 ? Colors.getSnakeColor(snake.id) : 'grey', color: 'white' }}>
+                <td style={{ background: snake.positions.length > 0 ? props.gameState.colors[snake.id] : 'grey', color: 'white' }}>
                   Name: {snake.name}<br />
                   Length: {snake.positions.length}<br />
                   Points: {snake.points}</td>

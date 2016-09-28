@@ -1,6 +1,3 @@
-const colorMappings = {};
-let index = 0;
-
 const boardColors = [
   ['#F44336', '#EF9A9A'],
   ['#9C27B0', '#BA68C8'],
@@ -38,12 +35,7 @@ export default {
     return boardColors[i];
   },
 
-  getSnakeColor(snakeId) {
-    if (!colorMappings[snakeId]) {
-      index += 1;
-      colorMappings[snakeId] = snakeColors[index];
-    }
-
-    return colorMappings[snakeId];
+  getSnakeColor(i) {
+    return snakeColors[i];
   },
 };
