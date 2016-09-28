@@ -11,7 +11,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 
 body { 
     background-color: #f2f2f2;
-    font:100%/1.6em 'Open Sans', sans-serif; 
+    font:100%/1.3125rem 'Open Sans', sans-serif; 
     color:#fff; 
     background-image: url('img/background.png');
     background-repeat: no-repeat;
@@ -27,21 +27,21 @@ img {
 
 h1 {
     font-size: 36px;
-    line-height: 2.4rem;
-    margin-bottom: 1rem;
+    line-height: 2.5rem;
+    margin-bottom: 0.5rem;
     font-weight: 300;
 }
 
 h2 {
     font-size: 28px;
     line-height: 2rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     font-weight: 400;
 }
 
 h3 {
     font-size: 20px;
-    line-height: 1.8rem;
+    line-height: 1.5rem;
     margin-bottom: 0.5rem;
     font-weight: 400;
 }
@@ -139,10 +139,10 @@ footer p {
 }
 
 .information {
-    max-width: 720px;
+    max-width: 860px;
     margin: auto;
     background-color: rgba(0,0,0,0.75);
-    padding: 2rem;
+    padding: 2rem 3rem;
     border-radius: 10px;
 }
 
@@ -308,6 +308,8 @@ input[type=range].react-native-slider:focus::-ms-fill-upper {
 
 /* Forms */
 label {
+    
+    margin-bottom: 4.75rem;
 }
 input[type=text],
 input[type=url],
@@ -317,20 +319,21 @@ input[type=email],
 textarea,
 select {
     display: block;
-    font-family: 'Lato', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 16px;
-    line-height: 1.7rem;
+    line-height: 1.2rem;
     background-color: #fff;
     border: none;
-    border-bottom: 1px solid #313131;
-    width: 100%;
+    border: 1px solid #313131;
+    width: 80%;
     transition: all 0.1s;
     margin-bottom: 0.5rem;
+    padding: 0.4rem;
+    border-radius: 3px;
 }
 
 textarea {
     height: 80px;
-    line-height: 1.2rem;
 }
 
 input[type=text]:hover,
@@ -339,7 +342,7 @@ input[type=tel]:hover,
 input[type=number]:hover,
 input[type=email]:hover,
 textarea:hover {
-    background-color: #f8f8f5;
+    background-color: #f1f8ff;
     transition: all 0.2s;
 }
 
@@ -357,20 +360,20 @@ select {
     -webkit-appearance: none;
     -webkit-border-radius: 0px;
     appearance: none;
-    border-radius: 0px;
     background-image: url(img/arrow.svg);
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 12px;
+    border-radius: 3px;
 }
 
 input[type=submit], input[type=reset], button {
     border: none;
     font-size: 16px;
-    border-radius: 6px;
+    border-radius: 3px;
     line-height: 1rem;
-    font-family: 'Lato';
-    padding: 6px 16px 4px;
+    font-family: 'Open Sans', sans-serif;
+    padding: 10px 20px 8px;
     cursor: pointer;
     transition: all 0.1s;
 }
@@ -413,7 +416,12 @@ button:hover, button:focus {
     transition: all 0.2s;
 }
 
+.formlist {
+    margin-bottom: 1rem;
+}
 
-
+.formlist li {
+    margin-bottom: 0.5rem;
+}
 
 
