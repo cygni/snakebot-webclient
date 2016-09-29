@@ -35,7 +35,6 @@ const listen = (gameid) => {
   socket.onopen = function onSocketOpen() {
     console.log('Socket is open');
     setGameFilter(gameid);
-    TournamentAction.socketIsOpen();
   };
 
   socket.onmessage = function onSocketMessage(e) {
