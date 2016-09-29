@@ -5,6 +5,8 @@ import {
   hashHistory,
 } from 'react-router';
 import rest from 'rest';
+import mime from 'rest/interceptor/mime';
+import errorCode from 'rest/interceptor/errorCode';
 import _ from 'lodash';
 import Config from 'Config'; // eslint-disable-line
 
@@ -29,24 +31,24 @@ const _activeGameState = {};
 // TODO handle if we're in replay mode or not, probably using a state variable or similar
 // TODO fetch tournaments via rest rather than an async api call
 
-
 const _startGame = () => {
   _activeGameState.started = true;
-  _activeGameState.running = true;
+  _startUpdatingFrames();
 
   console.log('Starting the game', _activeGameState, _getActiveGame());
 
-  // Socket.send({
-  //   includedGameIds: [_activeGameState.id],
-  //   type: 'se.cygni.snake.eventapi.request.SetGameFilter',
-  // });
-  // Socket.send({
-  //   gameId: _activeGameState.id,
-  //   type: 'se.cygni.snake.eventapi.request.StartGame',
-  // });
+  if (!_activeGameState.fetched) {
+    console.log('Game has not been fetched, so ask the server to start it');
+    Socket.send({
+      gameId: _activeGameState.id,
+      type: 'se.cygni.snake.eventapi.request.StartGame',
+    });
+    _activeGameState.fetched = true;
+  }
 };
 
 const _hasActiveGame = () => !_.isEmpty(_activeGameState) && _getActiveGame();
+const _getRestClient = () => rest.wrap(mime).wrap(errorCode);
 
 const _getActiveTournament = () => {
   // this will be improved
@@ -58,6 +60,7 @@ const _getActiveTournament = () => {
 
 const _setActiveGame = (gameid) => {
   _activeGameState.id = gameid;
+  _activeGameState.fetched = false;
   _activeGameState.started = false;
   _activeGameState.running = false;
   _activeGameState.currentFrame = 0;
@@ -70,21 +73,28 @@ const _setActiveGame = (gameid) => {
     mapEvents: [],
   };
 
-  rest(Config.server + '/history/' + _activeGameState.id)
+  const client = _getRestClient();
+  client({ path: Config.server + '/history/' + _activeGameState.id })
     .then((response) => {
-      const parsed = JSON.parse(response.entity);
-      console.log('Get active game got response', parsed);
-
+      const json = response.entity;
       const mapUpdateEvent = 'se.cygni.snake.api.event.MapUpdateEvent';
-      const mapEvents = parsed
+      const mapEvents = json
               .messages
               .filter(event => event.type === mapUpdateEvent)
               .map(type => type.map);
 
       games[gameid].mapEvents = mapEvents;
-
       _assignSnakeColors(mapEvents[0]);
-    }, error => console.error('Unable to fetch game', _activeGameState.id, error));
+      _activeGameState.fetched = true;
+    }, (error) => {
+      console.log('Unable to fetch game', _activeGameState.id, error);
+      console.log('Attempting to subscribing to the game instead');
+
+      Socket.send({
+        includedGameIds: [_activeGameState.id],
+        type: 'se.cygni.snake.eventapi.request.SetGameFilter',
+      });
+    });
 };
 
 const _assignSnakeColors = (mapEvent) => {
