@@ -71,7 +71,6 @@ class GameBoard extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.props, nextProps);
     if (!_.isEmpty(nextProps.game)) {
       if (this.props.game && this.props.game.mapEvents) {
         GameBoard.renderBoard(this.props.game, this.canvas, this.props.state);
