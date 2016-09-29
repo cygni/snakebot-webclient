@@ -1,23 +1,28 @@
 import React from 'react';
 import Header from './header/PageHeader.jsx';
 import PageFooter from './footer/PageFooter.jsx';
+import Store from '../../baseStore/BaseStore';
 import '../../design/styles/stylesheet.scss';
-
 
 const propTypes = {
   children: React.PropTypes.object.isRequired,
 };
 
-function PageTemplate(props) {
-  return (
-    <div>
-      <Header />
+class PageTemplate extends React.Component {
+  componentWillMount() {
+    Store.fetchActiveTournament();
+  }
 
-      { props.children }
+  render() {
+    return (
+      <div>
+        <Header />
+        { this.props.children }
+        <PageFooter />
+      </div>
+    );
+  }
 
-      <PageFooter />
-    </div>
-  );
 }
 
 PageTemplate.propTypes = propTypes;

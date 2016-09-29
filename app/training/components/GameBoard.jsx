@@ -13,7 +13,6 @@ let snakeLayer;
 let renderObstacles = true;
 
 function getActiveGame() {
-  Store.fetchActiveTournament();
   const game = Store.getActiveGame();
   const state = Store.getActiveGameState();
   return { game, state };
@@ -34,14 +33,11 @@ class GameBoard extends React.Component {
     }
   }
 
-  static renderGameBoard(canvas, map, mapIsEmpty, tileSize, colors) {
-    if (mapIsEmpty || canvas.getContext('2d') === undefined) {
-      return;
-    }
-
+  static renderGameBoard(canvas, map, tileSize, state) {
     snakeLayer.removeAllChildren();
-    TileUtils.renderSnakes(snakeLayer, map, tileSize, colors);
+    TileUtils.renderSnakes(snakeLayer, map, tileSize, state.colors);
     TileUtils.renderFood(snakeLayer, map, tileSize);
+
     if (renderObstacles) {
       if (map.obstaclePositions[0] !== undefined) {
         TileUtils.renderObstacles(worldLayer, map, tileSize);
@@ -54,11 +50,19 @@ class GameBoard extends React.Component {
     const map = game.mapEvents[state.currentFrame];
     const mapIsEmpty = BoardUtils.mapIsEmpty(map);
 
+    if (mapIsEmpty || canvas.getContext('2d') === undefined) {
+      return;
+    }
+
     const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
     const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
 
     GameBoard.validateCanvas(canvas, size);
-    GameBoard.renderGameBoard(canvas, map, mapIsEmpty, tileSize, state.colors);
+    GameBoard.renderGameBoard(canvas, map, tileSize, state);
+  }
+
+  componentWillMount() {
+    renderObstacles = true;
   }
 
   componentDidMount() {
