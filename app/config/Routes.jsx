@@ -15,27 +15,29 @@ import GettingStartedPage from '../pages/GettingStartedPage.jsx';
 import AboutPage from '../pages/AboutPage.jsx';
 import StatusPage from '../pages/StatusPage.jsx';
 
-import AuthPage from '../security/components/AuthPage.jsx';
 import Settings from '../tournament/components/settings/Settings.jsx';
 import Bracket from '../tournament/components/bracket/Bracket.jsx';
-import TournamentStore from '../baseStore/BaseStore';
 import GameSearch from '../training/search/GameSearch.jsx';
+import Store from '../baseStore/BaseStore.js';
+import TournamentAction from '../tournament/action/tournament-actions.js';
+
+function enterTournamentPage(nextState, replace) {
+  TournamentAction.fetchActiveTournament();
+  Store.requireAuth(nextState, replace);
+}
 
 export default () => (
   <Router history={hashHistory}>
     <Route path="/" component={PageTemplate}>
       <IndexRoute component={HomePage} />
     </Route>
-    <Route path="/viewgame/:gameId" component={GameTemplate} >
+    <Route path="/viewgame/:gameId" component={GameTemplate}>
       <IndexRoute component={Gameboard} />
     </Route>
     <Route path="/viewgame" component={GameTemplate} >
       <IndexRoute component={GameSearch} />
     </Route>
     <Route path="/auth" component={PageTemplate}>
-      <IndexRoute component={AuthPage} />
-    </Route>
-    <Route path="/login" component={PageTemplate}>
       <IndexRoute component={LoginPage} />
     </Route>
     <Route path="/about" component={PageTemplate}>
@@ -47,7 +49,11 @@ export default () => (
     <Route path="/status" component={PageTemplate}>
       <IndexRoute component={StatusPage} />
     </Route>
-    <Route path="/tournament" component={PageTemplate} onEnter={TournamentStore.requireAuth}>
+    <Route
+      path="/tournament"
+      component={PageTemplate}
+      onEnter={enterTournamentPage}
+    >
       <IndexRoute component={Settings} />
       <Route name="bracket" path="/tournament/tournamentbracket" component={Bracket} />
       <Route name="activeGame" path="/tournament/:gameId" component={Gameboard} />

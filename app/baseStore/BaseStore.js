@@ -4,108 +4,72 @@ import {
 import {
   hashHistory,
 } from 'react-router';
-import rest from 'rest';
-import mime from 'rest/interceptor/mime';
-import errorCode from 'rest/interceptor/errorCode';
 import _ from 'lodash';
-import Config from 'Config'; // eslint-disable-line
-
-// For now, let's ignore this rule until a proper fix can be done
-/* eslint-disable no-use-before-define */
-
+import restclient from './restclient';
 import Socket from '../websocket/WebSocket';
 import {
   register,
+
 } from '../dispatchers/AppDispatcher';
 import Constants from '../constants/Constants';
 import Colors from '../util/Colors';
 
 const CHANGE_EVENT = 'change';
 
-let oldGames = [];
+let searchResults = [];
 
 let tournament = {};
 const games = [];
 const _activeGameState = {};
 
+const _getActiveGame = () => games[_activeGameState.id];
 const _hasActiveGame = () => !_.isEmpty(_activeGameState) && _getActiveGame();
-const _hasActiveTournament = () => !_.isEmpty(tournament);
-const _getRestClient = () => rest.wrap(mime).wrap(errorCode);
 
-const _startGame = () => {
-  _activeGameState.started = true;
-  _startUpdatingFrames();
+// Handling the frame updating
 
-  console.log('Starting the game', _activeGameState, _getActiveGame());
+const _frameCount = () => {
+  if (_hasActiveGame()) {
+    return _getActiveGame().mapEvents.length - 1;
+  }
+  return 0;
+};
 
-  if (!_activeGameState.fetched) {
-    console.log('Game has not been fetched, so ask the server to start it');
-    Socket.send({
-      gameId: _activeGameState.id,
-      type: 'se.cygni.snake.eventapi.request.StartGame',
-    });
-    _activeGameState.fetched = true;
+const _stopUpdatingFrames = () => {
+  clearInterval(_activeGameState.frameChange);
+  _activeGameState.frameChange = undefined;
+  _activeGameState.running = false;
+};
+
+const _setNextFrame = (emitChange) => {
+  if (_activeGameState.currentFrame >= _frameCount()) {
+    console.log('Reached end of frames, pausing game');
+    _stopUpdatingFrames();
+    return;
+  }
+
+  const nextFrame = _activeGameState.currentFrame + 1;
+  const isValidIndex = nextFrame >= 0 && nextFrame <= _frameCount();
+  if (!isValidIndex) {
+    return;
+  }
+
+  _activeGameState.currentFrame = nextFrame;
+  emitChange();
+};
+
+const _startUpdatingFrames = (emitChange) => {
+  console.log('Starting to update frames', _activeGameState.updateFrequency);
+
+  _stopUpdatingFrames();
+
+  if (_activeGameState.started && _activeGameState.currentFrame < _frameCount()) {
+    _activeGameState.running = true;
+    _activeGameState.frameChange =
+      setInterval(() => _setNextFrame(emitChange), _activeGameState.updateFrequency);
   }
 };
 
-const _getActiveTournament = () => {
-  const client = _getRestClient();
-  tournament.fetching = false;
-  tournament.finalPlacement = {};
-
-
-  client({ path: Config.server + '/tournament/active' })
-    .then((response) => {
-      const json = response.entity;
-      console.log('Active tournament found', json);
-      _setActiveTournament(json);
-    }, () => {
-      console.log('There is currently no active tournament');
-    });
-};
-
-const _setActiveGame = (gameid) => {
-  console.log('Setting active game to ' + gameid);
-
-  _activeGameState.id = gameid;
-  _activeGameState.fetched = false;
-  _activeGameState.started = false;
-  _activeGameState.running = false;
-  _activeGameState.currentFrame = 0;
-  _activeGameState.updateFrequency = 200;
-  _activeGameState.colors = {};
-  _activeGameState.colorIndex = 0;
-
-  games[gameid] = {
-    gameid,
-    mapEvents: [],
-  };
-
-  const client = _getRestClient();
-  client({ path: Config.server + '/history/' + _activeGameState.id })
-    .then((response) => {
-      const json = response.entity;
-      const mapUpdateEvent = 'se.cygni.snake.api.event.MapUpdateEvent';
-      const mapEvents = json
-              .messages
-              .filter(event => event.type === mapUpdateEvent)
-              .map(type => type.map);
-
-      games[gameid].mapEvents = mapEvents;
-      _assignSnakeColors(mapEvents[0]);
-      _activeGameState.fetched = true;
-
-      console.log('Game was found in history', mapEvents);
-    }, (error) => {
-      console.log('Unable to fetch game', _activeGameState.id, error);
-      console.log('Attempting to subscribing to the game instead');
-
-      Socket.send({
-        includedGameIds: [_activeGameState.id],
-        type: 'se.cygni.snake.eventapi.request.SetGameFilter',
-      });
-    });
-};
+// Utility to handle the snakes' colors
 
 const _assignSnakeColors = (mapEvent) => {
   if (!mapEvent) {
@@ -120,26 +84,25 @@ const _assignSnakeColors = (mapEvent) => {
   });
 };
 
-const _searchForOldGames = (name) => {
-  console.log('Searching for games with name = \'' + name + '\'');
-  rest(Config.server + '/history/search/' + name)
-    .then(
-      (response) => {
-        const jsonResponse = JSON.parse(response.entity);
-        console.log('Searching for games found:', jsonResponse.items);
+// Requests to start the game
 
-        oldGames = jsonResponse.items;
-        BaseStore.emitChange();
-      },
-      (response) => {
-        console.error('Search for games got error response:', response);
-      }
-    );
+const _startGame = (emitChange) => {
+  _activeGameState.started = true;
+  _startUpdatingFrames(emitChange);
+
+  console.log('Starting the game', _activeGameState, _getActiveGame());
+
+  if (!_activeGameState.fetched) {
+    console.log('Game has not been fetched, so ask the server to start it');
+    Socket.send({
+      gameId: _activeGameState.id,
+      type: 'se.cygni.snake.eventapi.request.StartGame',
+    });
+    _activeGameState.fetched = true;
+  }
 };
 
-const _initWS = (gameid) => {
-  Socket.init(gameid);
-};
+// Handling the logging in and out for a user
 
 const _getToken = () => localStorage.getItem('token');
 const _getUser = () => localStorage.getItem('savedUser');
@@ -147,6 +110,13 @@ const _getUser = () => localStorage.getItem('savedUser');
 const _clearCredentials = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('savedUser');
+};
+
+const _loginUser = (action) => {
+  if (_getToken() !== action.token) {
+    localStorage.setItem('token', action.token);
+    localStorage.setItem('savedUser', action.user);
+  }
 };
 
 const _logOutUser = () => {
@@ -163,6 +133,17 @@ function _isLoggedIn() {
   const _token = _getToken();
   return _token !== null && _token !== undefined;
 }
+
+// All tournament-related actions
+
+const _setActiveTournament = (tournamentInfo) => {
+  tournament = tournamentInfo;
+  tournament.finalPlacement = {
+    list: [],
+    winner: {},
+  };
+  console.log('Active tournament is set', tournament);
+};
 
 const _createTournament = (name) => {
   Socket.init();
@@ -190,94 +171,12 @@ const _startTournament = () => {
   hashHistory.push('tournament/tournamentbracket');
 };
 
-const _setActiveTournament = (tournamentInfo) => {
-  tournament = tournamentInfo;
-  console.log('Active tournament is set', tournament);
-};
-
 const _tournamentCreated = (tournamentInfo) => {
   tournament = tournamentInfo;
   tournament.finalPlacement = {
     list: [],
     winner: {},
   };
-};
-
-const _updateGamePlan = (jsonData) => {
-  tournament.gamePlan = jsonData;
-};
-
-const _getActiveGame = () => games[_activeGameState.id];
-
-function _setUpdateFrequency(freq) {
-  _activeGameState.updateFrequency = freq;
-  _startUpdatingFrames();
-}
-
-const _setCurrentFrame = (frame) => {
-  _activeGameState.currentFrame = frame;
-  BaseStore.emitChange();
-};
-
-const _updateSettings = (key, value) => {
-  tournament.gameSettings[key] = value;
-};
-
-const _frameCount = () => {
-  if (_hasActiveGame()) {
-    return _getActiveGame().mapEvents.length - 1;
-  }
-  return 0;
-};
-
-const _setNextFrame = () => {
-  if (_activeGameState.currentFrame >= _frameCount()) {
-    console.log('Reached end of frames, pausing game');
-    _stopUpdatingFrames();
-    return;
-  }
-
-  const nextFrame = _activeGameState.currentFrame + 1;
-  const isValidIndex = nextFrame >= 0 && nextFrame <= _frameCount();
-  if (!isValidIndex) {
-    return;
-  }
-
-  _activeGameState.currentFrame = nextFrame;
-  BaseStore.emitChange();
-};
-
-const _stopUpdatingFrames = () => {
-  clearInterval(_activeGameState.frameChange);
-  _activeGameState.running = false;
-  BaseStore.emitChange();
-};
-
-const _startUpdatingFrames = () => {
-  _stopUpdatingFrames();
-
-  if (_activeGameState.started && _activeGameState.currentFrame < _frameCount()) {
-    _activeGameState.running = true;
-    _activeGameState.frameChange =
-      setInterval(() => _setNextFrame(), _activeGameState.updateFrequency);
-  }
-
-  BaseStore.emitChange();
-};
-
-const _addMapUpdate = (event) => {
-  const id = event.gameId;
-  const game = id === _activeGameState.id ? _getActiveGame() : games[id];
-
-  game.mapEvents.push(event.map);
-  _assignSnakeColors(event.map);
-
-  // Only stop and start updating when necessary
-  if (!_activeGameState.frameChange) {
-    _startUpdatingFrames();
-  }
-
-  BaseStore.emitChange();
 };
 
 const _tournamentEnded = (event) => {
@@ -300,15 +199,79 @@ const _killTournament = () => {
   tournament = {};
 };
 
-const _loginUser = (action) => {
-  if (_getToken() !== action.token) {
-    localStorage.setItem('token', action.token);
-    localStorage.setItem('savedUser', action.user);
-    hashHistory.push('/tournament');
+const _addMapEvent = (event, emitChange) => {
+  const id = event.gameId;
+  const game = id === _activeGameState.id ? _getActiveGame() : games[id];
+
+  game.mapEvents.push(event.map);
+  _assignSnakeColors(event.map);
+
+  // Only stop and start updating for every new map update
+  if (!_activeGameState.frameChange) {
+    _startUpdatingFrames(emitChange);
   }
 };
 
-const BaseStore = Object.assign(EventEmitter.prototype, {
+// Methods using the the restclient
+
+const _fetchActiveTournament = (emitChange) => {
+  if (!_isLoggedIn()) {
+    return;
+  }
+
+  restclient.fetchTournament(
+    (activeTournament) => {
+      _setActiveTournament(activeTournament);
+      emitChange();
+    });
+};
+
+const _fetchActiveGame = (gameid, emitChange) => {
+  console.log('Setting active game to ' + gameid);
+
+  _activeGameState.id = gameid;
+  _activeGameState.fetched = false;
+  _activeGameState.started = false;
+  _activeGameState.running = false;
+  _activeGameState.currentFrame = 0;
+  _activeGameState.updateFrequency = 200;
+  _activeGameState.colors = {};
+  _activeGameState.colorIndex = 0;
+  _activeGameState.renderObstacles = false;
+
+  games[gameid] = {
+    gameid,
+    mapEvents: [],
+  };
+
+  restclient.fetchGame(
+    gameid,
+    (mapEvents) => {
+      games[gameid].mapEvents = mapEvents;
+      _assignSnakeColors(mapEvents[0]);
+      _activeGameState.fetched = true;
+      _activeGameState.renderObstacles = true;
+      emitChange();
+    }, () => {
+      console.log('Attempting to subscribing to the game instead');
+
+      Socket.send({
+        includedGameIds: [_activeGameState.id],
+        type: 'se.cygni.snake.eventapi.request.SetGameFilter',
+      });
+    });
+};
+
+const _fetchGamesByName = (name, emitChange) => {
+  restclient.searchForGames(
+    name,
+    (matchingGames) => {
+      searchResults = matchingGames;
+      emitChange();
+    });
+};
+
+const BaseStore = Object.assign({}, EventEmitter.prototype, {
   emitChange() {
     this.emit(CHANGE_EVENT);
   },
@@ -338,17 +301,12 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
   },
 
   getOldGames() {
-    return oldGames;
+    return searchResults;
   },
 
   hasResults() {
-    return oldGames.length === 0;
-  },
-
-  fetchActiveTournament() {
-    if (!_hasActiveTournament()) {
-      _getActiveTournament();
-    }
+    console.log(searchResults);
+    return searchResults.length === 0;
   },
 
   getActiveTournament() {
@@ -392,7 +350,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
   },
 
   initWS(gameid) {
-    _initWS(gameid);
+    Socket.init(gameid);
   },
 
   getUser() {
@@ -417,13 +375,14 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
       });
     }
   },
+});
 
-  dispatherIndex: register((action) => {
+const emitChange = () => BaseStore.emitChange();
+
+BaseStore.dispatcher = register(
+  (action) => {
     console.log('Store received action', action);
     switch (action.actionType) {
-      case Constants.START_TOURNAMENT_GAME:
-        _startGame();
-        break;
       case Constants.ADD_GAMES:
         break;
       case Constants.CREATE_TOURNAMENT:
@@ -436,17 +395,16 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         _startTournament();
         break;
       case Constants.UPDATE_SETTINGS:
-        _updateSettings(action.key, action.value);
+        tournament.gameSettings[action.key] = action.value;
         break;
       case Constants.TOURNAMENT_CREATED:
         _tournamentCreated(action.jsonData);
         break;
       case Constants.GAME_PLAN_RECEIVED:
-        _updateGamePlan(action.jsonData);
+        tournament.gamePlan = action.jsonData;
         break;
       case Constants.SET_ACTIVE_TOURNAMENT_GAME:
         hashHistory.push('/tournament/' + action.gameId);
-        _setActiveGame(action.gameId);
         break;
       case Constants.TOURNAMENT_ENDED_EVENT:
         _tournamentEnded(action.event);
@@ -454,42 +412,35 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
       case Constants.KILL_TOURNAMENT:
         _killTournament();
         break;
-      case Constants.SET_CURRENT_TOURNAMENT_FRAME:
-        _setCurrentFrame(action.frame);
-        break;
       case Constants.SET_UPDATE_FREQUENCY:
-        _setUpdateFrequency(action.freq);
-        break;
-      case Constants.GET_ACTIVE_TOURNAMENT:
-        _getActiveTournament();
+        _activeGameState.updateFrequency = action.freq;
+        _startUpdatingFrames(emitChange);
         break;
       case Constants.TOURNAMENT_INFO_RECEIVED:
         _setActiveTournament(action.jsonData);
         break;
       case Constants.START_GAME:
-        _startGame();
-        _startUpdatingFrames();
+        _startGame(emitChange);
         break;
       case Constants.PAUSE_GAME:
         _stopUpdatingFrames();
         break;
       case Constants.RESUME_GAME:
-        _startUpdatingFrames();
+        _startUpdatingFrames(emitChange);
         break;
       case Constants.RESTART_GAME:
         _activeGameState.currentFrame = 0;
-        _startGame();
-        _startUpdatingFrames();
+        _startGame(emitChange);
         break;
-      case Constants.SET_ACTIVE_TRAINING_GAME:
-        _setActiveGame(action.gameId);
+      case Constants.SET_ACTIVE_GAME:
+        _fetchActiveGame(action.gameId, emitChange);
         break;
       case Constants.SET_CURRENT_FRAME:
-        _setCurrentFrame(action.frame);
+        _activeGameState.currentFrame = action.frame;
         _stopUpdatingFrames();
         break;
       case Constants.MAP_UPDATE_EVENT:
-        _addMapUpdate(action.event);
+        _addMapEvent(action.event, emitChange);
         break;
       case Constants.LOGIN_USER:
         _loginUser(action);
@@ -501,14 +452,20 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         _invalidToken();
         break;
       case Constants.SEARCH_FOR_OLD_GAMES_FOR_USER:
-        _searchForOldGames(action.name);
+        _fetchGamesByName(action.name, emitChange);
+        break;
+      case Constants.FETCH_ACTIVE_TOURNAMENT:
+        _fetchActiveTournament(emitChange);
+        break;
+      case Constants.OBSTACLES_RENDERED:
+        _activeGameState.renderObstacles = false;
         break;
       default:
+        console.log('Store received unknown action', action);
         break;
     }
 
     BaseStore.emitChange();
-  }),
-});
+  });
 
 export default BaseStore;

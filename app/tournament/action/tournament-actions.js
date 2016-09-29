@@ -2,12 +2,6 @@ import Constants from '../../constants/Constants';
 import { dispatch } from '../../dispatchers/AppDispatcher';
 
 export default {
-  socketIsOpen() {
-    dispatch({
-      actionType: Constants.SOCKET_IS_OPEN,
-    });
-  },
-
   createTournament(name) {
     dispatch({
       actionType: Constants.CREATE_TOURNAMENT, name,
@@ -70,7 +64,7 @@ export default {
 
   startGame() {
     dispatch({
-      actionType: Constants.START_TOURNAMENT_GAME,
+      actionType: Constants.START_GAME,
     });
   },
 
@@ -92,12 +86,6 @@ export default {
     });
   },
 
-  getActiveTournament() {
-    dispatch({
-      actionType: Constants.GET_ACTIVE_TOURNAMENT,
-    });
-  },
-
   loginUser(token, user) {
     dispatch({
       actionType: Constants.LOGIN_USER,
@@ -115,6 +103,12 @@ export default {
   invalidToken() {
     dispatch({
       actionType: Constants.INVALID_TOKEN,
+    });
+  },
+
+  fetchActiveTournament() {
+    dispatch({
+      actionType: Constants.FETCH_ACTIVE_TOURNAMENT,
     });
   },
 };

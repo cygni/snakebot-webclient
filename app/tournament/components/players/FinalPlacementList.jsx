@@ -26,7 +26,7 @@ function FinalPlacementList(props) {
               <th>Points</th>
             </tr>
           </thead>
-          <tbody> {
+          <tbody>{
             props.finalPlacement.list.map((player, index) => (
               <tr key={index}>
                 <td>{index + 1}</td>

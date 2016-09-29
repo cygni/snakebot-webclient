@@ -33,7 +33,7 @@ export default {
 
   activeGame(gameId) {
     dispatch({
-      actionType: Constants.SET_ACTIVE_TRAINING_GAME, gameId,
+      actionType: Constants.SET_ACTIVE_GAME, gameId,
     });
   },
 
@@ -58,6 +58,12 @@ export default {
   searchForOldGames(name) {
     dispatch({
       actionType: Constants.SEARCH_FOR_OLD_GAMES_FOR_USER, name,
+    });
+  },
+
+  obstaclesRendered() {
+    dispatch({
+      actionType: Constants.OBSTACLES_RENDERED,
     });
   },
 };

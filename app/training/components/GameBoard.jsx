@@ -8,10 +8,6 @@ import TileUtils from '../../util/TileUtils';
 import TrainingAction from '../../training/action/training-actions';
 import Sidebar from './sidebar/Sidebar.jsx';
 
-let worldLayer;
-let snakeLayer;
-let renderObstacles = true;
-
 function getActiveGame() {
   const game = Store.getActiveGame();
   const state = Store.getActiveGameState();
@@ -33,54 +29,27 @@ class GameBoard extends React.Component {
     }
   }
 
-  static renderGameBoard(canvas, map, tileSize, state) {
-    snakeLayer.removeAllChildren();
-    TileUtils.renderSnakes(snakeLayer, map, tileSize, state.colors);
-    TileUtils.renderFood(snakeLayer, map, tileSize);
-
-    if (renderObstacles) {
-      if (map.obstaclePositions[0] !== undefined) {
-        TileUtils.renderObstacles(worldLayer, map, tileSize);
-        renderObstacles = false;
-      }
-    }
-  }
-
-  static renderBoard(game, canvas, state) {
-    const map = game.mapEvents[state.currentFrame];
-    const mapIsEmpty = BoardUtils.mapIsEmpty(map);
-
-    if (mapIsEmpty || canvas.getContext('2d') === undefined) {
-      return;
-    }
-
-    const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
-    const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
-
-    GameBoard.validateCanvas(canvas, size);
-    GameBoard.renderGameBoard(canvas, map, tileSize, state);
-  }
-
   componentWillMount() {
-    renderObstacles = true;
+    console.log('GameBoard will mount');
+
+    Store.initWS(this.props.params.gameId);
+    TrainingAction.activeGame(this.props.params.gameId);
   }
 
   componentDidMount() {
-    worldLayer = new createjs.Stage(this.canvas);
-    snakeLayer = new createjs.Container();
+    this.worldLayer = new createjs.Stage(this.canvas);
+    this.snakeLayer = new createjs.Container();
     createjs.Ticker.setFPS(lib.properties.fps);
-    createjs.Ticker.addEventListener('tick', worldLayer);
-    worldLayer.addChild(snakeLayer);
-    TrainingAction.activeGame(this.props.params.gameId);
-    Store.initWS(this.props.params.gameId);
+    createjs.Ticker.addEventListener('tick', this.worldLayer);
+    this.worldLayer.addChild(this.snakeLayer);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!_.isEmpty(nextProps.game)) {
       if (this.props.game && this.props.game.mapEvents) {
-        GameBoard.renderBoard(this.props.game, this.canvas, this.props.state);
+        this.renderBoard(this.props.game, this.props.state);
       } else {
-        GameBoard.renderBoard(nextProps.game, this.canvas, nextProps.state);
+        this.renderBoard(nextProps.game, nextProps.state);
       }
     }
   }
@@ -88,6 +57,41 @@ class GameBoard extends React.Component {
   shouldComponentUpdate() {
     /* This is important for performance!*/
     return false;
+  }
+
+  componentWillUnmount() {
+    console.log('Unmounting GameBoard');
+    TrainingAction.pauseGame();
+  }
+
+  renderGameBoard(map, tileSize, state) {
+    this.snakeLayer.removeAllChildren();
+    TileUtils.renderSnakes(this.snakeLayer, map, tileSize, state.colors);
+    TileUtils.renderFood(this.snakeLayer, map, tileSize);
+
+    if (state.renderObstacles) {
+      if (map.obstaclePositions.length > 0) {
+        console.log('GameBoard will render obstacles', this.worldLayer.children);
+        TileUtils.renderObstacles(this.worldLayer, map, tileSize);
+
+        TrainingAction.obstaclesRendered();
+      }
+    }
+  }
+
+  renderBoard(game, state) {
+    const map = game.mapEvents[state.currentFrame];
+    const mapIsEmpty = BoardUtils.mapIsEmpty(map);
+
+    if (mapIsEmpty || this.canvas.getContext('2d') === undefined) {
+      return;
+    }
+
+    const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
+    const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
+
+    GameBoard.validateCanvas(this.canvas, size);
+    this.renderGameBoard(map, tileSize, state);
   }
 
   render() {
@@ -117,7 +121,6 @@ class GameBoard extends React.Component {
       </Row>
     );
   }
-
 }
 
 GameBoard.propTypes = propTypes;

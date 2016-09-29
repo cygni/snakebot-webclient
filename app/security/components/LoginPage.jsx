@@ -3,8 +3,14 @@ import {
   Row,
   Col,
 } from 'react-bootstrap';
+import { withRouter } from 'react-router';
 import AuthService from '../services/AuthService';
 import Store from '../../baseStore/BaseStore';
+
+const propTypes = {
+  router: React.PropTypes.object.isRequired,
+  location: React.PropTypes.object.isRequired,
+};
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -23,11 +29,20 @@ class LoginPage extends React.Component {
 
   login(e) {
     e.preventDefault();
-    this.auth.login(this.state.user, this.state.password)
+    const loggedIn = this.auth.login(this.state.user, this.state.password)
       .catch((err) => {
         alert('There was an error logging in');
         console.log('Error logging in', err);
       });
+
+    loggedIn.then(() => {
+      const location = this.props.location.state;
+      if (location && location.nextPathname) {
+        this.props.router.push(location.nextPathname);
+      } else {
+        this.props.router.push('/');
+      }
+    });
   }
 
   logout() {
@@ -83,4 +98,8 @@ class LoginPage extends React.Component {
   }
 }
 
-export default LoginPage;
+LoginPage.propTypes = propTypes;
+
+const RoutedLoginPage = withRouter(LoginPage);
+
+export default RoutedLoginPage;
