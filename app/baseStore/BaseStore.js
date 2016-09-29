@@ -28,8 +28,9 @@ let tournament = {};
 const games = [];
 const _activeGameState = {};
 
-// TODO handle if we're in replay mode or not, probably using a state variable or similar
-// TODO fetch tournaments via rest rather than an async api call
+const _hasActiveGame = () => !_.isEmpty(_activeGameState) && _getActiveGame();
+const _hasActiveTournament = () => !_.isEmpty(tournament);
+const _getRestClient = () => rest.wrap(mime).wrap(errorCode);
 
 const _startGame = () => {
   _activeGameState.started = true;
@@ -47,18 +48,25 @@ const _startGame = () => {
   }
 };
 
-const _hasActiveGame = () => !_.isEmpty(_activeGameState) && _getActiveGame();
-const _getRestClient = () => rest.wrap(mime).wrap(errorCode);
-
 const _getActiveTournament = () => {
-  // this will be improved
-  if (_.isEmpty(tournament)) {
-    Socket.init();
-    return;
-  }
+  const client = _getRestClient();
+  tournament.fetching = false;
+  tournament.finalPlacement = {};
+
+
+  client({ path: Config.server + '/tournament/active' })
+    .then((response) => {
+      const json = response.entity;
+      console.log('Active tournament found', json);
+      _setActiveTournament(json);
+    }, () => {
+      console.log('There is currently no active tournament');
+    });
 };
 
 const _setActiveGame = (gameid) => {
+  console.log('Setting active game to ' + gameid);
+
   _activeGameState.id = gameid;
   _activeGameState.fetched = false;
   _activeGameState.started = false;
@@ -86,6 +94,8 @@ const _setActiveGame = (gameid) => {
       games[gameid].mapEvents = mapEvents;
       _assignSnakeColors(mapEvents[0]);
       _activeGameState.fetched = true;
+
+      console.log('Game was found in history', mapEvents);
     }, (error) => {
       console.log('Unable to fetch game', _activeGameState.id, error);
       console.log('Attempting to subscribing to the game instead');
@@ -98,6 +108,10 @@ const _setActiveGame = (gameid) => {
 };
 
 const _assignSnakeColors = (mapEvent) => {
+  if (!mapEvent) {
+    return;
+  }
+
   mapEvent.snakeInfos.forEach((snake) => {
     if (!_activeGameState.colors[snake.id]) {
       _activeGameState.colors[snake.id] = Colors.getSnakeColor(_activeGameState.colorIndex);
@@ -197,6 +211,7 @@ const _getActiveGame = () => games[_activeGameState.id];
 
 function _setUpdateFrequency(freq) {
   _activeGameState.updateFrequency = freq;
+  _startUpdatingFrames();
 }
 
 const _setCurrentFrame = (frame) => {
@@ -256,7 +271,12 @@ const _addMapUpdate = (event) => {
 
   game.mapEvents.push(event.map);
   _assignSnakeColors(event.map);
-  _activeGameState.running = true;
+
+  // Only stop and start updating when necessary
+  if (!_activeGameState.frameChange) {
+    _startUpdatingFrames();
+  }
+
   BaseStore.emitChange();
 };
 
@@ -305,7 +325,7 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     if (_hasActiveGame()) {
       return _getActiveGame();
     }
-    _getActiveTournament();
+
     return {};
   },
 
@@ -323,6 +343,12 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
 
   hasResults() {
     return oldGames.length === 0;
+  },
+
+  fetchActiveTournament() {
+    if (!_hasActiveTournament()) {
+      _getActiveTournament();
+    }
   },
 
   getActiveTournament() {
@@ -395,13 +421,6 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
   dispatherIndex: register((action) => {
     console.log('Store received action', action);
     switch (action.actionType) {
-      case Constants.SOCKET_IS_OPEN:
-        Socket.send({
-          type: 'se.cygni.snake.eventapi.request.GetActiveTournament',
-          token: _getToken(),
-        });
-        _getActiveTournament();
-        break;
       case Constants.START_TOURNAMENT_GAME:
         _startGame();
         break;

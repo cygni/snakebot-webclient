@@ -13,6 +13,7 @@ let snakeLayer;
 let renderObstacles = true;
 
 function getActiveGame() {
+  Store.fetchActiveTournament();
   const game = Store.getActiveGame();
   const state = Store.getActiveGameState();
   return { game, state };
