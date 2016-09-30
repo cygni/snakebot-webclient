@@ -149,8 +149,7 @@ function _renderBodyPart(stage, pos, tileSize, color) {
   stage.addChild(rect);
 }
 
-function _renderSnakeHead(stage, pos, tileSize, color, rotation) {
-  const image = Images.getSnakeHead(color);
+function _renderImage(stage, pos, tileSize, image, rotation) {
   const bitmap = new createjs.Bitmap(image);
 
   // Use a container to be able to positon it with top/left orientation
@@ -187,13 +186,15 @@ function _renderSnakes(stage, map, tileSize, colors) {
         // ensure that we know which direction the head will be facing
         if (snake.positions.length > 1) {
           const rotation = _getHeadRotation(snake.positions, map);
-          _renderSnakeHead(stage, pos, tileSize, color, rotation);
+          const image = Images.getSnakeHead(color);
+          _renderImage(stage, pos, tileSize, image, rotation);
         } else {
           _renderBodyPart(stage, pos, tileSize, color);
         }
       } else if (index === lastIndex) {
-        // TODO: render tail!
-        _renderBodyPart(stage, pos, tileSize, color);
+        const rotation = _getTailRotation(snake.positions, map);
+        const image = Images.getSnakeTail(color);
+        _renderImage(stage, pos, tileSize, image, rotation);
       } else {
         _renderBodyPart(stage, pos, tileSize, color);
       }
@@ -263,27 +264,36 @@ function _filterObstacles(o1, o2) {
   return Math.abs(o1.x - o2.x) < 3 && Math.abs(o1.y - o2.y) < 3;
 }
 
-function _getHeadRotation(positions, map) {
-  const head = _getTileCoordinate(positions[0], map);
-  const body = _getTileCoordinate(positions[1], map);
-
-  if (head === undefined || body === undefined) {
-    console.error('Snake is too short to find a body', positions);
+function _getRotation(first, second) {
+  if (first === undefined || second === undefined) {
+    console.error('Snake is too short to find a body', first, second);
     return 0;
   }
 
-  if (head.x === body.x && head.y > body.y) {
+  if (first.x === second.x && first.y > second.y) {
     return 180; // down
-  } else if (head.x === body.x && head.y < body.y) {
+  } else if (first.x === second.x && first.y < second.y) {
     return 0; // up
-  } else if (head.x > body.x) {
+  } else if (first.x > second.x) {
     return 90; // right
-  } else if (head.x < body.x) {
+  } else if (first.x < second.x) {
     return -90; // left
   }
 
-  console.error('Body positions don\'t match any direction', positions);
+  console.error('Positions don\'t match any direction', first, second);
   return 0;
+}
+
+function _getHeadRotation(positions, map) {
+  const head = _getTileCoordinate(positions[0], map);
+  const body = _getTileCoordinate(positions[1], map);
+  return _getRotation(head, body);
+}
+
+function _getTailRotation(positions, map) {
+  const tail = _getTileCoordinate(positions[positions.length - 1], map);
+  const body = _getTileCoordinate(positions[positions.length - 2], map);
+  return _getRotation(body, tail);
 }
 
 function _getTileCoordinate(absolutePos, map) {
