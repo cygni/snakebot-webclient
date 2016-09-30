@@ -5,9 +5,7 @@ import {
 import Config from 'Config'; // eslint-disable-line
 import AuthService from '../../../security/services/AuthService';
 import Store from '../../../baseStore/BaseStore';
-import '../../../design/styles/stylesheet.scss';
-
-const snakelogo = require('../../../design/images/snakelogo.png');
+import snakelogo from '../../../design/images/logos/snakelogo.png';
 
 class PageHeader extends React.Component {
   static isLoggedIn() {

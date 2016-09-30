@@ -1,3 +1,0 @@
-Black hole - Hinder för ormen:
-Ska animeras, se HTML filen.
-Kan täcka 1, 4, 6 eller 8 rutor beroende på hur man vill bygga sin level.
