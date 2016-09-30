@@ -1,6 +1,5 @@
 import TileTypes from '../constants/TileTypes';
 import Images from '../constants/Images';
-import Directions from '../constants/Directions';
 
 function isConnectingPart(me, map, x, y) {
   const tile = _getTileAt(x, y, map);
@@ -150,6 +149,33 @@ function _renderBodyPart(stage, pos, tileSize, color) {
   stage.addChild(rect);
 }
 
+function _renderSnakeHead(stage, pos, tileSize, color, rotation) {
+  const image = Images.getSnakeHead(color);
+  const bitmap = new createjs.Bitmap(image);
+
+  // Use a container to be able to positon it with top/left orientation
+  const headContainer = new createjs.Container();
+  headContainer.addChild(bitmap);
+
+  headContainer.x = pos.x * tileSize;
+  headContainer.y = pos.y * tileSize;
+
+  bitmap.scaleX = tileSize / bitmap.image.width;
+  bitmap.scaleY = tileSize / bitmap.image.height;
+
+  // Set the registration point to the middle of the image (this ignores scaling)
+  bitmap.regX = bitmap.image.width / 2;
+  bitmap.regY = bitmap.image.width / 2;
+
+  // And put the registration point in the middle (this time taking scaling into consideration)
+  bitmap.x = tileSize / 2;
+  bitmap.y = tileSize / 2;
+
+  bitmap.rotation = rotation;
+
+  stage.addChild(headContainer);
+}
+
 function _renderSnakes(stage, map, tileSize, colors) {
   map.snakeInfos.forEach((snake) => {
     const lastIndex = snake.positions.length - 1;
@@ -160,10 +186,8 @@ function _renderSnakes(stage, map, tileSize, colors) {
       if (index === 0) {
         // ensure that we know which direction the head will be facing
         if (snake.positions.length > 1) {
-          const direction = _getHeadDirection(snake.positions, map);
-          const image = Images.getSnakeHead(color, direction);
-
-          _addImage(stage, tileSize, pos, image);
+          const rotation = _getHeadRotation(snake.positions, map);
+          _renderSnakeHead(stage, pos, tileSize, color, rotation);
         } else {
           _renderBodyPart(stage, pos, tileSize, color);
         }
@@ -239,36 +263,27 @@ function _filterObstacles(o1, o2) {
   return Math.abs(o1.x - o2.x) < 3 && Math.abs(o1.y - o2.y) < 3;
 }
 
-function _getHeadDirection(positions, map) {
+function _getHeadRotation(positions, map) {
   const head = _getTileCoordinate(positions[0], map);
   const body = _getTileCoordinate(positions[1], map);
 
   if (head === undefined || body === undefined) {
     console.error('Snake is too short to find a body', positions);
-    return Directions.DOWN;
+    return 0;
   }
 
   if (head.x === body.x && head.y > body.y) {
-    return Directions.DOWN;
+    return 180; // down
   } else if (head.x === body.x && head.y < body.y) {
-    return Directions.UP;
+    return 0; // up
   } else if (head.x > body.x) {
-    return Directions.RIGHT;
+    return 90; // right
   } else if (head.x < body.x) {
-    return Directions.LEFT;
+    return -90; // left
   }
 
   console.error('Body positions don\'t match any direction', positions);
-  return Directions.DOWN;
-}
-
-function _addImage(stage, tileSize, pos, image) {
-  const bitmap = new createjs.Bitmap(image);
-  bitmap.scaleX = tileSize / bitmap.image.width;
-  bitmap.scaleY = tileSize / bitmap.image.height;
-  bitmap.x = pos.x * tileSize;
-  bitmap.y = pos.y * tileSize;
-  stage.addChild(bitmap);
+  return 0;
 }
 
 function _getTileCoordinate(absolutePos, map) {
