@@ -99,6 +99,7 @@ const _startGame = (emitChange) => {
       type: 'se.cygni.snake.eventapi.request.StartGame',
     });
     _activeGameState.fetched = true;
+    _activeGameState.renderObstacles = true;
   }
 };
 
