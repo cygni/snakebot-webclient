@@ -49,40 +49,25 @@ function getTileType(me, x, y, map) {
 }
 
 function _getTileAt(x, y, map) {
-  let tile = {
-    content: TileTypes.EMPTY,
-  };
+  const atCoordinate = pos => pos.x === x && pos.y === y;
 
-  map.foodPositions.forEach((foodPosition) => {
-    if (foodPosition.x === x && foodPosition.y === y) {
-      tile = {
-        content: TileTypes.FOOD,
-      };
-    }
-  });
+  if (map.foodPositions.some(atCoordinate)) {
+    return {
+      content: TileTypes.FOOD,
+    };
+  } else if (map.obstaclePositions.some(atCoordinate)) {
+    return {
+      content: TileTypes.OBSTACLE,
+    };
+  }
 
-  map.obstaclePositions.forEach((obstaclePosition) => {
-    if (obstaclePosition.x === x && obstaclePosition.y === y) {
-      tile = {
-        content: TileTypes.OBSTACLE,
-      };
-    }
-  });
+  let tile = { content: TileTypes.EMPTY };
 
   map.snakeInfos.forEach((snakeInfo) => {
-    let head = true;
-
     snakeInfo.positions.forEach((snakePosition, index) => {
-      let type = TileTypes.SNAKE_BODY;
-
-      if (head) {
-        type = TileTypes.SNAKE_HEAD;
-        head = false;
-      }
-
-      if (snakePosition.x === x && snakePosition.y === y) {
+      if (atCoordinate(snakePosition)) {
         tile = {
-          content: type,
+          content: index === 0 ? TileTypes.SNAKE_HEAD : TileTypes.SNAKE_BODY,
           playerId: snakeInfo.id,
           order: index,
         };
@@ -133,7 +118,6 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
       };
       break;
     }
-
     case TileTypes.OBSTACLE: {
       item = {
         key,
@@ -158,27 +142,36 @@ function buildTileObject(tile, key, tileSize, _activeGame) {
   return item;
 }
 
-function _renderSnakes(stage, map, tileSize, _activeGame) {
-  map.snakeInfos.forEach((snakeInfo) => {
-    let head = true;
-    const lastIndex = snakeInfo.positions.length - 1;
-    const currentSnake = _activeGame.game.players.find(snake => snake.id === snakeInfo.id);
-    snakeInfo.positions.forEach((snakePosition, index) => {
-      const yPos = snakePosition.y * tileSize;
-      const xPos = snakePosition.x * tileSize;
-      if (head) {
-        head = false;
-        setHeadDirection(stage, snakeInfo.positions, tileSize, xPos, yPos, currentSnake.color);
-      } else if (lastIndex === index) {
-        /*
-         TODO render tail!
-         addImage(stage, tileSize, xPos, yPos, Images.TAIL);
-         */
+function _renderBodyPart(stage, pos, tileSize, color) {
+  const rect = new createjs.Shape();
+  rect.graphics
+    .beginFill(color)
+    .drawRect(pos.x * tileSize, pos.y * tileSize, tileSize, tileSize);
+  stage.addChild(rect);
+}
+
+function _renderSnakes(stage, map, tileSize, colors) {
+  map.snakeInfos.forEach((snake) => {
+    const lastIndex = snake.positions.length - 1;
+    snake.positions.forEach((position, index) => {
+      const pos = _getTileCoordinate(position, map);
+      const color = colors[snake.id];
+
+      if (index === 0) {
+        // ensure that we know which direction the head will be facing
+        if (snake.positions.length > 1) {
+          const direction = _getHeadDirection(snake.positions, map);
+          const image = Images.getSnakeHead(color, direction);
+
+          _addImage(stage, tileSize, pos, image);
+        } else {
+          _renderBodyPart(stage, pos, tileSize, color);
+        }
+      } else if (index === lastIndex) {
+        // TODO: render tail!
+        _renderBodyPart(stage, pos, tileSize, color);
       } else {
-        const rect = new createjs.Shape();
-        rect.graphics.beginStroke('#000000')
-            .beginFill(currentSnake.color).drawRect(xPos, yPos, tileSize, tileSize);
-        stage.addChild(rect);
+        _renderBodyPart(stage, pos, tileSize, color);
       }
     });
   });
@@ -186,8 +179,10 @@ function _renderSnakes(stage, map, tileSize, _activeGame) {
 
 function _renderFood(stage, map, tileSize) {
   map.foodPositions.forEach((foodPosition) => {
-    const yPos = foodPosition.y * tileSize;
-    const xPos = foodPosition.x * tileSize;
+    const pos = _getTileCoordinate(foodPosition, map);
+
+    const yPos = pos.y * tileSize;
+    const xPos = pos.x * tileSize;
     const star = new createjs.Bitmap(Images.STAR);
     star.scaleX = tileSize / star.image.width;
     star.scaleY = tileSize / star.image.height;
@@ -198,7 +193,10 @@ function _renderFood(stage, map, tileSize) {
 }
 
 function _renderObstacles(stage, map, tileSize) {
-  groupObstacles(map.obstaclePositions).forEach((group) => {
+  const obstacleCoordinates = map.obstaclePositions.map(
+    obstacle => _getTileCoordinate(obstacle, map));
+
+  _groupObstacles(obstacleCoordinates).forEach((group) => {
     if (group.length > 0) {
       const groupSize = group.length;
       const firstObstacle = group[0];
@@ -222,12 +220,12 @@ function _renderObstacles(stage, map, tileSize) {
   });
 }
 
-function groupObstacles(obstaclePositions) {
+function _groupObstacles(obstaclePositions) {
   const ready = [];
   const cluster = [];
   obstaclePositions.forEach((obstaclePosition) => {
     if (!ready.includes([obstaclePosition.x, obstaclePosition.y].join())) {
-      const ar = obstaclePositions.filter(o => filterObstacles(o, obstaclePosition));
+      const ar = obstaclePositions.filter(o => _filterObstacles(o, obstaclePosition));
       cluster.push(ar);
       ar.forEach((ob) => {
         ready.push([ob.x, ob.y].join());
@@ -237,38 +235,50 @@ function groupObstacles(obstaclePositions) {
   return cluster;
 }
 
-function filterObstacles(o1, o2) {
+function _filterObstacles(o1, o2) {
   return Math.abs(o1.x - o2.x) < 3 && Math.abs(o1.y - o2.y) < 3;
 }
 
-function setHeadDirection(stage, snakePositions, tileSize, xPos, yPos, color) {
-  const snakePosition1 = snakePositions[0];
-  const snakePosition2 = snakePositions[1];
-  if (snakePosition1 === undefined || snakePosition2 === undefined) {
-    return;
+function _getHeadDirection(positions, map) {
+  const head = _getTileCoordinate(positions[0], map);
+  const body = _getTileCoordinate(positions[1], map);
+
+  if (head === undefined || body === undefined) {
+    console.error('Snake is too short to find a body', positions);
+    return Directions.DOWN;
   }
-  if (snakePosition1.x === snakePosition2.x && snakePosition1.y > snakePosition2.y) {
-    addImage(stage, tileSize, xPos, yPos, Images.getSnakeHead(color, Directions.DOWN));
-  } else if (snakePosition1.x > snakePosition2.x) {
-    addImage(stage, tileSize, xPos, yPos, Images.getSnakeHead(color, Directions.RIGHT));
-  } else if (snakePosition1.x < snakePosition2.x) {
-    addImage(stage, tileSize, xPos, yPos, Images.getSnakeHead(color, Directions.LEFT));
-  } else {
-    addImage(stage, tileSize, xPos, yPos, Images.getSnakeHead(color, Directions.UP));
+
+  if (head.x === body.x && head.y > body.y) {
+    return Directions.DOWN;
+  } else if (head.x === body.x && head.y < body.y) {
+    return Directions.UP;
+  } else if (head.x > body.x) {
+    return Directions.RIGHT;
+  } else if (head.x < body.x) {
+    return Directions.LEFT;
   }
+
+  console.error('Body positions don\'t match any direction', positions);
+  return Directions.DOWN;
 }
 
-function addImage(stage, tileSize, xPos, yPos, image) {
+function _addImage(stage, tileSize, pos, image) {
   const bitmap = new createjs.Bitmap(image);
   bitmap.scaleX = tileSize / bitmap.image.width;
   bitmap.scaleY = tileSize / bitmap.image.height;
-  bitmap.x = xPos;
-  bitmap.y = yPos;
+  bitmap.x = pos.x * tileSize;
+  bitmap.y = pos.y * tileSize;
   stage.addChild(bitmap);
 }
 
-export default {
+function _getTileCoordinate(absolutePos, map) {
+  const y = Math.floor(absolutePos / map.width);
+  const x = absolutePos - (y * map.width);
 
+  return { x, y };
+}
+
+export default {
   renderSnakes(stage, map, tileSize, _activeGame) {
     _renderSnakes(stage, map, tileSize, _activeGame);
   },
@@ -290,11 +300,5 @@ export default {
     }
 
     return buildTileObject(tile, key, tileSize, activeGame);
-  },
-  getTileCoordinate(absolutePos, mapWidth) {
-    const y = Math.floor(absolutePos / mapWidth);
-    const x = absolutePos - (y * mapWidth);
-
-    return { x, y };
   },
 };

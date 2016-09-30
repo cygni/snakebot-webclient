@@ -7,15 +7,14 @@ import StoreWatch from '../watch/StoreWatch.jsx';
 import GameStore from '../../../baseStore/BaseStore';
 
 function gameControlStateCallback() {
-  const game = GameStore.getActiveGame();
-  const frameInfo = GameStore.getFrameInfo();
-  return { game, frameInfo };
+  const gameState = GameStore.getActiveGameState();
+  const frameCount = GameStore.getFrameCount();
+  return { gameState, frameCount };
 }
 
 const propTypes = {
-  id: React.PropTypes.string,
-  game: React.PropTypes.object.isRequired,
-  frameInfo: React.PropTypes.object.isRequired,
+  frameCount: React.PropTypes.number.isRequired,
+  gameState: React.PropTypes.object.isRequired,
 };
 
 class GameControl extends React.Component {
@@ -31,14 +30,8 @@ class GameControl extends React.Component {
     AppAction.resumeGame(id);
   }
 
-  static getState(game, id) {
-    if (game.started) {
-      if (game.running) {
-        return { text: 'Pause Game', action: () => GameControl.pauseGame(id) };
-      }
-      return { text: 'Resume Game', action: () => GameControl.resumeGame(id) };
-    }
-    return { text: 'Start Game', action: () => GameControl.startGame(id) };
+  static restartGame(id) {
+    AppAction.restartGame(id);
   }
 
   static updateFrequencyChanged(event) {
@@ -49,41 +42,46 @@ class GameControl extends React.Component {
     AppAction.setCurrentFrame(parseInt(event.target.value, 10));
   }
 
-  render() {
-    if (this.props.game) {
-      const state = GameControl.getState(this.props.game, this.props.id);
-      const text = state.text;
-      const action = state.action;
-      return (
-        <div>
-          <div>
-            <Button
-              onClick={action}
-              className="btn btn-default btn-lg"
-            >{text}</Button>
-          </div>
-          <div>
-            <h4>Frame delay: {this.props.game.updateFrequency}</h4>
-            <ReactSliderNativeBootstrap
-              value={this.props.game.updateFrequency}
-              handleChange={GameControl.updateFrequencyChanged} step={100} max={2000}
-              min={100}
-            />
-          </div>
-          <div>
-            <h4>Frame: {this.props.game.currentFrame}
-              / {this.props.frameInfo.lastFrame}</h4>
-            <ReactSliderNativeBootstrap
-              value={this.props.game.currentFrame}
-              handleChange={GameControl.currentFrameChanged} step={1}
-              max={this.props.frameInfo.lastFrame} min={0}
-            />
-          </div>
-        </div>
-      );
+  getState() {
+    if (this.props.gameState.started) {
+      if (this.props.gameState.running) {
+        return { text: 'Pause Game', action: () => GameControl.pauseGame(this.props.gameState.id) };
+      } else if (this.props.gameState.currentFrame === this.props.frameCount) {
+        return { text: 'Restart Game', action: () => GameControl.restartGame(this.props.gameState.id) };
+      }
+      return { text: 'Resume Game', action: () => GameControl.resumeGame(this.props.gameState.id) };
     }
+    return { text: 'Start Game', action: () => GameControl.startGame(this.props.gameState.id) };
+  }
+
+  render() {
+    const state = this.getState();
     return (
-      <div />
+      <div>
+        <div>
+          <Button
+            onClick={state.action}
+            className="btn btn-default btn-lg"
+          >{state.text}</Button>
+        </div>
+        <div>
+          <h4>Frame delay: {this.props.gameState.updateFrequency}</h4>
+          <ReactSliderNativeBootstrap
+            value={this.props.gameState.updateFrequency}
+            handleChange={GameControl.updateFrequencyChanged} step={100} max={2000}
+            min={100}
+          />
+        </div>
+        <div>
+          <h4>Frame: {this.props.gameState.currentFrame}
+            / {this.props.frameCount}</h4>
+          <ReactSliderNativeBootstrap
+            value={this.props.gameState.currentFrame}
+            handleChange={GameControl.currentFrameChanged} step={1}
+            max={this.props.frameCount} min={0}
+          />
+        </div>
+      </div>
     );
   }
 }

@@ -38,6 +38,12 @@ export default {
     });
   },
 
+  tournamentInfoReceived(jsonData) {
+    dispatch({
+      actionType: Constants.TOURNAMENT_INFO_RECEIVED, jsonData,
+    });
+  },
+
   tournamentGamePlanReceived(jsonData) {
     dispatch({
       actionType: Constants.GAME_PLAN_RECEIVED, jsonData,
@@ -58,7 +64,7 @@ export default {
 
   startGame() {
     dispatch({
-      actionType: Constants.START_TOURNAMENT_GAME,
+      actionType: Constants.START_GAME,
     });
   },
 
@@ -68,21 +74,15 @@ export default {
     });
   },
 
-  setUpdateFrequencyTournament(freq) {
+  setUpdateFrequency(freq) {
     dispatch({
-      actionType: Constants.SET_UPDATE_FREQUENCY_TOURNAMENT, freq,
+      actionType: Constants.SET_UPDATE_FREQUENCY, freq,
     });
   },
 
-  setCurrentFrameTournament(frame) {
+  setCurrentFrame(frame) {
     dispatch({
-      actionType: Constants.SET_CURRENT_TOURNAMENT_FRAME, frame,
-    });
-  },
-
-  getActiveTournament() {
-    dispatch({
-      actionType: Constants.GET_ACTIVE_TOURNAMENT,
+      actionType: Constants.SET_CURRENT_FRAME, frame,
     });
   },
 
@@ -103,6 +103,12 @@ export default {
   invalidToken() {
     dispatch({
       actionType: Constants.INVALID_TOKEN,
+    });
+  },
+
+  fetchActiveTournament() {
+    dispatch({
+      actionType: Constants.FETCH_ACTIVE_TOURNAMENT,
     });
   },
 };

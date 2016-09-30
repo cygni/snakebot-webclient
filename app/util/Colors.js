@@ -31,12 +31,11 @@ const snakeColors = [
 ];
 
 export default {
-  getBoardColor() {
-    return boardColors;
+  getBoardColor(i) {
+    return boardColors[i];
   },
 
-  getSnakeColor() {
-    return snakeColors;
+  getSnakeColor(i) {
+    return snakeColors[i];
   },
 };
-

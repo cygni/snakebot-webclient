@@ -59,9 +59,9 @@ class GameSearch extends React.Component {
         </form>
         <div><h2>Old games</h2></div>
         <ul> {
-          this.props.games.map((id, index) => (
+          this.props.games.map((game, index) => (
             <li key={index}>
-              <Link to={{ pathname: '/viewgame/' + id }}>{index}: {id} </Link>
+              <Link to={{ pathname: '/viewgame/' + game.gameId }}>{index}: {game.gameId} </Link>
             </li>
           ))}
         </ul>

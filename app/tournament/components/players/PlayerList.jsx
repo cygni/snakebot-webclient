@@ -15,9 +15,9 @@ const propTypes = {
 
 function PlayerList(props) {
   return (
-    <ListGroup> {
-      props.playerList.map((player, index) =>
-        (<ListGroupItem key={index}>{player.name}</ListGroupItem>))}
+    <ListGroup>{
+      props.playerList.map(
+        (player, index) => (<ListGroupItem key={index}>{player.name}</ListGroupItem>))}
     </ListGroup>
   );
 }

@@ -27,7 +27,7 @@ function PlayerList(props) {
             <th>Points</th>
           </tr>
         </thead>
-        <tbody> {
+        <tbody>{
           props.playerList.map((player, index) => (
             <tr key={index} style={{ background: player.color, color: 'white' }}>
               <td>{index + 1}</td>

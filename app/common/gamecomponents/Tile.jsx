@@ -24,94 +24,84 @@ const propTypes = {
   tileType: React.PropTypes.string.isRequired,
 };
 
-class Tile extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.type && this.props.type) {
-      return nextProps.type !== this.props.type || this.props.tileType !==
-        nextProps.tileType;
+const Tile = (props) => {
+  const styles = {
+    empty: {
+      padding: 0,
+      margin: 0,
+      borderLeft: '1px solid rgba(255,255,255,0.2)',
+      borderBottom: '1px solid rgba(255,255,255,0.2)',
+      width: props.width,
+      height: props.height,
+      display: 'inline-block',
+    },
+    food: {
+      padding: 0,
+      margin: 0,
+      background: 'green',
+      width: props.width,
+      height: props.height,
+      display: 'inline-block',
+    },
+    obstacle: {
+      background: 'black',
+      padding: 0,
+      margin: 0,
+      width: props.width,
+      height: props.height,
+      display: 'inline-block',
+    },
+    snakebody: {
+      background: props.color,
+      padding: 0,
+      margin: 0,
+      width: props.width,
+      height: props.height,
+      borderColor: 'black',
+      borderWidth: 3,
+      borderStyle: borders.get(props.tileType),
+      display: 'inline-block',
+    },
+    snakehead: {
+      padding: 0,
+      margin: 0,
+      background: props.color,
+      width: props.width,
+      height: props.height,
+      borderColor: 'black',
+      borderWidth: 3,
+      borderStyle: 'solid',
+      display: 'inline-block',
+    },
+  };
+
+  let tile = {};
+  (() => {
+    switch (props.type) {
+      case TileTypes.EMPTY:
+        tile = styles.empty;
+        break;
+      case TileTypes.FOOD:
+        tile = styles.food;
+        break;
+      case TileTypes.OBSTACLE:
+        tile = styles.obstacle;
+        break;
+      case TileTypes.SNAKE_BODY:
+        tile = styles.snakebody;
+        break;
+      case TileTypes.SNAKE_HEAD:
+        tile = styles.snakehead;
+        break;
+      default:
+        break;
     }
-    return false;
-  }
+  })();
 
-  render() {
-    const styles = {
-      empty: {
-        padding: 0,
-        margin: 0,
-        borderLeft: '1px solid rgba(255,255,255,0.2)',
-        borderBottom: '1px solid rgba(255,255,255,0.2)',
-        width: this.props.width,
-        height: this.props.height,
-        display: 'inline-block',
-      },
-      food: {
-        padding: 0,
-        margin: 0,
-        background: 'green',
-        width: this.props.width,
-        height: this.props.height,
-        display: 'inline-block',
-      },
-      obstacle: {
-        background: 'black',
-        padding: 0,
-        margin: 0,
-        width: this.props.width,
-        height: this.props.height,
-        display: 'inline-block',
-      },
-      snakebody: {
-        background: this.props.color,
-        padding: 0,
-        margin: 0,
-        width: this.props.width,
-        height: this.props.height,
-        borderColor: 'black',
-        borderWidth: 3,
-        borderStyle: borders.get(this.props.tileType),
-        display: 'inline-block',
-      },
-      snakehead: {
-        padding: 0,
-        margin: 0,
-        background: this.props.color,
-        width: this.props.width,
-        height: this.props.height,
-        borderColor: 'black',
-        borderWidth: 3,
-        borderStyle: 'solid',
-        display: 'inline-block',
-      },
-    };
-
-    let tile = {};
-    (() => {
-      switch (this.props.type) {
-        case TileTypes.EMPTY:
-          tile = styles.empty;
-          break;
-        case TileTypes.FOOD:
-          tile = styles.food;
-          break;
-        case TileTypes.OBSTACLE:
-          tile = styles.obstacle;
-          break;
-        case TileTypes.SNAKE_BODY:
-          tile = styles.snakebody;
-          break;
-        case TileTypes.SNAKE_HEAD:
-          tile = styles.snakehead;
-          break;
-        default:
-          break;
-      }
-    })();
-
-    return (
-      <div style={tile} />
-    );
-  }
-}
+  return (
+    <div style={tile} />
+  );
+};
 
 Tile.propTypes = propTypes;
 

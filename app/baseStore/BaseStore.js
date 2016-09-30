@@ -4,114 +4,110 @@ import {
 import {
   hashHistory,
 } from 'react-router';
-import rest from 'rest';
 import _ from 'lodash';
-import Config from 'Config'; // eslint-disable-line
-
-// For now, let's ignore this rule until a proper fix can be done
-/* eslint-disable no-use-before-define */
-
+import restclient from '../util/RestClient.js';
 import Socket from '../websocket/WebSocket';
 import {
   register,
+
 } from '../dispatchers/AppDispatcher';
 import Constants from '../constants/Constants';
-import GameRenderingFunction from '../util/GameRenderingFunctions';
+import Colors from '../util/Colors';
 
 const CHANGE_EVENT = 'change';
-let finalPlacement = {
-  winner: {},
-  list: [],
+
+let searchResults = [];
+
+let tournament = {};
+const _activeGameState = {};
+
+const _hasActiveGame = () => !_.isEmpty(_activeGameState);
+
+// Handling the frame updating
+
+const _frameCount = () => {
+  if (_hasActiveGame()) {
+    return _activeGameState.mapEvents.length - 1;
+  }
+  return 0;
 };
-let playerList = [];
-const tournament = {};
-let tournamentGameplan = {
-  tournamentLevels: [],
+
+const _stopUpdatingFrames = () => {
+  clearInterval(_activeGameState.frameChange);
+  _activeGameState.frameChange = undefined;
+  _activeGameState.running = false;
 };
 
-let activeGameId = '';
-let noResultsFound = false;
+const _setNextFrame = (emitChange) => {
+  if (_activeGameState.currentFrame >= _frameCount()) {
+    console.log('Reached end of frames, pausing game');
+    _stopUpdatingFrames();
+    return;
+  }
 
-let oldGames = [];
+  const nextFrame = _activeGameState.currentFrame + 1;
+  const isValidIndex = nextFrame >= 0 && nextFrame <= _frameCount();
+  if (!isValidIndex) {
+    return;
+  }
 
-let games = [];
-const playerMap = new Map();
-const startedGame = {};
-const gameEvents = {};
+  _activeGameState.currentFrame = nextFrame;
+  emitChange();
+};
 
-let _activeGame = {};
+const _startUpdatingFrames = (emitChange) => {
+  console.log('Starting to update frames', _activeGameState.updateFrequency);
 
-const _startGame = () => {
-  _activeGame.started = true;
-  _activeGame.running = true;
+  _stopUpdatingFrames();
 
-  if (_activeGame.id) {
+  if (_activeGameState.started && _activeGameState.currentFrame < _frameCount()) {
+    _activeGameState.running = true;
+    _activeGameState.frameChange =
+      setInterval(() => _setNextFrame(emitChange), _activeGameState.updateFrequency);
+  }
+};
+
+// Utility functions
+
+const _assignSnakeColors = (mapEvent) => {
+  if (!mapEvent) {
+    return;
+  }
+
+  mapEvent.snakeInfos.forEach((snake) => {
+    if (!_activeGameState.colors[snake.id]) {
+      _activeGameState.colors[snake.id] = Colors.getSnakeColor(_activeGameState.colorIndex);
+      _activeGameState.colorIndex += 1;
+    }
+  });
+};
+
+const _renderObstacles = (emitChange) => {
+  _activeGameState.renderObstacles = true;
+  emitChange();
+  _activeGameState.renderObstacles = false;
+  emitChange();
+};
+
+// Requests to start the game
+
+const _startGame = (emitChange) => {
+  _activeGameState.started = true;
+  _startUpdatingFrames(emitChange);
+
+  console.log('Starting the game', _activeGameState);
+
+  if (!_activeGameState.fetched) {
+    console.log('Game has not been fetched, so ask the server to start it');
     Socket.send({
-      includedGameIds: [_activeGame.id],
-      type: 'se.cygni.snake.eventapi.request.SetGameFilter',
-    });
-    Socket.send({
-      gameId: _activeGame.id,
+      gameId: _activeGameState.id,
       type: 'se.cygni.snake.eventapi.request.StartGame',
     });
+    _activeGameState.fetched = true;
   }
 };
 
-const _addGames = (gamesList) => {
-  games = GameRenderingFunction.addGames(gamesList);
-
-  if (_.isEmpty(_activeGame) && activeGameId) {
-    _activeGame = games.find(game => game.id === activeGameId);
-
-    if (_.isEmpty(_activeGame)) {
-      rest(Config.server + '/history/' + activeGameId)
-        .then((response) => {
-          const test = JSON.parse(response.entity);
-          console.log(test);
-          const game = test.messages.filter(event => event.type ===
-                                            'se.cygni.snake.api.event.MapUpdateEvent')
-                  .map(type => type.map);
-          _activeGame = GameRenderingFunction.addOldGame(game);
-          BaseStore.emitChange();
-        });
-    } else {
-      BaseStore.emitChange();
-    }
-  }
-};
-
-const _searchForOldGames = (name) => {
-  rest(Config.server + '/history/search/' + name)
-    .then((response) => {
-      const jsonResponse = JSON.parse(response.entity);
-      oldGames = jsonResponse.items;
-      noResultsFound = oldGames.length === 0;
-      BaseStore.emitChange();
-    });
-};
-
-const _setActiveGame = (gameid) => {
-  if (games.length > 0) {
-    _activeGame = games.find(game => game.id === gameid);
-  } else if (Socket.state() === 1) {
-    rest(Config.server + '/history/' + gameid)
-      .then((response) => {
-        const test = JSON.parse(response.entity);
-        console.log(JSON.stringify(test.messages));
-        const game = test.messages.filter(event => event.type ===
-                                          'se.cygni.snake.api.event.MapUpdateEvent')
-                .map(type => type.map);
-        _activeGame = GameRenderingFunction.addOldGame(game);
-        BaseStore.emitChange();
-      });
-  } else if (_.isEmpty(_activeGame)) {
-    activeGameId = gameid;
-  }
-};
-
-const _initWS = (gameid) => {
-  Socket.init(gameid);
-};
+// Handling the logging in and out for a user
 
 const _getToken = () => localStorage.getItem('token');
 const _getUser = () => localStorage.getItem('savedUser');
@@ -119,6 +115,13 @@ const _getUser = () => localStorage.getItem('savedUser');
 const _clearCredentials = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('savedUser');
+};
+
+const _loginUser = (action) => {
+  if (_getToken() !== action.token) {
+    localStorage.setItem('token', action.token);
+    localStorage.setItem('savedUser', action.user);
+  }
 };
 
 const _logOutUser = () => {
@@ -135,6 +138,17 @@ function _isLoggedIn() {
   const _token = _getToken();
   return _token !== null && _token !== undefined;
 }
+
+// All tournament-related actions
+
+const _setActiveTournament = (tournamentInfo) => {
+  tournament = tournamentInfo;
+  tournament.finalPlacement = {
+    list: [],
+    winner: {},
+  };
+  console.log('Active tournament is set', tournament);
+};
 
 const _createTournament = (name) => {
   Socket.init();
@@ -154,8 +168,6 @@ const _createTournamentTable = () => {
 };
 
 const _startTournament = () => {
-  localStorage.removeItem('gameplan');
-  localStorage.removeItem('finalPlacement');
   Socket.send({
     type: 'se.cygni.snake.eventapi.request.StartTournament',
     token: _getToken(),
@@ -164,78 +176,22 @@ const _startTournament = () => {
   hashHistory.push('tournament/tournamentbracket');
 };
 
-const _getActiveTournament = () => {
-  Socket.send({
-    type: 'se.cygni.snake.eventapi.request.GetActiveTournament',
-    token: _getToken(),
-  });
-};
-
-const _tournamentCreated = (jsonData) => {
-  tournament.tournamentName = jsonData.tournamentName;
-  tournament.tournamentId = jsonData.tournamentId;
-  tournament.gameSettings = jsonData.gameSettings;
-};
-
-const _updateGameplan = (jsonData) => {
-  localStorage.setItem('gameplan', JSON.stringify(jsonData));
-  tournamentGameplan = jsonData;
-};
-
-const _updatePlayers = (players) => {
-  playerList = players;
-};
-
-const _getActiveGame = (gameid) => {
-  if (_.isEmpty(_activeGame)) {
-    _activeGame = games.find(game => game.id === gameid);
-  }
-  return _activeGame;
-};
-
-const _setActiveTournamentGame = (gameId) => {
-  hashHistory.push('/tournament/' + gameId);
-};
-
-function _setUpdateFrequency(freq) {
-  _activeGame.updateFrequency = freq;
-}
-
-const _setCurrentFrame = (frame) => {
-  GameRenderingFunction.setCurrentFrame(_activeGame, frame);
-};
-
-const _updateSettings = (key, value) => {
-  tournament.gameSettings[key] = value;
-};
-
-const _changeFrame = () => {
-  if (_activeGame && _activeGame.started && _activeGame.running &&
-    (_activeGame.currentFrame === 0 || _activeGame.currentFrame < _activeGame
-      .mapEvents
-      .length - 1)) {
-    GameRenderingFunction.changeFrame(_activeGame);
-    setTimeout(() => _changeFrame(), _activeGame.updateFrequency);
-    BaseStore.emitChange();
-  }
-};
-
-const _addMapUpdate = (event) => {
-  if (event.gameId === _activeGame.id) {
-    event.map.rendered = false;
-    _activeGame.mapEvents.push(event.map);
-  } else {
-    const updatedGame = games.find(game => game.id === event.gameId);
-    event.map.rendered = false;
-    updatedGame.mapEvents.push(event.map);
-  }
+const _tournamentCreated = (tournamentInfo) => {
+  tournament = tournamentInfo;
+  tournament.finalPlacement = {
+    list: [],
+    winner: {},
+  };
 };
 
 const _tournamentEnded = (event) => {
-  finalPlacement.list = event.gameResult;
-  finalPlacement.winner = finalPlacement.list.find(snake => snake.playerId ===
-    event.playerWinnerId);
-  localStorage.setItem('finalPlacement', JSON.stringify(finalPlacement));
+  console.log('Tournament ended', tournament, event);
+  tournament.finalPlacement.list = event.gameResult;
+  tournament.finalPlacement.winner =
+    tournament.finalPlacement.list.find(
+      snake => snake.playerId === event.playerWinnerId);
+
+  console.log('Tournament final placements are', tournament.finalPlacement);
 };
 
 const _killTournament = () => {
@@ -244,17 +200,82 @@ const _killTournament = () => {
     type: 'se.cygni.snake.eventapi.request.KillTournament',
     token: _getToken(),
   });
+
+  tournament = {};
 };
 
-const _loginUser = (action) => {
-  if (_getToken() !== action.token) {
-    localStorage.setItem('token', action.token);
-    localStorage.setItem('savedUser', action.user);
-    hashHistory.push('/tournament');
+const _addMapEvent = (event, emitChange) => {
+  if (event.gameId !== _activeGameState.id) {
+    console.error('Received map event for a different game than the active one', event);
+  }
+
+  _activeGameState.mapEvents.push(event.map);
+  _assignSnakeColors(event.map);
+
+  if (_activeGameState.mapEvents.length === 1) {
+    _renderObstacles(emitChange);
+  }
+
+  if (!_activeGameState.frameChange) {
+    _startUpdatingFrames(emitChange);
   }
 };
 
-const BaseStore = Object.assign(EventEmitter.prototype, {
+// Methods using the the restclient
+
+const _fetchActiveTournament = (emitChange) => {
+  if (!_isLoggedIn()) {
+    return;
+  }
+
+  restclient.fetchTournament(
+    (activeTournament) => {
+      _setActiveTournament(activeTournament);
+      emitChange();
+    });
+};
+
+const _fetchActiveGame = (gameid, emitChange) => {
+  console.log('Setting active game to ' + gameid);
+
+  _activeGameState.id = gameid;
+  _activeGameState.fetched = false;
+  _activeGameState.started = false;
+  _activeGameState.running = false;
+  _activeGameState.currentFrame = 0;
+  _activeGameState.updateFrequency = 200;
+  _activeGameState.colors = {};
+  _activeGameState.colorIndex = 0;
+  _activeGameState.renderObstacles = false;
+  _activeGameState.mapEvents = [];
+
+  restclient.fetchGame(
+    gameid,
+    (mapEvents) => {
+      _activeGameState.mapEvents = mapEvents;
+      _assignSnakeColors(mapEvents[0]);
+      _activeGameState.fetched = true;
+      _renderObstacles(emitChange);
+    }, () => {
+      console.log('Attempting to subscribing to the game instead');
+
+      Socket.send({
+        includedGameIds: [_activeGameState.id],
+        type: 'se.cygni.snake.eventapi.request.SetGameFilter',
+      });
+    });
+};
+
+const _fetchGamesByName = (name, emitChange) => {
+  restclient.searchForGames(
+    name,
+    (matchingGames) => {
+      searchResults = matchingGames;
+      emitChange();
+    });
+};
+
+const BaseStore = Object.assign({}, EventEmitter.prototype, {
   emitChange() {
     this.emit(CHANGE_EVENT);
   },
@@ -267,37 +288,20 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
     this.removeListener(CHANGE_EVENT, callback);
   },
 
-  getActiveGame() {
-    return _getActiveGame();
+  getActiveGameState() {
+    return _activeGameState;
+  },
+
+  getFrameCount() {
+    return _frameCount();
   },
 
   getOldGames() {
-    return oldGames;
+    return searchResults;
   },
 
   hasResults() {
-    return noResultsFound;
-  },
-
-  getActiveTournamentGame() {
-    if (_.isEmpty(_activeGame) && localStorage.getItem('activeGame')) {
-      const tmp = localStorage.getItem('activeGame');
-      _activeGame = JSON.parse(tmp);
-    }
-    return _activeGame;
-  },
-
-  getFrameInfo() {
-    if (_activeGame) {
-      return {
-        currentFrame: _activeGame.currentFrame,
-        lastFrame: Math.max(0, _activeGame.mapEvents.length - 1),
-      };
-    }
-    return {
-      currentFrame: 0,
-      lastFrame: 0,
-    };
+    return searchResults.length === 0;
   },
 
   getActiveTournament() {
@@ -309,58 +313,31 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
   },
 
   getPlayerList() {
-    return playerList;
+    if (tournament.gamePlan) {
+      return tournament.gamePlan.players;
+    }
+
+    return [];
   },
 
-  getTournamentGameplan() {
-    if (localStorage.getItem('gameplan')) {
-      const tmp = localStorage.getItem('gameplan');
-      tournamentGameplan = JSON.parse(tmp);
-    }
-    return tournamentGameplan;
+  getTournamentGamePlan() {
+    return tournament.gamePlan;
   },
 
   getActivePlayers() {
-    return _activeGame.players.sort((a, b) => b.points - a.points);
+    return tournament.gamePlan.players.sort((a, b) => b.points - a.points);
   },
+
   getFinalPlacement() {
-    if (localStorage.getItem('finalPlacement')) {
-      const tmp = localStorage.getItem('finalPlacement');
-      finalPlacement = JSON.parse(tmp);
-    }
-    return finalPlacement;
+    return tournament.finalPlacement;
   },
 
   getUpdateFrequencyForTournament() {
-    if (_activeGame) {
-      return _activeGame.updateFrequency;
-    }
-    return 100;
-  },
-
-  getTrainingGames() {
-    return games;
+    return _hasActiveGame() ? _activeGameState.updateFrequency : 100;
   },
 
   hasActiveGame() {
-    return !_.isEmpty(_activeGame);
-  },
-
-  getSnakes() {
-    return (_activeGame && playerMap.get(_activeGame.id)) ? playerMap.get(
-      _activeGame.id) : [];
-  },
-
-  startGame() {
-    return startedGame;
-  },
-
-  initWS(gameid) {
-    _initWS(gameid);
-  },
-
-  getSocketEvents() {
-    return gameEvents;
+    return _hasActiveGame();
   },
 
   getUser() {
@@ -385,16 +362,14 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
       });
     }
   },
+});
 
-  dispatherIndex: register((action) => {
+const emitChange = () => BaseStore.emitChange();
+
+BaseStore.dispatcher = register(
+  (action) => {
+    console.log('Store received action', action);
     switch (action.actionType) {
-      case Constants.START_TOURNAMENT_GAME:
-        _startGame();
-        _changeFrame();
-        break;
-      case Constants.ADD_GAMES:
-        _addGames(action.games);
-        break;
       case Constants.CREATE_TOURNAMENT:
         _createTournament(action.name);
         break;
@@ -405,19 +380,16 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         _startTournament();
         break;
       case Constants.UPDATE_SETTINGS:
-        _updateSettings(action.key, action.value);
+        tournament.gameSettings[action.key] = action.value;
         break;
       case Constants.TOURNAMENT_CREATED:
         _tournamentCreated(action.jsonData);
         break;
       case Constants.GAME_PLAN_RECEIVED:
-        _updateGameplan(action.jsonData);
-        break;
-      case Constants.UPDATE_PLAYERS:
-        _updatePlayers(action.players);
+        tournament.gamePlan = action.jsonData;
         break;
       case Constants.SET_ACTIVE_TOURNAMENT_GAME:
-        _setActiveTournamentGame(action.gameId);
+        hashHistory.push('/tournament/' + action.gameId);
         break;
       case Constants.TOURNAMENT_ENDED_EVENT:
         _tournamentEnded(action.event);
@@ -425,34 +397,36 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
       case Constants.KILL_TOURNAMENT:
         _killTournament();
         break;
-      case Constants.SET_CURRENT_TOURNAMENT_FRAME:
-        _setCurrentFrame(action.frame);
-        break;
       case Constants.SET_UPDATE_FREQUENCY:
-        _setUpdateFrequency(action.freq);
+        _activeGameState.updateFrequency = action.freq;
+        _startUpdatingFrames(emitChange);
         break;
-      case Constants.GET_ACTIVE_TOURNAMENT:
-        _getActiveTournament();
+      case Constants.TOURNAMENT_INFO_RECEIVED:
+        _setActiveTournament(action.jsonData);
         break;
       case Constants.START_GAME:
-        _startGame();
-        _changeFrame();
+        _startGame(emitChange);
         break;
       case Constants.PAUSE_GAME:
-        _activeGame.running = false;
+        _stopUpdatingFrames();
         break;
       case Constants.RESUME_GAME:
-        _activeGame.running = true;
-        _changeFrame();
+        _startUpdatingFrames(emitChange);
         break;
-      case Constants.SET_ACTIVE_TRAINING_GAME:
-        _setActiveGame(action.gameId);
+      case Constants.RESTART_GAME:
+        _activeGameState.currentFrame = 0;
+        _startGame(emitChange);
+        break;
+      case Constants.SET_ACTIVE_GAME:
+        Socket.init(action.gameId);
+        _fetchActiveGame(action.gameId, emitChange);
         break;
       case Constants.SET_CURRENT_FRAME:
-        _setCurrentFrame(action.frame);
+        _activeGameState.currentFrame = action.frame;
+        _stopUpdatingFrames();
         break;
       case Constants.MAP_UPDATE_EVENT:
-        _addMapUpdate(action.event);
+        _addMapEvent(action.event, emitChange);
         break;
       case Constants.LOGIN_USER:
         _loginUser(action);
@@ -464,14 +438,17 @@ const BaseStore = Object.assign(EventEmitter.prototype, {
         _invalidToken();
         break;
       case Constants.SEARCH_FOR_OLD_GAMES_FOR_USER:
-        _searchForOldGames(action.name);
+        _fetchGamesByName(action.name, emitChange);
+        break;
+      case Constants.FETCH_ACTIVE_TOURNAMENT:
+        _fetchActiveTournament(emitChange);
         break;
       default:
+        console.log('Store received unknown action', action);
         break;
-
     }
+
     BaseStore.emitChange();
-  }),
-});
+  });
 
 export default BaseStore;

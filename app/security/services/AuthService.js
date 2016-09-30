@@ -1,18 +1,23 @@
-import request from 'reqwest';
-import when from 'when';
+import rest from 'rest';
+import errorCode from 'rest/interceptor/errorCode';
 import Config from 'Config'; // eslint-disable-line
 import Action from '../../tournament/action/tournament-actions';
 
 class AuthService {
-  login(username, password) {
-    return when(request({
-      url: `${Config.server}/login?login=${username}&password=${password}`,
-      method: 'GET',
-      type: 'text/html',
-      crossOrigin: true,
-    })).then((token) => {
-      Action.loginUser(token.response, username);
-    });
+  login(username, password, success, error) {
+    const client = rest.wrap(errorCode);
+    client({ path: `${Config.server}/login?login=${username}&password=${password}` })
+      .then(
+        (token) => {
+          Action.loginUser(token.entity, username);
+          success(token);
+        },
+        (response) => {
+          console.error('Unable to authenticate user, got response', response);
+          if (error) {
+            error(response);
+          }
+        });
   }
 
   logout() {

@@ -3,6 +3,7 @@ import SockJS from 'sockjs-client';
 import TournamentAction from '../tournament/action/tournament-actions';
 import AppAction from '../training/action/training-actions';
 
+const TOURNAMENT_INFO = 'se.cygni.snake.eventapi.model.TournamentInfo';
 const TOURNAMENT_CREATED = 'se.cygni.snake.eventapi.response.TournamentCreated';
 const TOURNAMENT_GAME_PLAN = 'se.cygni.snake.eventapi.model.TournamentGamePlan';
 const ACTIVE_GAMES_LIST = 'se.cygni.snake.eventapi.response.ActiveGamesList';
@@ -13,19 +14,27 @@ const UNAUTHORIZED = 'se.cygni.snake.eventapi.exception.Unauthorized';
 
 const socket = new SockJS(Config.server + '/events');
 
+const sendObj = (msg) => {
+  console.log('Sending message to socket:', msg);
+  socket.send(JSON.stringify(msg));
+};
+
+const setGameFilter = (gameid) => {
+  const included = gameid ? [gameid] : [];
+  sendObj({
+    includedGameIds: included,
+    type: 'se.cygni.snake.eventapi.request.SetGameFilter',
+  });
+};
+
 const listen = (gameid) => {
   if (socket.readyState === 1) {
-    socket.send({
-      includedGameIds: [gameid],
-      type: 'se.cygni.snake.eventapi.request.SetGameFiler',
-    });
+    setGameFilter(gameid);
   }
 
   socket.onopen = function onSocketOpen() {
-    socket.send({
-      includedGameIds: [gameid],
-      type: 'se.cygni.snake.eventapi.request.SetGameFilter',
-    });
+    console.log('Socket is open');
+    setGameFilter(gameid);
   };
 
   socket.onmessage = function onSocketMessage(e) {
@@ -33,12 +42,14 @@ const listen = (gameid) => {
     console.log('Received json message', jsonData);
 
     switch (jsonData.type) {
+      case TOURNAMENT_INFO:
+        TournamentAction.tournamentInfoReceived(jsonData);
+        break;
       case TOURNAMENT_CREATED:
         TournamentAction.tournamentCreated(jsonData);
         break;
       case TOURNAMENT_GAME_PLAN:
         TournamentAction.tournamentGamePlanReceived(jsonData);
-        TournamentAction.updatePlayers(jsonData.players);
         break;
       case ACTIVE_GAMES_LIST:
         AppAction.addGames(jsonData.games);
@@ -71,10 +82,7 @@ export default {
     console.log('Initialized socket with with gameid:', gameid);
     listen(gameid);
   },
-  send(msg) {
-    console.log('Sending message to socket:', msg);
-    socket.send(JSON.stringify(msg));
-  },
+  send: sendObj,
   state() {
     return socket.readyState;
   },
