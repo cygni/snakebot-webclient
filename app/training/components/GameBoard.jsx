@@ -8,15 +8,13 @@ import TileUtils from '../../util/TileUtils';
 import TrainingAction from '../../training/action/training-actions';
 import Sidebar from './sidebar/Sidebar.jsx';
 
-function getActiveGame() {
-  const game = Store.getActiveGame();
+function getGameState() {
   const state = Store.getActiveGameState();
-  return { game, state };
+  return { state };
 }
 
 const propTypes = {
-  game: React.PropTypes.object,
-  state: React.PropTypes.object,
+  state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
 };
 
@@ -31,8 +29,6 @@ class GameBoard extends React.Component {
 
   componentWillMount() {
     console.log('GameBoard will mount');
-
-    Store.initWS(this.props.params.gameId);
     TrainingAction.activeGame(this.props.params.gameId);
   }
 
@@ -45,12 +41,13 @@ class GameBoard extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEmpty(nextProps.game)) {
-      if (this.props.game && this.props.game.mapEvents) {
-        this.renderBoard(this.props.game, this.props.state);
-      } else {
-        this.renderBoard(nextProps.game, nextProps.state);
-      }
+    const renderableProps =
+      !_.isEmpty(nextProps.state) &&
+      nextProps.state.mapEvents &&
+      nextProps.state.mapEvents.length > 0;
+
+    if (renderableProps) {
+      this.renderBoard(nextProps.state);
     }
   }
 
@@ -69,18 +66,13 @@ class GameBoard extends React.Component {
     TileUtils.renderSnakes(this.snakeLayer, map, tileSize, state.colors);
     TileUtils.renderFood(this.snakeLayer, map, tileSize);
 
-    if (state.renderObstacles) {
-      if (map.obstaclePositions.length > 0) {
-        console.log('GameBoard will render obstacles', this.worldLayer.children);
-        TileUtils.renderObstacles(this.worldLayer, map, tileSize);
-
-        TrainingAction.obstaclesRendered();
-      }
+    if (state.renderObstacles && map.obstaclePositions.length > 0) {
+      TileUtils.renderObstacles(this.worldLayer, map, tileSize);
     }
   }
 
-  renderBoard(game, state) {
-    const map = game.mapEvents[state.currentFrame];
+  renderBoard(state) {
+    const map = state.mapEvents[state.currentFrame];
     const mapIsEmpty = BoardUtils.mapIsEmpty(map);
 
     if (mapIsEmpty || this.canvas.getContext('2d') === undefined) {
@@ -125,4 +117,4 @@ class GameBoard extends React.Component {
 
 GameBoard.propTypes = propTypes;
 
-export default new StoreWatch(GameBoard, getActiveGame);
+export default new StoreWatch(GameBoard, getGameState);

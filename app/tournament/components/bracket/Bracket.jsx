@@ -23,10 +23,6 @@ class Bracket extends React.Component {
     return () => TournamentAction.setActiveTournamentGame(game.gameId);
   }
 
-  componentDidMount() {
-    TournamentStore.initWS();
-  }
-
   render() {
     console.log('Rendering Bracket', this.props);
     if (!this.props.gamePlan) {

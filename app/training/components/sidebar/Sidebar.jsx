@@ -5,19 +5,17 @@ import GameStore from '../../../baseStore/BaseStore';
 import GameControl from './GameControl.jsx';
 
 function getActiveGame() {
-  const game = GameStore.getActiveGame();
-  const gameState = GameStore.getActiveGameState();
-  return { game, gameState };
+  const state = GameStore.getActiveGameState();
+  return { state };
 }
 
 const propTypes = {
-  game: React.PropTypes.object,
-  gameState: React.PropTypes.object.isRequired,
+  state: React.PropTypes.object.isRequired,
 };
 
 const Sidebar = function Sidebar(props) {
-  if (props.game && props.game.mapEvents) {
-    const currentMap = props.game.mapEvents[props.gameState.currentFrame];
+  if (props.state && props.state.mapEvents) {
+    const currentMap = props.state.mapEvents[props.state.currentFrame];
     const snakes = (currentMap && currentMap.snakeInfos) ? currentMap.snakeInfos : [];
 
     return (
@@ -34,7 +32,7 @@ const Sidebar = function Sidebar(props) {
           <tbody>{
             snakes.map(snake => (
               <tr key={snake.id}>
-                <td style={{ background: snake.positions.length > 0 ? props.gameState.colors[snake.id] : 'grey', color: 'white' }}>
+                <td style={{ background: snake.positions.length > 0 ? props.state.colors[snake.id] : 'grey', color: 'white' }}>
                   Name: {snake.name}<br />
                   Length: {snake.positions.length}<br />
                   Points: {snake.points}</td>
@@ -42,7 +40,7 @@ const Sidebar = function Sidebar(props) {
             ))}
           </tbody>
         </Table>
-        <GameControl id={props.gameState.id} />
+        <GameControl id={props.state.id} />
       </div>
     );
   }

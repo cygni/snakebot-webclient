@@ -60,10 +60,4 @@ export default {
       actionType: Constants.SEARCH_FOR_OLD_GAMES_FOR_USER, name,
     });
   },
-
-  obstaclesRendered() {
-    dispatch({
-      actionType: Constants.OBSTACLES_RENDERED,
-    });
-  },
 };

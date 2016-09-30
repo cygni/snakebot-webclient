@@ -29,20 +29,20 @@ class LoginPage extends React.Component {
 
   login(e) {
     e.preventDefault();
-    const loggedIn = this.auth.login(this.state.user, this.state.password)
-      .catch((err) => {
+    this.auth.login(
+      this.state.user,
+      this.state.password,
+      () => {
+        const location = this.props.location.state;
+        if (location && location.nextPathname) {
+          this.props.router.push(location.nextPathname);
+        } else {
+          this.props.router.push('/');
+        }
+      },
+      () => {
         alert('There was an error logging in');
-        console.log('Error logging in', err);
       });
-
-    loggedIn.then(() => {
-      const location = this.props.location.state;
-      if (location && location.nextPathname) {
-        this.props.router.push(location.nextPathname);
-      } else {
-        this.props.router.push('/');
-      }
-    });
   }
 
   logout() {

@@ -5,7 +5,7 @@ import {
   hashHistory,
 } from 'react-router';
 import _ from 'lodash';
-import restclient from './restclient';
+import restclient from '../util/RestClient.js';
 import Socket from '../websocket/WebSocket';
 import {
   register,
@@ -19,17 +19,15 @@ const CHANGE_EVENT = 'change';
 let searchResults = [];
 
 let tournament = {};
-const games = [];
 const _activeGameState = {};
 
-const _getActiveGame = () => games[_activeGameState.id];
-const _hasActiveGame = () => !_.isEmpty(_activeGameState) && _getActiveGame();
+const _hasActiveGame = () => !_.isEmpty(_activeGameState);
 
 // Handling the frame updating
 
 const _frameCount = () => {
   if (_hasActiveGame()) {
-    return _getActiveGame().mapEvents.length - 1;
+    return _activeGameState.mapEvents.length - 1;
   }
   return 0;
 };
@@ -69,7 +67,7 @@ const _startUpdatingFrames = (emitChange) => {
   }
 };
 
-// Utility to handle the snakes' colors
+// Utility functions
 
 const _assignSnakeColors = (mapEvent) => {
   if (!mapEvent) {
@@ -84,13 +82,20 @@ const _assignSnakeColors = (mapEvent) => {
   });
 };
 
+const _renderObstacles = (emitChange) => {
+  _activeGameState.renderObstacles = true;
+  emitChange();
+  _activeGameState.renderObstacles = false;
+  emitChange();
+};
+
 // Requests to start the game
 
 const _startGame = (emitChange) => {
   _activeGameState.started = true;
   _startUpdatingFrames(emitChange);
 
-  console.log('Starting the game', _activeGameState, _getActiveGame());
+  console.log('Starting the game', _activeGameState);
 
   if (!_activeGameState.fetched) {
     console.log('Game has not been fetched, so ask the server to start it');
@@ -99,7 +104,6 @@ const _startGame = (emitChange) => {
       type: 'se.cygni.snake.eventapi.request.StartGame',
     });
     _activeGameState.fetched = true;
-    _activeGameState.renderObstacles = true;
   }
 };
 
@@ -201,13 +205,17 @@ const _killTournament = () => {
 };
 
 const _addMapEvent = (event, emitChange) => {
-  const id = event.gameId;
-  const game = id === _activeGameState.id ? _getActiveGame() : games[id];
+  if (event.gameId !== _activeGameState.id) {
+    console.error('Received map event for a different game than the active one', event);
+  }
 
-  game.mapEvents.push(event.map);
+  _activeGameState.mapEvents.push(event.map);
   _assignSnakeColors(event.map);
 
-  // Only stop and start updating for every new map update
+  if (_activeGameState.mapEvents.length === 1) {
+    _renderObstacles(emitChange);
+  }
+
   if (!_activeGameState.frameChange) {
     _startUpdatingFrames(emitChange);
   }
@@ -239,20 +247,15 @@ const _fetchActiveGame = (gameid, emitChange) => {
   _activeGameState.colors = {};
   _activeGameState.colorIndex = 0;
   _activeGameState.renderObstacles = false;
-
-  games[gameid] = {
-    gameid,
-    mapEvents: [],
-  };
+  _activeGameState.mapEvents = [];
 
   restclient.fetchGame(
     gameid,
     (mapEvents) => {
-      games[gameid].mapEvents = mapEvents;
+      _activeGameState.mapEvents = mapEvents;
       _assignSnakeColors(mapEvents[0]);
       _activeGameState.fetched = true;
-      _activeGameState.renderObstacles = true;
-      emitChange();
+      _renderObstacles(emitChange);
     }, () => {
       console.log('Attempting to subscribing to the game instead');
 
@@ -285,14 +288,6 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     this.removeListener(CHANGE_EVENT, callback);
   },
 
-  getActiveGame() {
-    if (_hasActiveGame()) {
-      return _getActiveGame();
-    }
-
-    return {};
-  },
-
   getActiveGameState() {
     return _activeGameState;
   },
@@ -306,7 +301,6 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   hasResults() {
-    console.log(searchResults);
     return searchResults.length === 0;
   },
 
@@ -342,16 +336,8 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     return _hasActiveGame() ? _activeGameState.updateFrequency : 100;
   },
 
-  getTrainingGames() {
-    return games;
-  },
-
   hasActiveGame() {
     return _hasActiveGame();
-  },
-
-  initWS(gameid) {
-    Socket.init(gameid);
   },
 
   getUser() {
@@ -384,8 +370,6 @@ BaseStore.dispatcher = register(
   (action) => {
     console.log('Store received action', action);
     switch (action.actionType) {
-      case Constants.ADD_GAMES:
-        break;
       case Constants.CREATE_TOURNAMENT:
         _createTournament(action.name);
         break;
@@ -434,6 +418,7 @@ BaseStore.dispatcher = register(
         _startGame(emitChange);
         break;
       case Constants.SET_ACTIVE_GAME:
+        Socket.init(action.gameId);
         _fetchActiveGame(action.gameId, emitChange);
         break;
       case Constants.SET_CURRENT_FRAME:
@@ -457,9 +442,6 @@ BaseStore.dispatcher = register(
         break;
       case Constants.FETCH_ACTIVE_TOURNAMENT:
         _fetchActiveTournament(emitChange);
-        break;
-      case Constants.OBSTACLES_RENDERED:
-        _activeGameState.renderObstacles = false;
         break;
       default:
         console.log('Store received unknown action', action);

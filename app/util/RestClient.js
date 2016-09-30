@@ -7,7 +7,7 @@ const client = rest.wrap(mime).wrap(errorCode);
 
 export default {
   fetchTournament: (success, error) => {
-    client({ path: Config.server + '/tournament/active' })
+    client({ path: `${Config.server}/tournament/active` })
       .then((response) => {
         const json = response.entity;
         console.log('Active tournament found', json);
@@ -22,7 +22,7 @@ export default {
   },
 
   fetchGame: (id, success, error) => {
-    client({ path: Config.server + '/history/' + id })
+    client({ path: `${Config.server}/history/${id}` })
       .then((response) => {
         const json = response.entity;
         const mapUpdateEvent = 'se.cygni.snake.api.event.MapUpdateEvent';
@@ -43,7 +43,7 @@ export default {
   },
 
   searchForGames: (name, success, error) => {
-    console.log('Searching for games with name = \'' + name + '\'');
+    console.log(`Searching for games with name = \'${name}\'`);
     client({ path: Config.server + '/history/search/' + name })
       .then(
         (response) => {
