@@ -1,257 +1,100 @@
-import Directions from './Directions';
+import star from '../design/images/star/star.svg';
+
+import snake0EBDE7 from '../design/images/snakes/0EBDE7/0EBDE7.png';
+import snake3CC321 from '../design/images/snakes/3CC321/3CC321.png';
+import snakeFF8F35 from '../design/images/snakes/FF8F35/FF8F35.png';
+import snakeF978AD from '../design/images/snakes/F978AD/F978AD.png';
+import snakeBA43FF from '../design/images/snakes/BA43FF/BA43FF.png';
+import snakeF8F8F8 from '../design/images/snakes/F8F8F8/F8F8F8.png';
+import snakeFFDF4A from '../design/images/snakes/FFDF4A/FFDF4A.png';
+import snake000000 from '../design/images/snakes/000000/000000.png';
+import snakeFF4848 from '../design/images/snakes/FF4848/FF4848.png';
+import snake9AF48E from '../design/images/snakes/9AF48E/9AF48E.png';
+import snake9BF3F0 from '../design/images/snakes/9BF3F0/9BF3F0.png';
+
+import snake0EBDE7Tail from '../design/images/snakes/0EBDE7/0EBDE7_TAIL.png';
+import snake3CC321Tail from '../design/images/snakes/3CC321/3CC321_TAIL.png';
+import snakeFF8F35Tail from '../design/images/snakes/FF8F35/FF8F35_TAIL.png';
+import snakeF978ADTail from '../design/images/snakes/F978AD/F978AD_TAIL.png';
+import snakeBA43FFTail from '../design/images/snakes/BA43FF/BA43FF_TAIL.png';
+import snakeF8F8F8Tail from '../design/images/snakes/F8F8F8/F8F8F8_TAIL.png';
+import snakeFFDF4ATail from '../design/images/snakes/FFDF4A/FFDF4A_TAIL.png';
+import snake000000Tail from '../design/images/snakes/000000/000000_TAIL.png';
+import snakeFF4848Tail from '../design/images/snakes/FF4848/FF4848_TAIL.png';
+import snake9AF48ETail from '../design/images/snakes/9AF48E/9AF48E_TAIL.png';
+import snake9BF3F0Tail from '../design/images/snakes/9BF3F0/9BF3F0_TAIL.png';
 
 const starImg = new Image();
-starImg.src = 'img/star/star.svg';
+starImg.src = star;
 
-/*
-#0EBDE7
-*/
-const HEAD_UP_1 = new Image();
-HEAD_UP_1.src = 'img/snakes/0EBDE7/0EBDE7_UP.png';
-const HEAD_DOWN_1 = new Image();
-HEAD_DOWN_1.src = 'img/snakes/0EBDE7/0EBDE7_DOWN.png';
-const HEAD_RIGHT_1 = new Image();
-HEAD_RIGHT_1.src = 'img/snakes/0EBDE7/0EBDE7_RIGHT.png';
-const HEAD_LEFT_1 = new Image();
-HEAD_LEFT_1.src = 'img/snakes/0EBDE7/0EBDE7_LEFT.png';
-
-/*
-#3CC321
-*/
-const HEAD_UP_2 = new Image();
-HEAD_UP_2.src = 'img/snakes/3CC321/3CC321_UP.png';
-const HEAD_DOWN_2 = new Image();
-HEAD_DOWN_2.src = 'img/snakes/3CC321/3CC321_DOWN.png';
-const HEAD_RIGHT_2 = new Image();
-HEAD_RIGHT_2.src = 'img/snakes/3CC321/3CC321_RIGHT.png';
-const HEAD_LEFT_2 = new Image();
-HEAD_LEFT_2.src = 'img/snakes/3CC321/3CC321_LEFT.png';
-
-/*
-#FF8F35
-*/
-const HEAD_UP_3 = new Image();
-HEAD_UP_3.src = 'img/snakes/FF8F35/FF8F35_UP.png';
-const HEAD_DOWN_3 = new Image();
-HEAD_DOWN_3.src = 'img/snakes/FF8F35/FF8F35_DOWN.png';
-const HEAD_RIGHT_3 = new Image();
-HEAD_RIGHT_3.src = 'img/snakes/FF8F35/FF8F35_RIGHT.png';
-const HEAD_LEFT_3 = new Image();
-HEAD_LEFT_3.src = 'img/snakes/FF8F35/FF8F35_LEFT.png';
-
-/*
-#F978AD
-*/
-const HEAD_UP_4 = new Image();
-HEAD_UP_4.src = 'img/snakes/F978AD/F978AD_UP.png';
-const HEAD_DOWN_4 = new Image();
-HEAD_DOWN_4.src = 'img/snakes/F978AD/F978AD_DOWN.png';
-const HEAD_RIGHT_4 = new Image();
-HEAD_RIGHT_4.src = 'img/snakes/F978AD/F978AD_RIGHT.png';
-const HEAD_LEFT_4 = new Image();
-HEAD_LEFT_4.src = 'img/snakes/F978AD/F978AD_LEFT.png';
-
-/*
-#BA43FF
-*/
-const HEAD_UP_5 = new Image();
-HEAD_UP_5.src = 'img/snakes/BA43FF/BA43FF_UP.png';
-const HEAD_DOWN_5 = new Image();
-HEAD_DOWN_5.src = 'img/snakes/BA43FF/BA43FF_DOWN.png';
-const HEAD_RIGHT_5 = new Image();
-HEAD_RIGHT_5.src = 'img/snakes/BA43FF/BA43FF_RIGHT.png';
-const HEAD_LEFT_5 = new Image();
-HEAD_LEFT_5.src = 'img/snakes/BA43FF/BA43FF_LEFT.png';
-
-/*
-#F8F8F8
-*/
-const HEAD_UP_6 = new Image();
-HEAD_UP_6.src = 'img/snakes/F8F8F8/F8F8F8_UP.png';
-const HEAD_DOWN_6 = new Image();
-HEAD_DOWN_6.src = 'img/snakes/F8F8F8/F8F8F8_DOWN.png';
-const HEAD_RIGHT_6 = new Image();
-HEAD_RIGHT_6.src = 'img/snakes/F8F8F8/F8F8F8_RIGHT.png';
-const HEAD_LEFT_6 = new Image();
-HEAD_LEFT_6.src = 'img/snakes/F8F8F8/F8F8F8_LEFT.png';
-
-/*
-#FFDF4A
-*/
-const HEAD_UP_7 = new Image();
-HEAD_UP_7.src = 'img/snakes/FFDF4A/FFDF4A_UP.png';
-const HEAD_DOWN_7 = new Image();
-HEAD_DOWN_7.src = 'img/snakes/FFDF4A/FFDF4A_DOWN.png';
-const HEAD_RIGHT_7 = new Image();
-HEAD_RIGHT_7.src = 'img/snakes/FFDF4A/FFDF4A_RIGHT.png';
-const HEAD_LEFT_7 = new Image();
-HEAD_LEFT_7.src = 'img/snakes/FFDF4A/FFDF4A_LEFT.png';
-
-/*
-#000000
-*/
-const HEAD_UP_8 = new Image();
-HEAD_UP_8.src = 'img/snakes/000000/000000_UP.png';
-const HEAD_DOWN_8 = new Image();
-HEAD_DOWN_8.src = 'img/snakes/000000/000000_DOWN.png';
-const HEAD_RIGHT_8 = new Image();
-HEAD_RIGHT_8.src = 'img/snakes/000000/000000_RIGHT.png';
-const HEAD_LEFT_8 = new Image();
-HEAD_LEFT_8.src = 'img/snakes/000000/000000_LEFT.png';
-
-/*
-#FF4848
-*/
-const HEAD_UP_9 = new Image();
-HEAD_UP_9.src = 'img/snakes/FF4848/FF4848_UP.png';
-const HEAD_DOWN_9 = new Image();
-HEAD_DOWN_9.src = 'img/snakes/FF4848/FF4848_DOWN.png';
-const HEAD_RIGHT_9 = new Image();
-HEAD_RIGHT_9.src = 'img/snakes/FF4848/FF4848_RIGHT.png';
-const HEAD_LEFT_9 = new Image();
-HEAD_LEFT_9.src = 'img/snakes/FF4848/FF4848_LEFT.png';
-
-/*
-#9AF48E
-*/
-const HEAD_UP_10 = new Image();
-HEAD_UP_10.src = 'img/snakes/9AF48E/9AF48E_UP.png';
-const HEAD_DOWN_10 = new Image();
-HEAD_DOWN_10.src = 'img/snakes/9AF48E/9AF48E_DOWN.png';
-const HEAD_RIGHT_10 = new Image();
-HEAD_RIGHT_10.src = 'img/snakes/9AF48E/9AF48E_RIGHT.png';
-const HEAD_LEFT_10 = new Image();
-HEAD_LEFT_10.src = 'img/snakes/9AF48E/9AF48E_LEFT.png';
-
-/*
-#9BF3F0
-*/
-const HEAD_UP_11 = new Image();
-HEAD_UP_11.src = 'img/snakes/9BF3F0/9BF3F0_UP.png';
-const HEAD_DOWN_11 = new Image();
-HEAD_DOWN_11.src = 'img/snakes/9BF3F0/9BF3F0_DOWN.png';
-const HEAD_RIGHT_11 = new Image();
-HEAD_RIGHT_11.src = 'img/snakes/9BF3F0/9BF3F0_RIGHT.png';
-const HEAD_LEFT_11 = new Image();
-HEAD_LEFT_11.src = 'img/snakes/9BF3F0/9BF3F0_LEFT.png';
-
-
-function _getSnakeHead(color, direction) {
+function _getSnakeHead(color) {
   switch (color) {
     case '#0EBDE7':
-      if (direction === Directions.UP) {
-        return HEAD_UP_1;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_1;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_1;
-      }
-      return HEAD_DOWN_1;
+      return snake0EBDE7;
     case '#3CC321' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_2;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_2;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_2;
-      }
-      return HEAD_DOWN_2;
+      return snake3CC321;
     case '#FF8F35' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_3;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_3;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_3;
-      }
-      return HEAD_DOWN_3;
+      return snakeFF8F35;
     case '#F978AD' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_4;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_4;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_4;
-      }
-      return HEAD_DOWN_4;
+      return snakeF978AD;
     case '#BA43FF' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_5;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_5;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_5;
-      }
-      return HEAD_DOWN_5;
+      return snakeBA43FF;
     case '#F8F8F8' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_6;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_6;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_6;
-      }
-      return HEAD_DOWN_6;
+      return snakeF8F8F8;
     case '#FFDF4A' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_7;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_7;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_7;
-      }
-      return HEAD_DOWN_7;
+      return snakeFFDF4A;
     case '#000000' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_8;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_8;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_8;
-      }
-      return HEAD_DOWN_8;
+      return snake000000;
     case '#FF4848' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_9;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_9;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_9;
-      }
-      return HEAD_DOWN_9;
+      return snakeFF4848;
     case '#9AF48E' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_10;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_10;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_10;
-      }
-      return HEAD_DOWN_10;
+      return snake9AF48E;
     case '#9BF3F0' :
-      if (direction === Directions.UP) {
-        return HEAD_UP_11;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_11;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_11;
-      }
-      return HEAD_DOWN_11;
+      return snake9BF3F0;
     default:
-      if (direction === Directions.UP) {
-        return HEAD_UP_1;
-      } else if (direction === Directions.RIGHT) {
-        return HEAD_RIGHT_1;
-      } else if (direction === Directions.LEFT) {
-        return HEAD_LEFT_1;
-      }
-      return HEAD_DOWN_1;
+      return snake000000;
+  }
+}
+
+function _getSnakeTail(color) {
+  switch (color) {
+    case '#0EBDE7':
+      return snake0EBDE7Tail;
+    case '#3CC321' :
+      return snake3CC321Tail;
+    case '#FF8F35' :
+      return snakeFF8F35Tail;
+    case '#F978AD' :
+      return snakeF978ADTail;
+    case '#BA43FF' :
+      return snakeBA43FFTail;
+    case '#F8F8F8' :
+      return snakeF8F8F8Tail;
+    case '#FFDF4A' :
+      return snakeFFDF4ATail;
+    case '#000000' :
+      return snake000000Tail;
+    case '#FF4848' :
+      return snakeFF4848Tail;
+    case '#9AF48E' :
+      return snake9AF48ETail;
+    case '#9BF3F0' :
+      return snake9BF3F0Tail;
+    default:
+      return snake000000Tail;
   }
 }
 
 export default {
   STAR: starImg,
-  getSnakeHead(color, direction) {
-    return _getSnakeHead(color, direction);
+  getSnakeHead(color) {
+    const img = new Image();
+    img.src = _getSnakeHead(color);
+    return img;
+  },
+  getSnakeTail(color) {
+    const img = new Image();
+    img.src = _getSnakeTail(color);
+    return img;
   },
 };

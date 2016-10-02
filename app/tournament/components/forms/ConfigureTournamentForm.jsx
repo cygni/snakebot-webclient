@@ -5,7 +5,6 @@ import TournamentStore from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch.jsx';
 import Action from '../../action/tournament-actions';
 import PlayerList from '../players/PlayerList.jsx';
-import './configure-tournament-form.scss';
 
 
 function getSettings() {

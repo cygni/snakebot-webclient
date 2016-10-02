@@ -55,7 +55,6 @@ module.exports = {
   module: {
     preLoaders: [{
       test: /\.(js|jsx)$/,
-      exclude: /node_modules/,
       loader: 'eslint-loader',
       cache: true,
     }],
@@ -72,10 +71,10 @@ module.exports = {
       include: /app/,
       loaders: ['style', 'css', 'sass'],
     }, {
-      test: /\.(jpe?g|gif|svg)$/i,
+      test: /\.(jpe?g|gif|svg|png")$/i,
       loaders: [
         'url?limit=8192',
-        'img',
+        'image-webpack',
       ],
     }, {
       test: /\.png$/,
