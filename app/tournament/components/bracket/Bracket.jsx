@@ -5,7 +5,6 @@ import TournamentStore from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch.jsx';
 import TournamentAction from '../../action/tournament-actions';
 import FinalPlacementList from '../players/FinalPlacementList.jsx';
-import './bracket.scss';
 
 function getGamePlan() {
   const gamePlan = TournamentStore.getTournamentGamePlan();

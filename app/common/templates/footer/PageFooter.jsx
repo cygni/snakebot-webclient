@@ -2,9 +2,7 @@ import React from 'react';
 import {
   Link,
 } from 'react-router';
-import '../../../design/styles/stylesheet.scss';
-
-const cygniLogo = require('../../../design/images/cygni-logo.png');
+import cygnilogo from '../../../design/images/logos/cygni-logo.svg';
 
 function PageFooter() {
   return (
@@ -12,7 +10,7 @@ function PageFooter() {
       <p>JAKOBSBERGSGATAN 22 </p>
       <p> 111 44 STOCKHOLM</p>
       <Link to="http://www.cygni.se">
-        <img src={cygniLogo} alt="Cygni-logo" />
+        <img src={cygnilogo} alt="Cygni-logo" />
       </Link>
     </footer>
   );

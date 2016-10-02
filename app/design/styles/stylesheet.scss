@@ -1,77 +1,80 @@
-body
-{
-	background-image: url('../images/space.png');
-	margin: 0;
+html {
+  background: url('../images/backgrounds/background.png') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
-header ul
-{
+#canvas {
+  background: url('../images/backgrounds/game.svg') no-repeat center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+body {
+	margin: 0;
+  background: transparent !important;
+}
+
+header ul {
 	list-style-type: none;
 	margin: 0;
 
 }
-header a
-{
+header a {
 	color: white;
 	text-decoration: none;
 	font-family: fira sans;
 	font-weight: 700;
 	font-size: 25px;
 }
-header li
-{
+header li {
 	padding: 8px;
 	float: left;
 }
-header, footer
-{
+header, footer {
       background-color: rgba(255,255,255,0.5);
       padding: 2rem 1,7rem;
 
 }
-header nav
-{
+header nav {
 	float: right;
 	margin-top: 1rem;
 
 }
 
-header img
-{
+header img {
 	width: 24%;
 }
 
-section p
-{
+section p {
 	font-family: fira sans;
 	font-weight: 300;
 	font-size: 20px;
 	text-align: center;
 	color: white;
 }
-section
-{
+section {
 	  background-color: rgba(255,255,255,0.5);
       width: 50%;
       margin: 200px 25%;
 }
-.snakebotGame-img
-{
+.snakebotGame-img {
 	width: 50%;
 	margin-top: 2%;
 	margin-left: 27%;
 }
-footer img
-{
+footer img {
 	width: 10%;
 	margin-left: 0%;
 }
-footer 
-{
+footer {
 	margin-top: 20rem;
 }
-.activePlayers
-{
+.activePlayers {
 	width: 17%;
 	background-color: white;
 	opacity: 0.6;
@@ -80,23 +83,20 @@ footer
     height: 480px;
     margin-top: -37%;
 }
-footer p 
-{
+footer p {
 	color: black;
 	font-family: fira sans;
 	font-weight: 200;
 	font-size: 25px;
 
 }
-.activePlayers p
-{
+.activePlayers p {
 	font-size: 25px;
 	margin-left: -14px;
 	margin-top: -20px;
 	font-family: Courier New;
 }
-.startResumeButton
-{
+.startResumeButton {
 	position: absolute;
 	z-index: 4;
 	left: 45%;
@@ -108,4 +108,56 @@ footer p
 	font-size: 20px;
 	font-family: Courier New;
 	padding: 13px;
+}
+
+main {
+  display: flex;
+  flex-direction: row;
+  margin-top: 15px;
+  .panel {
+    margin-right: 30px;
+    &:last-child {
+      margin-right: 0px;
+      &:before {
+        border-color: transparent transparent transparent transparent;
+      }
+    }
+    &:before {
+      content: "";
+      border-style: solid;
+      border-width: 15px 0 15px 15px;
+      border-color: transparent transparent transparent #d9edf7;
+      position: absolute;
+      right: -15px;
+      top: 5px;
+    }
+  }
+  .panel-heading {
+    margin: 0 -15px;
+  }
+}
+
+.configure-tournament-form {
+  margin-top: 20px;
+  .tournament-name {
+    display: inline;
+    margin-right: 30px;
+  }
+  .btn-group {
+    float: right;
+  }
+  .form-group {
+    display: inline;
+  }
+  .radio {
+    display: inherit;
+    margin-right: 20px;
+    margin-top: 10px;
+  }
+  .row {
+    padding: 5px 0;
+  }
+  input[type="range"] {
+    margin-top: 10px;
+  }
 }

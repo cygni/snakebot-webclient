@@ -7,4 +7,6 @@ npm-debug.log
 
 # Ignore the eslint cache
 .eslintcache
+
+# Ignore stupid macOS files
 .DS_Store
