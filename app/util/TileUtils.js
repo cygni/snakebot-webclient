@@ -268,8 +268,8 @@ function _filterDuplicates(cluster, group, index) {
   let filteredGroup = group;
   cluster.filter((g, i) => i !== index)
       .forEach((g) => {
-        filteredGroup = filteredGroup.filter((o1) =>
-              !g.some((o2) => _isEqual(o1, o2)))
+        filteredGroup = filteredGroup.filter(o1 =>
+              !g.some(o2 => _isEqual(o1, o2)));
       });
   return filteredGroup;
 }
