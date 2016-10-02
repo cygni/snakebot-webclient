@@ -228,7 +228,6 @@ function _renderObstacles(stage, map, tileSize) {
       const xPos = firstObstacle.x * tileSize;
       const yPos = firstObstacle.y * tileSize;
 
-
       let scale = 1;
       if (groupSize === 4) {
         scale = 2;
@@ -269,16 +268,21 @@ function _filterObstacles(o1, o2) {
 function _validateCluster(cluster) {
   const validCluster = [];
   cluster.forEach((group, index) => {
-    let validGroup = [];
+    const validGroup = [];
     group.forEach((obstacle) => {
       if (_isConnectingTile(obstacle, group)) {
         validGroup.push(obstacle);
       }
     });
+
     if (validGroup.length === 0) {
-      validGroup = _filterDuplicates(cluster, group, index);
+      const validGroups = _filterDuplicates(cluster, group, index);
+      validGroups.forEach((g) => {
+        validCluster.push(g);
+      });
+    } else {
+      validCluster.push(validGroup);
     }
-    validCluster.push(validGroup);
   });
   return validCluster;
 }
@@ -290,13 +294,23 @@ function _isConnectingTile(obstacle, group) {
 }
 
 function _filterDuplicates(cluster, group, index) {
+  const groups = [];
   let filteredGroup = group;
   cluster.filter((g, i) => i !== index)
       .forEach((g) => {
         filteredGroup = filteredGroup.filter(o1 =>
               !g.some(o2 => _isEqual(o1, o2)));
       });
-  return filteredGroup;
+
+  if (filteredGroup.length === 2) {
+    filteredGroup.forEach((o3) => {
+      const g2 = [o3];
+      groups.push(g2);
+    });
+    return groups;
+  }
+  groups.push(filteredGroup);
+  return groups;
 }
 
 function _isEqual(o1, o2) {
