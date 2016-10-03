@@ -1,7 +1,7 @@
 import Config from 'Config'; // eslint-disable-line
 import SockJS from 'sockjs-client';
 import TournamentAction from '../tournament/action/tournament-actions';
-import AppAction from '../training/action/training-actions';
+import GameAction from '../game/action/game-actions';
 
 const TOURNAMENT_INFO = 'se.cygni.snake.eventapi.model.TournamentInfo';
 const TOURNAMENT_CREATED = 'se.cygni.snake.eventapi.response.TournamentCreated';
@@ -52,13 +52,13 @@ const listen = (gameid) => {
         TournamentAction.tournamentGamePlanReceived(jsonData);
         break;
       case ACTIVE_GAMES_LIST:
-        AppAction.addGames(jsonData.games);
+        GameAction.addGames(jsonData.games);
         break;
       case MAP_UPDATE_EVENT:
-        AppAction.mapUpdateEvent(jsonData);
+        GameAction.mapUpdateEvent(jsonData);
         break;
       case GAME_ENDED_EVENT:
-        AppAction.mapUpdateEvent(jsonData);
+        GameAction.mapUpdateEvent(jsonData);
         break;
       case TOURNAMENT_ENDED_EVENT:
         TournamentAction.tournamentEndedEvent(jsonData);

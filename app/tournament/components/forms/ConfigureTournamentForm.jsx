@@ -1,14 +1,14 @@
 import React from 'react';
 import { Row, Col, input, Button, ButtonGroup } from 'react-bootstrap';
 
-import TournamentStore from '../../../baseStore/BaseStore';
+import Store from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch.jsx';
 import Action from '../../action/tournament-actions';
 import PlayerList from '../players/PlayerList.jsx';
 
 
 function getSettings() {
-  const settings = TournamentStore.getSettings();
+  const settings = Store.getSettings();
   return { settings };
 }
 
