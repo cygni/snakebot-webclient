@@ -7,6 +7,7 @@ import GameStore from '../../../baseStore/BaseStore';
 import Backwards from '../../../design/images/icons/icon-backwards.svg';
 import Play from '../../../design/images/icons/icon-play.svg';
 import Pause from '../../../design/images/icons/icon-pause.svg';
+import Replay from '../../../design/images/icons/icon-replay.svg';
 import Forwards from '../../../design/images/icons/icon-forward.svg';
 
 function gameControlStateCallback() {
@@ -54,7 +55,7 @@ class GameControl extends React.Component {
       if (this.props.gameState.running) {
         return { icon: Pause, action: () => GameControl.pauseGame(this.props.gameState.id) };
       } else if (this.props.gameState.currentFrame === this.props.frameCount) {
-        return { icon: Play, action: () => GameControl.restartGame(this.props.gameState.id) };
+        return { icon: Replay, action: () => GameControl.restartGame(this.props.gameState.id) };
       }
 
       return { icon: Play, action: () => GameControl.resumeGame(this.props.gameState.id) };
