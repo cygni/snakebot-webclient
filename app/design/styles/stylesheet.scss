@@ -5,6 +5,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 .clear-fix:after { clear: both; content: ""; display: block; height: 0; visibility: hidden; }
 
 $footer-height: 80px;
+$gameboard-width: 1024px;
 
 html {
   position: relative;
@@ -93,8 +94,8 @@ header {
     margin-top: 1rem;
 
     a {
-      color: rgba(255,255,255,0.7) !important;
-      text-decoration: none !important;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
       font-size: 16px;
       border-bottom: none;
       transition: all 0.1s;
@@ -109,6 +110,8 @@ header {
 
       &.active {
         border-bottom: 3px solid #f8f8f8;
+        color: rgba(255,255,255,1);
+        text-decoration: none;
       }
     }
   }
@@ -193,23 +196,43 @@ footer {
   }
 }
 
-/* Gameboard with controlls */
+/* Gameboard with controls */
 .gameboard {
-  width: 1024px;
+  background-image: url('../images/backgrounds/space.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: $gameboard-width;
   float: right;
+  padding-top: 12px;
+  padding-bottom: 12px;
+
+  canvas {
+    background: url('../images/backgrounds/game.svg');
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 1000px;
+  }
 }
 
 .controlpanel {
+  width: $gameboard-width;
+  float: right;
+  display: inline-block;
   background-color: rgba(0,0,0,0.5);
-  width: 100%;
   padding: 0 1rem;
 }
 
 .controlbuttons {
+  float: right;
   width: 99px;
 }
 
-.playButton, .forwardButton, .backwardsButton {
+.playButton,
+.forwardButton,
+.backwardsButton {
   height: 26px;
   width: 26px;
   margin: 10px 2px 3px;
@@ -218,12 +241,13 @@ footer {
   padding: 6px;
   border-radius: 3px;
   transition: all 0.1 s;
-}
 
-.playButton:hover, .forwardButton:hover, .backwardsButton:hover {
-                                           background-color: #333;
-                                           transition: all 0.2s;
-                                         }
+  &:hover {
+    background-color: #333;
+    transition: all 0.2s;
+
+  }
+}
 
 /* Range CSS */
 input[type=range].react-native-slider {

@@ -37,9 +37,15 @@ export default {
     });
   },
 
-  setUpdateFrequency(freq) {
+  increaseUpdateFrequency() {
     dispatch({
-      actionType: Constants.SET_UPDATE_FREQUENCY, freq,
+      actionType: Constants.INCREASE_UPDATE_FREQUENCY,
+    });
+  },
+
+  decreaseUpdateFrequency() {
+    dispatch({
+      actionType: Constants.DECREASE_UPDATE_FREQUENCY,
     });
   },
 

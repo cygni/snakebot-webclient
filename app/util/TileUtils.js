@@ -149,7 +149,9 @@ function _renderBodyPart(stage, pos, tileSize, color) {
   stage.addChild(rect);
 }
 
-function _renderImage(stage, pos, tileSize, image, rotation) {
+function _renderImage(stage, pos, tileSize, imgSource, rotation) {
+  const image = new Image();
+  image.src = imgSource;
   const bitmap = new createjs.Bitmap(image);
 
   // Use a container to be able to positon it with top/left orientation
@@ -186,15 +188,15 @@ function _renderSnakes(stage, map, tileSize, colors) {
         // ensure that we know which direction the head will be facing
         if (snake.positions.length > 1) {
           const rotation = _getHeadRotation(snake.positions, map);
-          const image = Images.getSnakeHead(color);
-          _renderImage(stage, pos, tileSize, image, rotation);
+          const imgSource = Images.getSnakeHead(color);
+          _renderImage(stage, pos, tileSize, imgSource, rotation);
         } else {
           _renderBodyPart(stage, pos, tileSize, color);
         }
       } else if (index === lastIndex) {
         const rotation = _getTailRotation(snake.positions, map);
-        const image = Images.getSnakeTail(color);
-        _renderImage(stage, pos, tileSize, image, rotation);
+        const imgSource = Images.getSnakeTail(color);
+        _renderImage(stage, pos, tileSize, imgSource, rotation);
       } else {
         _renderBodyPart(stage, pos, tileSize, color);
       }
@@ -205,10 +207,12 @@ function _renderSnakes(stage, map, tileSize, colors) {
 function _renderFood(stage, map, tileSize) {
   map.foodPositions.forEach((foodPosition) => {
     const pos = _getTileCoordinate(foodPosition, map);
+    const image = new Image();
+    image.src = Images.STAR;
 
     const yPos = pos.y * tileSize;
     const xPos = pos.x * tileSize;
-    const star = new createjs.Bitmap(Images.STAR);
+    const star = new createjs.Bitmap(image);
     star.scaleX = tileSize / star.image.width;
     star.scaleY = tileSize / star.image.height;
     star.x = xPos;

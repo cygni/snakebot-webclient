@@ -1,12 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
-import { Grid, Row, Col } from 'react-bootstrap';
 import Store from '../../baseStore/BaseStore';
 import StoreWatch from './watch/StoreWatch.jsx';
 import BoardUtils from '../../util/BoardUtils';
 import TileUtils from '../../util/TileUtils';
 import TrainingAction from '../../training/action/training-actions';
 import Sidebar from './sidebar/Sidebar.jsx';
+import GameControl from './sidebar/GameControl.jsx';
 
 function getGameState() {
   const state = Store.getActiveGameState();
@@ -88,29 +88,17 @@ class GameBoard extends React.Component {
 
   render() {
     return (
-      <Row>
-        <Col xs={3} md={2}>
-          <Sidebar />
-        </Col>
-        <Col xs={15} md={10}>
-          <Grid>
-            <Col xs={14} md={9}>
-              <Grid >
-                <Row className="show-grid">
-                  <div id="map" style={{ marginTop: 20 }}>
-                    <canvas
-                      id="canvas"
-                      className="hidden"
-                      ref={(c) => { this.canvas = c; }}
-                      width="2000" height="2000"
-                    />
-                  </div>
-                </Row>
-              </Grid>
-            </Col>
-          </Grid>
-        </Col>
-      </Row>
+      <section className="clear-fix">
+        <Sidebar />
+        <div className="gameboard">
+          <canvas
+            id="canvas"
+            className="hidden"
+            ref={(c) => { this.canvas = c; }}
+          />
+        </div>
+        <GameControl />
+      </section>
     );
   }
 }

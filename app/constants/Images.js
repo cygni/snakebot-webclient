@@ -24,8 +24,7 @@ import snakeFF4848Tail from '../design/images/snakes/FF4848/FF4848_TAIL.png';
 import snake9AF48ETail from '../design/images/snakes/9AF48E/9AF48E_TAIL.png';
 import snake9BF3F0Tail from '../design/images/snakes/9BF3F0/9BF3F0_TAIL.png';
 
-const starImg = new Image();
-starImg.src = star;
+const starImg = star;
 
 function _getSnakeHead(color) {
   switch (color) {
@@ -88,13 +87,9 @@ function _getSnakeTail(color) {
 export default {
   STAR: starImg,
   getSnakeHead(color) {
-    const img = new Image();
-    img.src = _getSnakeHead(color);
-    return img;
+    return _getSnakeHead(color);
   },
   getSnakeTail(color) {
-    const img = new Image();
-    img.src = _getSnakeTail(color);
-    return img;
+    return _getSnakeTail(color);
   },
 };
