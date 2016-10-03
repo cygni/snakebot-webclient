@@ -344,7 +344,8 @@ input[type=range].react-native-slider {
 
 /* Forms */
 label {
-  margin-bottom: 4.75rem;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
 }
 
 input[type=text],
@@ -354,6 +355,7 @@ input[type=number],
 input[type=email],
 textarea,
 select {
+  color:#000;
   display: block;
   font-family: 'Open Sans', sans-serif;
   font-size: 16px;

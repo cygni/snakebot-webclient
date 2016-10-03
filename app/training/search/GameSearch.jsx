@@ -5,17 +5,15 @@ import AppAction from '../action/training-actions';
 import GameStore from '../../baseStore/BaseStore';
 import StoreWatch from '../components/watch/StoreWatch.jsx';
 
-function getOldGames() {
-  const games = GameStore.getOldGames();
-  const results = GameStore.hasResults();
+function getSearchResults() {
+  const searchResults = GameStore.getSearchResults();
 
-  return { games, results };
+  return { searchResults };
 }
 
 const propTypes = {
   text: React.PropTypes.string,
-  results: React.PropTypes.bool.isRequired,
-  games: React.PropTypes.array.isRequired,
+  searchResults: React.PropTypes.object.isRequired,
 };
 
 class GameSearch extends React.Component {
@@ -24,6 +22,7 @@ class GameSearch extends React.Component {
     this.state = {
       searchName: '',
     };
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -39,10 +38,37 @@ class GameSearch extends React.Component {
     });
   }
 
+  noResultsFound() {
+    const results = this.props.searchResults;
+    if (results.hasSearched) {
+      return results.matchingGames.length === 0;
+    }
+
+    return false;
+  }
+
   render() {
+    let results;
+    if (this.noResultsFound()) {
+      results = (
+        <p
+          className={this.noResultsFound() ? 'show' : 'hidden'}
+          style={{ color: 'red' }}
+        >No result found</p>);
+    } else {
+      results = (
+        <ul> {
+          this.props.searchResults.matchingGames.map((game, index) => (
+            <li key={index}>
+              <Link to={{ pathname: '/viewgame/' + game.gameId }}>{index}: {game.gameId} </Link>
+            </li>
+          ))}
+        </ul>);
+    }
+
     return (
       <div className="information">
-        <h2>Search for games</h2>
+        <h2>Search for games by snake name</h2>
         <form className="commentForm" onSubmit={this.handleSubmit}>
           <input
             id="yourName"
@@ -52,24 +78,13 @@ class GameSearch extends React.Component {
             onChange={this.handleChange}
           />
           <input type="submit" value="Post" />
-          <label
-            htmlFor="yourName"
-            className={this.props.results ? 'show' : 'hidden'}
-            style={{ color: 'red' }}
-          >No result found</label>
         </form>
-        <h2>Old games</h2>
-        <ul> {
-          this.props.games.map((game, index) => (
-            <li key={index}>
-              <Link to={{ pathname: '/viewgame/' + game.gameId }}>{index}: {game.gameId} </Link>
-            </li>
-          ))}
-        </ul>
+        <h2>Search results</h2>
+        { results }
       </div>
     );
   }
 }
 
 GameSearch.propTypes = propTypes;
-export default new StoreWatch(GameSearch, getOldGames);
+export default new StoreWatch(GameSearch, getSearchResults);

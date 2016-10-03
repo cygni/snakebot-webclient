@@ -17,7 +17,10 @@ import Colors from '../util/Colors';
 const CHANGE_EVENT = 'change';
 const UPDATE_FREQUENCY_STEP = 50;
 
-let searchResults = [];
+const searchResults = {
+  hasSearched: false,
+  matchingGames: [],
+};
 
 let tournament = {};
 const _activeGameState = {};
@@ -274,7 +277,13 @@ const _fetchGamesByName = (name, emitChange) => {
   restclient.searchForGames(
     name,
     (matchingGames) => {
-      searchResults = matchingGames;
+      searchResults.matchingGames = matchingGames;
+      searchResults.hasSearched = true;
+      emitChange();
+    },
+    () => {
+      searchResults.matchingGames = [];
+      searchResults.hasSearched = true;
       emitChange();
     });
 };
@@ -304,12 +313,8 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     _isLastFrame();
   },
 
-  getOldGames() {
+  getSearchResults() {
     return searchResults;
-  },
-
-  hasResults() {
-    return searchResults.length === 0;
   },
 
   getActiveTournament() {
