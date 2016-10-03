@@ -15,8 +15,12 @@ import Constants from '../constants/Constants';
 import Colors from '../util/Colors';
 
 const CHANGE_EVENT = 'change';
+const UPDATE_FREQUENCY_STEP = 50;
 
-let searchResults = [];
+const searchResults = {
+  hasSearched: false,
+  matchingGames: [],
+};
 
 let tournament = {};
 const _activeGameState = {};
@@ -32,6 +36,8 @@ const _frameCount = () => {
   return 0;
 };
 
+const _isLastFrame = () => _activeGameState.currentFrame >= _frameCount();
+
 const _stopUpdatingFrames = () => {
   clearInterval(_activeGameState.frameChange);
   _activeGameState.frameChange = undefined;
@@ -42,6 +48,7 @@ const _setNextFrame = (emitChange) => {
   if (_activeGameState.currentFrame >= _frameCount()) {
     console.log('Reached end of frames, pausing game');
     _stopUpdatingFrames();
+    emitChange();
     return;
   }
 
@@ -60,7 +67,7 @@ const _startUpdatingFrames = (emitChange) => {
 
   _stopUpdatingFrames();
 
-  if (_activeGameState.started && _activeGameState.currentFrame < _frameCount()) {
+  if (_activeGameState.started && !_isLastFrame()) {
     _activeGameState.running = true;
     _activeGameState.frameChange =
       setInterval(() => _setNextFrame(emitChange), _activeGameState.updateFrequency);
@@ -270,7 +277,13 @@ const _fetchGamesByName = (name, emitChange) => {
   restclient.searchForGames(
     name,
     (matchingGames) => {
-      searchResults = matchingGames;
+      searchResults.matchingGames = matchingGames;
+      searchResults.hasSearched = true;
+      emitChange();
+    },
+    () => {
+      searchResults.matchingGames = [];
+      searchResults.hasSearched = true;
       emitChange();
     });
 };
@@ -296,12 +309,12 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     return _frameCount();
   },
 
-  getOldGames() {
-    return searchResults;
+  isLastFrame() {
+    _isLastFrame();
   },
 
-  hasResults() {
-    return searchResults.length === 0;
+  getSearchResults() {
+    return searchResults;
   },
 
   getActiveTournament() {
@@ -397,8 +410,15 @@ BaseStore.dispatcher = register(
       case Constants.KILL_TOURNAMENT:
         _killTournament();
         break;
-      case Constants.SET_UPDATE_FREQUENCY:
-        _activeGameState.updateFrequency = action.freq;
+      case Constants.INCREASE_UPDATE_FREQUENCY:
+        _activeGameState.updateFrequency -= UPDATE_FREQUENCY_STEP;
+        // ensure that the value never goes to 0
+        _activeGameState.updateFrequency =
+          Math.max(_activeGameState.updateFrequency, UPDATE_FREQUENCY_STEP);
+        _startUpdatingFrames(emitChange);
+        break;
+      case Constants.DECREASE_UPDATE_FREQUENCY:
+        _activeGameState.updateFrequency += UPDATE_FREQUENCY_STEP;
         _startUpdatingFrames(emitChange);
         break;
       case Constants.TOURNAMENT_INFO_RECEIVED:

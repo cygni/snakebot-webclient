@@ -1,8 +1,7 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
 import StoreWatch from '../watch/StoreWatch.jsx';
 import GameStore from '../../../baseStore/BaseStore';
-import GameControl from './GameControl.jsx';
+import Images from '../../../constants/Images.js';
 
 function getActiveGame() {
   const state = GameStore.getActiveGameState();
@@ -17,30 +16,20 @@ const Sidebar = function Sidebar(props) {
   if (props.state && props.state.mapEvents) {
     const currentMap = props.state.mapEvents[props.state.currentFrame];
     const snakes = (currentMap && currentMap.snakeInfos) ? currentMap.snakeInfos : [];
+    const snakeColor = snake => props.state.colors[snake.id];
+    const snakeHead = snake => Images.getSnakeHead(snakeColor(snake));
 
     return (
-      <div>
-        <h3>Active Game</h3>
-        <Table striped bordered condensed>
-          <thead>
-            <tr>
-              <th>
-                Players
-              </th>
-            </tr>
-          </thead>
-          <tbody>{
+      <div className="active-players">
+        <ul>
+          {
             snakes.map(snake => (
-              <tr key={snake.id}>
-                <td style={{ background: snake.positions.length > 0 ? props.state.colors[snake.id] : 'grey', color: 'white' }}>
-                  Name: {snake.name}<br />
-                  Length: {snake.positions.length}<br />
-                  Points: {snake.points}</td>
-              </tr>
+              <li key={snake.id}>
+                <img src={snakeHead(snake)} alt={snakeColor(snake)} />
+                <strong>{snake.points} {snake.name}</strong>
+              </li>
             ))}
-          </tbody>
-        </Table>
-        <GameControl id={props.state.id} />
+        </ul>
       </div>
     );
   }

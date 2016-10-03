@@ -7,7 +7,6 @@ import {
 } from 'react-router';
 
 import LoginPage from '../security/components/LoginPage.jsx';
-import GameTemplate from '../training/components/GameTemplate.jsx';
 import Gameboard from '../training/components/GameBoard.jsx';
 import PageTemplate from '../common/templates/PageTemplate.jsx';
 import HomePage from '../pages/HomePage.jsx';
@@ -31,10 +30,10 @@ export default () => (
     <Route path="/" component={PageTemplate}>
       <IndexRoute component={HomePage} />
     </Route>
-    <Route path="/viewgame/:gameId" component={GameTemplate}>
+    <Route path="/viewgame/:gameId" component={PageTemplate}>
       <IndexRoute component={Gameboard} />
     </Route>
-    <Route path="/viewgame" component={GameTemplate} >
+    <Route path="/viewgame" component={PageTemplate} >
       <IndexRoute component={GameSearch} />
     </Route>
     <Route path="/auth" component={PageTemplate}>

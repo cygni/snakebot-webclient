@@ -3,7 +3,7 @@ import '../design/styles/stylesheet.scss';
 
 function AboutPage() {
   return (
-    <section>
+    <section className="clear-fix information">
       <h2>About</h2>
       <p>
         Nulla nec lectus vel erat. Sed sit amet magna ac ipsum sagittis consectetur at ac magna.
