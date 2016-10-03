@@ -254,18 +254,71 @@ function _groupObstacles(obstaclePositions) {
   const cluster = [];
   obstaclePositions.forEach((obstaclePosition) => {
     if (!ready.includes([obstaclePosition.x, obstaclePosition.y].join())) {
-      const ar = obstaclePositions.filter(o => _filterObstacles(o, obstaclePosition));
-      cluster.push(ar);
-      ar.forEach((ob) => {
+      const group = obstaclePositions.filter(o => _filterObstacles(o, obstaclePosition));
+      cluster.push(group);
+      group.forEach((ob) => {
         ready.push([ob.x, ob.y].join());
       });
     }
   });
-  return cluster;
+  return _validateCluster(cluster);
 }
 
 function _filterObstacles(o1, o2) {
-  return Math.abs(o1.x - o2.x) < 3 && Math.abs(o1.y - o2.y) < 3;
+  return Math.abs(o1.x - o2.x) < 3
+      && Math.abs(o1.y - o2.y) < 3;
+}
+
+function _validateCluster(cluster) {
+  const validCluster = [];
+  cluster.forEach((group, index) => {
+    const validGroup = [];
+    group.forEach((obstacle) => {
+      if (_isConnectingTile(obstacle, group)) {
+        validGroup.push(obstacle);
+      }
+    });
+
+    if (validGroup.length === 0) {
+      const validGroups = _filterDuplicates(cluster, group, index);
+      validGroups.forEach((g) => {
+        validCluster.push(g);
+      });
+    } else {
+      validCluster.push(validGroup);
+    }
+  });
+  return validCluster;
+}
+
+function _isConnectingTile(obstacle, group) {
+  return group.length === 1 || (group.some(o => !_isEqual(o, obstacle)
+  && Math.abs(o.x - obstacle.x) === 1
+  && Math.abs(o.y - obstacle.y) === 1));
+}
+
+function _filterDuplicates(cluster, group, index) {
+  const groups = [];
+  let filteredGroup = group;
+  cluster.filter((g, i) => i !== index)
+      .forEach((g) => {
+        filteredGroup = filteredGroup.filter(o1 =>
+              !g.some(o2 => _isEqual(o1, o2)));
+      });
+
+  if (filteredGroup.length === 2) {
+    filteredGroup.forEach((o3) => {
+      const g2 = [o3];
+      groups.push(g2);
+    });
+    return groups;
+  }
+  groups.push(filteredGroup);
+  return groups;
+}
+
+function _isEqual(o1, o2) {
+  return o1.x === o2.x && o1.y === o2.y;
 }
 
 function _getRotation(first, second) {
