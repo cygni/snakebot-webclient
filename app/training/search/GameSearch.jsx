@@ -41,7 +41,8 @@ class GameSearch extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="information">
+        <h2>Search for games</h2>
         <form className="commentForm" onSubmit={this.handleSubmit}>
           <input
             id="yourName"
@@ -57,7 +58,7 @@ class GameSearch extends React.Component {
             style={{ color: 'red' }}
           >No result found</label>
         </form>
-        <div><h2>Old games</h2></div>
+        <h2>Old games</h2>
         <ul> {
           this.props.games.map((game, index) => (
             <li key={index}>

@@ -2,16 +2,15 @@ import React from 'react';
 import {
   Link,
 } from 'react-router';
-import cygnilogo from '../../../design/images/logos/cygni-logo.svg';
+import cygnilogo from '../../../design/images/logos/cygni_vit.svg';
 
 function PageFooter() {
   return (
-    <footer>
-      <p>JAKOBSBERGSGATAN 22 </p>
-      <p> 111 44 STOCKHOLM</p>
+    <footer className="clear=fix">
       <Link to="http://www.cygni.se">
         <img src={cygnilogo} alt="Cygni-logo" />
       </Link>
+      <span>Jakobsbergsgatan 22, 111 44 STOCKHOLM</span>
     </footer>
   );
 }

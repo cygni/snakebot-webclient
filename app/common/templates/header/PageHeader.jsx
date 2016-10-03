@@ -32,23 +32,13 @@ class PageHeader extends React.Component {
         </Link>
         <nav>
           <ul>
-            <li><Link to="/about">ABOUT</Link></li>
-            <li><Link to="/gettingstarted">GETTING STARTED</Link></li>
-            <li><Link to="/viewgame">GAMES</Link></li>
-            <li><Link to="/tournament">TOURNAMENT</Link></li>
-            <li><Link to="/status">STATUS</Link></li>
+            <li><Link to="about" activeClassName="active">ABOUT</Link></li>
+            <li><Link to="gettingstarted" activeClassName="active">GETTING STARTED</Link></li>
+            <li><Link to="viewgame" activeClassName="active">GAMES</Link></li>
+            <li><Link to="tournament" activeClassName="active">TOURNAMENT</Link></li>
+            <li><Link to="status" activeClassName="active">STATUS</Link></li>
           </ul>
         </nav>
-        <div>
-          { Store.isLoggedIn() ?
-            <p> <span className="glyphicon glyphicon-user" aria-hidden="true" /> User: {Store.getUser()} </p> : ''
-          }
-        </div>
-        <div>
-          { Store.isLoggedIn() ?
-            <p>Cygni snakebot-webclient <b>v{Config.version}</b> from {Config.buildDate}</p> : ''
-          }
-        </div>
       </header>
     );
   }
