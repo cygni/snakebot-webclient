@@ -252,73 +252,70 @@ function _renderObstacles(stage, map, tileSize) {
 function _groupObstacles(obstaclePositions) {
   const ready = [];
   const cluster = [];
+  obstaclePositions.sort((o1, o2) => o1.y - o2.y || o1.x - o2.x);
   obstaclePositions.forEach((obstaclePosition) => {
-    if (!ready.includes([obstaclePosition.x, obstaclePosition.y].join())) {
-      const group = obstaclePositions.filter(o => _filterObstacles(o, obstaclePosition));
-      cluster.push(group);
-      group.forEach((ob) => {
-        ready.push([ob.x, ob.y].join());
-      });
-    }
-  });
-  return _validateCluster(cluster);
-}
+    if (!ready.includes(concatCoordinate(obstaclePosition))) {
+      const group = [];
+      const r1 = obstaclePositions.filter(ob => !ready.includes(concatCoordinate(ob)))
+          .filter(o => (o.x === (obstaclePosition.x + 1) && obstaclePosition.y === o.y));
+      const r2 = obstaclePositions.filter(ob => !ready.includes(concatCoordinate(ob)))
+          .filter(o => (o.x === (obstaclePosition.x + 2) && obstaclePosition.y === o.y));
 
-function _filterObstacles(o1, o2) {
-  return Math.abs(o1.x - o2.x) < 3
-      && Math.abs(o1.y - o2.y) < 3;
-}
-
-function _validateCluster(cluster) {
-  const validCluster = [];
-  cluster.forEach((group, index) => {
-    const validGroup = [];
-    group.forEach((obstacle) => {
-      if (_isConnectingTile(obstacle, group)) {
-        validGroup.push(obstacle);
+      if (r1.length === 0) {
+        group.push(obstaclePosition);
+        ready.push(concatCoordinate(obstaclePosition));
+      } else if (r1.length === 1 && !(r2.length > 0)) {
+        const down = createObstacle(obstaclePosition.x, obstaclePosition.y + 1);
+        const right = createObstacle(obstaclePosition.x + 1, obstaclePosition.y);
+        const rightDown = createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 1);
+        group.push(obstaclePosition);
+        group.push(down);
+        group.push(right);
+        group.push(rightDown);
+        ready.push(concatCoordinate(obstaclePosition));
+        ready.push(concatCoordinate(down));
+        ready.push(concatCoordinate(right));
+        ready.push(concatCoordinate(rightDown));
+      } else if (r2.length > 0) {
+        const down = createObstacle(obstaclePosition.x, obstaclePosition.y + 1);
+        const down2 = createObstacle(obstaclePosition.x, obstaclePosition.y + 2);
+        const right = createObstacle(obstaclePosition.x + 1, obstaclePosition.y);
+        const right2 = createObstacle(obstaclePosition.x + 2, obstaclePosition.y);
+        const rightDown = createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 1);
+        const rightDown2 = createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 2);
+        const rightDown3 = createObstacle(obstaclePosition.x + 2, obstaclePosition.y + 1);
+        const rightDown4 = createObstacle(obstaclePosition.x + 2, obstaclePosition.y + 2);
+        group.push(obstaclePosition);
+        group.push(down);
+        group.push(down2);
+        group.push(right);
+        group.push(right2);
+        group.push(rightDown);
+        group.push(rightDown2);
+        group.push(rightDown3);
+        group.push(rightDown4);
+        ready.push(concatCoordinate(obstaclePosition));
+        ready.push(concatCoordinate(down));
+        ready.push(concatCoordinate(down2));
+        ready.push(concatCoordinate(right));
+        ready.push(concatCoordinate(right2));
+        ready.push(concatCoordinate(rightDown));
+        ready.push(concatCoordinate(rightDown2));
+        ready.push(concatCoordinate(rightDown3));
+        ready.push(concatCoordinate(rightDown4));
       }
-    });
-
-    if (validGroup.length === 0) {
-      const validGroups = _filterDuplicates(cluster, group, index);
-      validGroups.forEach((g) => {
-        validCluster.push(g);
-      });
-    } else {
-      validCluster.push(validGroup);
+      cluster.push(group);
     }
   });
-  return validCluster;
+  return cluster;
 }
 
-function _isConnectingTile(obstacle, group) {
-  return group.length === 1 || (group.some(o => !_isEqual(o, obstacle)
-  && Math.abs(o.x - obstacle.x) === 1
-  && Math.abs(o.y - obstacle.y) === 1));
+function concatCoordinate(obstaclePosition) {
+  return [obstaclePosition.x, obstaclePosition.y].join();
 }
 
-function _filterDuplicates(cluster, group, index) {
-  const groups = [];
-  let filteredGroup = group;
-  cluster.filter((g, i) => i !== index)
-      .forEach((g) => {
-        filteredGroup = filteredGroup.filter(o1 =>
-              !g.some(o2 => _isEqual(o1, o2)));
-      });
-
-  if (filteredGroup.length === 2) {
-    filteredGroup.forEach((o3) => {
-      const g2 = [o3];
-      groups.push(g2);
-    });
-    return groups;
-  }
-  groups.push(filteredGroup);
-  return groups;
-}
-
-function _isEqual(o1, o2) {
-  return o1.x === o2.x && o1.y === o2.y;
+function createObstacle(xPos, yPos) {
+  return { x: xPos, y: yPos };
 }
 
 function _getRotation(first, second) {
