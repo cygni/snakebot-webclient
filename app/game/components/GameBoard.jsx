@@ -96,8 +96,8 @@ class GameBoard extends React.Component {
             className="hidden"
             ref={(c) => { this.canvas = c; }}
           />
+          <GameControl />
         </div>
-        <GameControl />
       </section>
     );
   }
