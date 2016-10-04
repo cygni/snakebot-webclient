@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import AppAction from '../action/training-actions';
+import GameAction from '../action/game-actions.js';
 import GameStore from '../../baseStore/BaseStore';
 import StoreWatch from '../components/watch/StoreWatch.jsx';
 
@@ -29,7 +29,7 @@ class GameSearch extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    AppAction.searchForOldGames(this.state.searchName);
+    GameAction.searchForOldGames(this.state.searchName);
   }
 
   handleChange(e) {

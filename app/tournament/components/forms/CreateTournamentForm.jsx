@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import Action from '../../action/tournament-actions';
+import TournamentAction from '../../action/tournament-actions';
 
 class CreateTournamentForm extends React.Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class CreateTournamentForm extends React.Component {
 
   createTournament(e) {
     e.preventDefault();
-    Action.createTournament(this.state.tempGameName);
+    TournamentAction.createTournament(this.state.tempGameName);
   }
 
   render() {

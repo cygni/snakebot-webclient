@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AppAction from '../../action/training-actions';
+import GameAction from '../../action/game-actions';
 import StoreWatch from '../watch/StoreWatch.jsx';
 import GameStore from '../../../baseStore/BaseStore';
 
@@ -23,31 +23,31 @@ const propTypes = {
 
 class GameControl extends React.Component {
   static startGame(id) {
-    AppAction.startGame(id);
+    GameAction.startGame(id);
   }
 
   static pauseGame(id) {
-    AppAction.pauseGame(id);
+    GameAction.pauseGame(id);
   }
 
   static resumeGame(id) {
-    AppAction.resumeGame(id);
+    GameAction.resumeGame(id);
   }
 
   static restartGame(id) {
-    AppAction.restartGame(id);
+    GameAction.restartGame(id);
   }
 
   static currentFrameChanged(event) {
-    AppAction.setCurrentFrame(parseInt(event.target.value, 10));
+    GameAction.setCurrentFrame(parseInt(event.target.value, 10));
   }
 
   static decreaseFrequency() {
-    AppAction.decreaseUpdateFrequency();
+    GameAction.decreaseUpdateFrequency();
   }
 
   static increaseFrequency() {
-    AppAction.increaseUpdateFrequency();
+    GameAction.increaseUpdateFrequency();
   }
 
   getState() {
