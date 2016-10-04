@@ -93,7 +93,12 @@ header {
     float: right;
     margin-top: 1rem;
 
-    a {
+    button {
+      padding: 0px;
+      border: 0px;
+    }
+
+    a button {
       color: rgba(255,255,255,0.7);
       text-decoration: none;
       font-size: 16px;
@@ -353,6 +358,7 @@ input[type=url],
 input[type=tel],
 input[type=number],
 input[type=email],
+input[type=password],
 textarea,
 select {
   color:#000;
@@ -441,6 +447,10 @@ input[type=reset]:focus {
   background: #d6d6d6;
   border-bottom: 2px solid #999;
   transition: all 0.2s;
+}
+
+input[type=password] {
+  color: #313131;
 }
 
 button {
