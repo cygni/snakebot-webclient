@@ -1,11 +1,11 @@
 import React from 'react';
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 
-import TournamentStore from '../../../baseStore/BaseStore';
+import Store from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch.jsx';
 
 function getPlayerList() {
-  const playerList = TournamentStore.getPlayerList();
+  const playerList = Store.getPlayerList();
   return { playerList };
 }
 

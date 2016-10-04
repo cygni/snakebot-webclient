@@ -1,11 +1,11 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 
-import TournamentStore from '../../../baseStore/BaseStore';
+import Store from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch.jsx';
 
 function getFinalPlacement() {
-  const finalPlacement = TournamentStore.getFinalPlacement();
+  const finalPlacement = Store.getFinalPlacement();
   return { finalPlacement };
 }
 

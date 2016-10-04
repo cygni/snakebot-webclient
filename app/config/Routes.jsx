@@ -7,16 +7,16 @@ import {
 } from 'react-router';
 
 import LoginPage from '../security/components/LoginPage.jsx';
-import Gameboard from '../training/components/GameBoard.jsx';
+import Gameboard from '../game/components/GameBoard.jsx';
 import PageTemplate from '../common/templates/PageTemplate.jsx';
 import HomePage from '../pages/HomePage.jsx';
 import GettingStartedPage from '../pages/GettingStartedPage.jsx';
 import AboutPage from '../pages/AboutPage.jsx';
 import StatusPage from '../pages/StatusPage.jsx';
 
-import Settings from '../tournament/components/settings/Settings.jsx';
+import TournamentSettings from '../tournament/components/settings/TournamentSettings.jsx';
 import Bracket from '../tournament/components/bracket/Bracket.jsx';
-import GameSearch from '../training/search/GameSearch.jsx';
+import GameSearch from '../game/search/GameSearch.jsx';
 import Store from '../baseStore/BaseStore.js';
 import TournamentAction from '../tournament/action/tournament-actions.js';
 
@@ -53,7 +53,7 @@ export default () => (
       component={PageTemplate}
       onEnter={enterTournamentPage}
     >
-      <IndexRoute component={Settings} />
+      <IndexRoute component={TournamentSettings} />
       <Route name="bracket" path="/tournament/tournamentbracket" component={Bracket} />
       <Route name="activeGame" path="/tournament/:gameId" component={Gameboard} />
     </Route>

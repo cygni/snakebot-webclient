@@ -62,27 +62,9 @@ export default {
     });
   },
 
-  startGame() {
-    dispatch({
-      actionType: Constants.START_GAME,
-    });
-  },
-
   tournamentEndedEvent(event) {
     dispatch({
       actionType: Constants.TOURNAMENT_ENDED_EVENT, event,
-    });
-  },
-
-  setUpdateFrequency(freq) {
-    dispatch({
-      actionType: Constants.SET_UPDATE_FREQUENCY, freq,
-    });
-  },
-
-  setCurrentFrame(frame) {
-    dispatch({
-      actionType: Constants.SET_CURRENT_FRAME, frame,
     });
   },
 

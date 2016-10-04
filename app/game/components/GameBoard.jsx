@@ -4,7 +4,7 @@ import Store from '../../baseStore/BaseStore';
 import StoreWatch from './watch/StoreWatch.jsx';
 import BoardUtils from '../../util/BoardUtils';
 import TileUtils from '../../util/TileUtils';
-import TrainingAction from '../../training/action/training-actions';
+import GameAction from '../../game/action/game-actions';
 import Sidebar from './sidebar/Sidebar.jsx';
 import GameControl from './sidebar/GameControl.jsx';
 
@@ -29,7 +29,7 @@ class GameBoard extends React.Component {
 
   componentWillMount() {
     console.log('GameBoard will mount');
-    TrainingAction.activeGame(this.props.params.gameId);
+    GameAction.activeGame(this.props.params.gameId);
   }
 
   componentDidMount() {
@@ -58,7 +58,7 @@ class GameBoard extends React.Component {
 
   componentWillUnmount() {
     console.log('Unmounting GameBoard');
-    TrainingAction.pauseGame();
+    GameAction.pauseGame();
   }
 
   renderGameBoard(map, tileSize, state) {
