@@ -18,8 +18,6 @@ const searchResults = {
 let _tournament = {};
 const _activeGameState = {};
 
-const _deadSnakesList = [];
-
 const _hasActiveGame = () => !_.isEmpty(_activeGameState);
 
 // Handling the frame updating
@@ -246,7 +244,7 @@ const _addDeadSnakeEvent = (event) => {
   deadSnake.deathY = event.y;
   deadSnake.ttl = 3;
   deadSnake.worldTick = event.gameTick;
-  _deadSnakesList.push(deadSnake);
+  _activeGameState.deadSnakes.push(deadSnake);
 };
 
 const _addDeadSnakeEvents = (events) => {
@@ -284,6 +282,7 @@ const _fetchActiveGame = (gameid, emitChange) => {
   _activeGameState.renderObstacles = false;
   _activeGameState.mapEvents = [];
   _activeGameState.players = [];
+  _activeGameState.deadSnakes = [];
 
   restclient.fetchGame(
     gameid,
@@ -329,7 +328,7 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   getDeadSnakes() {
-    return _deadSnakesList;
+    return _activeGameState.deadSnakes;
   },
 
   getFrameCount() {
