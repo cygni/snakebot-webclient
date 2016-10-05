@@ -77,10 +77,10 @@ class LoginPage extends React.Component {
 
     return (
       <Row>
-        <Col xs={18} md={12}>
+        <Col xs={18} md={6} mdOffset={3}>
           <h1>Sign in</h1>
         </Col>
-        <Col xs={10} md={6}>
+        <Col xs={10} md={6} mdOffset={3}>
           <form role="form" onSubmit={this.login}>
             <input
               value={this.state.user} onChange={this.handleUserChange} type="text"
