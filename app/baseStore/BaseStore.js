@@ -194,6 +194,7 @@ const _tournamentCreated = (tournamentInfo) => {
 const _tournamentEnded = (event) => {
   console.log('Tournament ended', tournament, event);
   tournament.finalPlacement.list = event.gameResult;
+  tournament.finalPlacement.list.sort((s1, s2) => s2.points - s1.points);
   tournament.finalPlacement.winner =
     tournament.finalPlacement.list.find(
       snake => snake.playerId === event.playerWinnerId);
@@ -335,10 +336,6 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
 
   getTournamentGamePlan() {
     return tournament.gamePlan;
-  },
-
-  getActivePlayers() {
-    return tournament.gamePlan.players.sort((a, b) => b.points - a.points);
   },
 
   getFinalPlacement() {
