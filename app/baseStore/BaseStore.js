@@ -15,10 +15,10 @@ const searchResults = {
   matchingGames: [],
 };
 
-let tournament = {};
+let _tournament = {};
 const _activeGameState = {};
 
-const deadSnakesList = [];
+const _deadSnakesList = [];
 
 const _hasActiveGame = () => !_.isEmpty(_activeGameState);
 
@@ -70,12 +70,8 @@ const _startUpdatingFrames = (emitChange) => {
 
 // Utility functions
 
-const _assignSnakeColors = (mapEvent) => {
-  if (!mapEvent) {
-    return;
-  }
-
-  mapEvent.snakeInfos.forEach((snake) => {
+const _assignSnakeColors = (snakes) => {
+  snakes.forEach((snake) => {
     if (!_activeGameState.colors[snake.id]) {
       _activeGameState.colors[snake.id] = Colors.getSnakeColor(_activeGameState.colorIndex);
       _activeGameState.colorIndex += 1;
@@ -106,6 +102,23 @@ const _startGame = (emitChange) => {
     });
     _activeGameState.fetched = true;
   }
+};
+
+const _addGameInfo = (addedGames) => {
+  const game = addedGames.find(g => g.gameId === _activeGameState.id);
+  if (!game) {
+    console.log('Games added did not match the id of the current game', addedGames, _activeGameState);
+    return;
+  }
+
+  const snakes = game.players.map((snake) => {
+    snake.positions = [];
+    snake.points = 0;
+    return snake;
+  });
+
+  _activeGameState.players = snakes;
+  _assignSnakeColors(game.players);
 };
 
 // Handling the logging in and out for a user
@@ -140,15 +153,15 @@ function _isLoggedIn() {
   return _token !== null && _token !== undefined;
 }
 
-// All tournament-related actions
+// All _tournament-related actions
 
-const _setActiveTournament = (tournamentInfo) => {
-  tournament = tournamentInfo;
-  tournament.finalPlacement = {
+const _setActiveTournament = (_tournamentInfo) => {
+  _tournament = _tournamentInfo;
+  _tournament.finalPlacement = {
     list: [],
     winner: {},
   };
-  console.log('Active tournament is set', tournament);
+  console.log('Active tournament is set', _tournament);
 };
 
 const _createTournament = (name) => {
@@ -164,7 +177,7 @@ const _createTournamentTable = () => {
   Socket.send({
     type: 'se.cygni.snake.eventapi.request.UpdateTournamentSettings',
     token: _getToken(),
-    gameSettings: tournament.gameSettings,
+    gameSettings: _tournament.gameSettings,
   });
 };
 
@@ -172,38 +185,38 @@ const _startTournament = () => {
   Socket.send({
     type: 'se.cygni.snake.eventapi.request.StartTournament',
     token: _getToken(),
-    tournamentId: tournament.tournamentId,
+    _tournamentId: _tournament._tournamentId,
   });
   hashHistory.push('tournament/tournamentbracket');
 };
 
-const _tournamentCreated = (tournamentInfo) => {
-  tournament = tournamentInfo;
-  tournament.finalPlacement = {
+const _tournamentCreated = (_tournamentInfo) => {
+  _tournament = _tournamentInfo;
+  _tournament.finalPlacement = {
     list: [],
     winner: {},
   };
 };
 
 const _tournamentEnded = (event) => {
-  console.log('Tournament ended', tournament, event);
-  tournament.finalPlacement.list = event.gameResult;
-  tournament.finalPlacement.list.sort((s1, s2) => s2.points - s1.points);
-  tournament.finalPlacement.winner =
-    tournament.finalPlacement.list.find(
+  console.log('Tournament ended', _tournament, event);
+  _tournament.finalPlacement.list = event.gameResult;
+  _tournament.finalPlacement.list.sort((s1, s2) => s2.points - s1.points);
+  _tournament.finalPlacement.winner =
+    _tournament.finalPlacement.list.find(
       snake => snake.playerId === event.playerWinnerId);
 
-  console.log('Tournament final placements are', tournament.finalPlacement);
+  console.log('Tournament final placements are', _tournament.finalPlacement);
 };
 
 const _killTournament = () => {
   Socket.send({
-    tournamentId: tournament.tournamentId,
+    _tournamentId: _tournament._tournamentId,
     type: 'se.cygni.snake.eventapi.request.KillTournament',
     token: _getToken(),
   });
 
-  tournament = {};
+  _tournament = {};
 };
 
 const _addMapEvent = (event, emitChange) => {
@@ -211,7 +224,7 @@ const _addMapEvent = (event, emitChange) => {
     console.error('Received map event for a different game than the active one', event);
   }
   _activeGameState.mapEvents.push(event.map);
-  _assignSnakeColors(event.map);
+  _assignSnakeColors(event.map.snakeInfos);
 
   if (_activeGameState.mapEvents.length === 1) {
     _renderObstacles(emitChange);
@@ -223,7 +236,6 @@ const _addMapEvent = (event, emitChange) => {
 };
 
 const _addDeadSnakeEvent = (event) => {
-  console.log(event);
   const mapEvent = _activeGameState.mapEvents[event.gameTick];
 
   const deadSnake = mapEvent.snakeInfos.find(snake =>
@@ -234,7 +246,7 @@ const _addDeadSnakeEvent = (event) => {
   deadSnake.deathY = event.y;
   deadSnake.ttl = 3;
   deadSnake.worldTick = event.gameTick;
-  deadSnakesList.push(deadSnake);
+  _deadSnakesList.push(deadSnake);
 };
 
 const _addDeadSnakeEvents = (events) => {
@@ -271,22 +283,16 @@ const _fetchActiveGame = (gameid, emitChange) => {
   _activeGameState.colorIndex = 0;
   _activeGameState.renderObstacles = false;
   _activeGameState.mapEvents = [];
+  _activeGameState.players = [];
 
   restclient.fetchGame(
     gameid,
     (mapEvents, snakeDeadEvents) => {
       _activeGameState.mapEvents = mapEvents;
       _addDeadSnakeEvents(snakeDeadEvents);
-      _assignSnakeColors(mapEvents[0]);
+      _assignSnakeColors(mapEvents[0].snakeInfos);
       _activeGameState.fetched = true;
       _renderObstacles(emitChange);
-    }, () => {
-      console.log('Attempting to subscribing to the game instead');
-
-      Socket.send({
-        includedGameIds: [_activeGameState.id],
-        type: 'se.cygni.snake.eventapi.request.SetGameFilter',
-      });
     });
 };
 
@@ -323,7 +329,7 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   getDeadSnakes() {
-    return deadSnakesList;
+    return _deadSnakesList;
   },
 
   getFrameCount() {
@@ -339,27 +345,27 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   getActiveTournament() {
-    return tournament;
+    return _tournament;
   },
 
   getSettings() {
-    return tournament.gameSettings;
+    return _tournament.gameSettings;
   },
 
   getPlayerList() {
-    if (tournament.gamePlan) {
-      return tournament.gamePlan.players;
+    if (_tournament.gamePlan) {
+      return _tournament.gamePlan.players;
     }
 
     return [];
   },
 
   getTournamentGamePlan() {
-    return tournament.gamePlan;
+    return _tournament.gamePlan;
   },
 
   getFinalPlacement() {
-    return tournament.finalPlacement;
+    return _tournament.finalPlacement;
   },
 
   getUpdateFrequencyForTournament() {
@@ -410,13 +416,13 @@ BaseStore.dispatcher = register(
         _startTournament();
         break;
       case Constants.UPDATE_SETTINGS:
-        tournament.gameSettings[action.key] = action.value;
+        _tournament.gameSettings[action.key] = action.value;
         break;
       case Constants.TOURNAMENT_CREATED:
         _tournamentCreated(action.jsonData);
         break;
       case Constants.GAME_PLAN_RECEIVED:
-        tournament.gamePlan = action.jsonData;
+        _tournament.gamePlan = action.jsonData;
         break;
       case Constants.SET_ACTIVE_TOURNAMENT_GAME:
         hashHistory.push('/tournament/' + action.gameId);
@@ -457,6 +463,9 @@ BaseStore.dispatcher = register(
       case Constants.SET_ACTIVE_GAME:
         Socket.init(action.gameId);
         _fetchActiveGame(action.gameId, emitChange);
+        break;
+      case Constants.ADD_GAMES:
+        _addGameInfo(action.games);
         break;
       case Constants.SET_CURRENT_FRAME:
         _activeGameState.currentFrame = action.frame;

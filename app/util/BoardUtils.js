@@ -1,23 +1,26 @@
+const MAP_HEIGHT = 34;
+const MAP_WIDTH = 46;
+
 export default {
-  getTileSize(map) {
-    const size = this.calculateSize(map);
-    return size.width / map.width;
+  getTileSize() {
+    const size = this.calculateSize();
+    return size.width / MAP_WIDTH;
   },
 
-  calculateSize(map) {
-    if (map.width === map.height) {
+  calculateSize() {
+    const height = MAP_HEIGHT;
+    const width = MAP_WIDTH;
+
+    if (width === height) {
       return { width: 1000, height: 1000 };
     }
 
-    if (map.width > map.height) {
-      const ratio = map.width / map.height;
+    if (width > height) {
+      const ratio = width / height;
       return { width: 1000, height: 1000 / ratio };
     }
 
-    const ratio = map.height / map.width;
+    const ratio = height / width;
     return { width: 1000 / ratio, height: 1000 };
-  },
-  mapIsEmpty(map) {
-    return !map || !map.width || map.width === 0;
   },
 };
