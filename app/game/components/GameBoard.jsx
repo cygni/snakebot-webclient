@@ -12,7 +12,7 @@ function getGameState() {
   const state = Store.getActiveGameState();
   const deadSnakes = Store.getDeadSnakes();
 
-  return {state, deadSnakes};
+  return { state, deadSnakes };
 }
 
 const propTypes = {
@@ -113,7 +113,7 @@ class GameBoard extends React.Component {
       return;
     }
 
-    const size = mapIsEmpty ? {width: 0, height: 0} : BoardUtils.calculateSize(map);
+    const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
     const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
 
     GameBoard.validateCanvas(this.canvas, size);
