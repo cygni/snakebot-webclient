@@ -27,16 +27,14 @@ function GettingStartedPage() {
         bindings. Each project has a Readme file that explains how to get
         going.
       </p>
-      <p>
-        <ul>
-          <li><a href="https://github.com/cygni/snakebot-client-java">Java</a></li>
-          <li><a href="https://github.com/cygni/snakebot-client-js">JS</a></li>
-          <li><a href="https://github.com/cygni/snakebot-client-dotnet">.Net</a></li>
-          <li><a href="https://github.com/cygni/snakebot-client-clojurescript">Clojure Script</a></li>
-          <li><a href="https://github.com/cygni/snakebot-client-rust">Rust</a></li>
-          <li><a href="https://github.com/cygni/snakebot-client-cpp">C++</a></li>
-        </ul>
-      </p>
+      <ul>
+        <li><a href="https://github.com/cygni/snakebot-client-java">Java</a></li>
+        <li><a href="https://github.com/cygni/snakebot-client-js">JS</a></li>
+        <li><a href="https://github.com/cygni/snakebot-client-dotnet">.Net</a></li>
+        <li><a href="https://github.com/cygni/snakebot-client-clojurescript">Clojure Script</a></li>
+        <li><a href="https://github.com/cygni/snakebot-client-rust">Rust</a></li>
+        <li><a href="https://github.com/cygni/snakebot-client-cpp">C++</a></li>
+      </ul>
     </section>
   );
 }
