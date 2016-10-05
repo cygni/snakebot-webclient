@@ -32,15 +32,20 @@ const snakeOrdering = (snake1, snake2) => {
   } else if (snake2.name < snake2.name) {
     return -1;
   }
-  return 0;
 
+  return 0;
 };
 
 const Sidebar = function Sidebar(props) {
   if (props.state && props.state.mapEvents) {
     const currentMap = props.state.mapEvents[props.state.currentFrame];
-    const snakes = (currentMap && currentMap.snakeInfos) ? currentMap.snakeInfos : [];
-    // TODO: live bots, dead bots, both by points
+    let snakes = [];
+    if (currentMap && currentMap.snakeInfos) {
+      snakes = currentMap.snakeInfos;
+    } else if (props.state.players) {
+      snakes = props.state.players;
+    }
+
     snakes.sort(snakeOrdering);
 
     const snakeColor = (snake) => {

@@ -76,12 +76,8 @@ const _startUpdatingFrames = (emitChange) => {
 
 // Utility functions
 
-const _assignSnakeColors = (mapEvent) => {
-  if (!mapEvent) {
-    return;
-  }
-
-  mapEvent.snakeInfos.forEach((snake) => {
+const _assignSnakeColors = (snakes) => {
+  snakes.forEach((snake) => {
     if (!_activeGameState.colors[snake.id]) {
       _activeGameState.colors[snake.id] = Colors.getSnakeColor(_activeGameState.colorIndex);
       _activeGameState.colorIndex += 1;
@@ -112,6 +108,22 @@ const _startGame = (emitChange) => {
     });
     _activeGameState.fetched = true;
   }
+};
+
+const _addGameInfo = (addedGames) => {
+  const game = addedGames.find(g => g.gameId === _activeGameState.id);
+  if (!game) {
+    console.log('Games added did not match the id of the current game', addedGames, _activeGameState);
+  }
+
+  const snakes = game.players.map((snake) => {
+    snake.positions = [];
+    snake.points = 0;
+    return snake;
+  });
+
+  _activeGameState.players = snakes;
+  _assignSnakeColors(game.players);
 };
 
 // Handling the logging in and out for a user
@@ -218,7 +230,7 @@ const _addMapEvent = (event, emitChange) => {
   }
 
   _activeGameState.mapEvents.push(event.map);
-  _assignSnakeColors(event.map);
+  _assignSnakeColors(event.map.snakeInfos);
 
   if (_activeGameState.mapEvents.length === 1) {
     _renderObstacles(emitChange);
@@ -256,21 +268,15 @@ const _fetchActiveGame = (gameid, emitChange) => {
   _activeGameState.colorIndex = 0;
   _activeGameState.renderObstacles = false;
   _activeGameState.mapEvents = [];
+  _activeGameState.players = [];
 
   restclient.fetchGame(
     gameid,
     (mapEvents) => {
       _activeGameState.mapEvents = mapEvents;
-      _assignSnakeColors(mapEvents[0]);
+      _assignSnakeColors(mapEvents[0].snakeInfos);
       _activeGameState.fetched = true;
       _renderObstacles(emitChange);
-    }, () => {
-      console.log('Attempting to subscribing to the game instead');
-
-      Socket.send({
-        includedGameIds: [_activeGameState.id],
-        type: 'se.cygni.snake.eventapi.request.SetGameFilter',
-      });
     });
 };
 
@@ -437,6 +443,9 @@ BaseStore.dispatcher = register(
       case Constants.SET_ACTIVE_GAME:
         Socket.init(action.gameId);
         _fetchActiveGame(action.gameId, emitChange);
+        break;
+      case Constants.ADD_GAMES:
+        _addGameInfo(action.games);
         break;
       case Constants.SET_CURRENT_FRAME:
         _activeGameState.currentFrame = action.frame;
