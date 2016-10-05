@@ -337,10 +337,6 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     return tournament.gamePlan;
   },
 
-  getActivePlayers() {
-    return tournament.gamePlan.players.sort((a, b) => b.points - a.points);
-  },
-
   getFinalPlacement() {
     return tournament.finalPlacement;
   },

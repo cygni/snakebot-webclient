@@ -16,7 +16,15 @@ const Sidebar = function Sidebar(props) {
   if (props.state && props.state.mapEvents) {
     const currentMap = props.state.mapEvents[props.state.currentFrame];
     const snakes = (currentMap && currentMap.snakeInfos) ? currentMap.snakeInfos : [];
-    const snakeColor = snake => props.state.colors[snake.id];
+    snakes.sort((s1, s2) => s2.points - s1.points);
+
+    const snakeColor = (snake) => {
+      if (snake.positions.length > 0) {
+        return props.state.colors[snake.id];
+      }
+
+      return '000000';
+    };
     const snakeHead = snake => Images.getSnakeHead(snakeColor(snake));
 
     return (
