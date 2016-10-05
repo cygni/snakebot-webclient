@@ -1,22 +1,22 @@
-import React from 'react';
-import _ from 'lodash';
-import Store from '../../baseStore/BaseStore';
-import StoreWatch from './watch/StoreWatch.jsx';
-import BoardUtils from '../../util/BoardUtils';
-import TileUtils from '../../util/TileUtils';
-import GameAction from '../../game/action/game-actions';
-import Sidebar from './sidebar/Sidebar.jsx';
-import GameControl from './sidebar/GameControl.jsx';
+import React from "react";
+import _ from "lodash";
+import Store from "../../baseStore/BaseStore";
+import StoreWatch from "./watch/StoreWatch.jsx";
+import BoardUtils from "../../util/BoardUtils";
+import TileUtils from "../../util/TileUtils";
+import GameAction from "../../game/action/game-actions";
+import Sidebar from "./sidebar/Sidebar.jsx";
+import GameControl from "./sidebar/GameControl.jsx";
 
 function getGameState() {
   const state = Store.getActiveGameState();
   const deadSnakes = Store.getDeadSnakes();
 
-  return { state, deadSnakes };
+  return {state, deadSnakes};
 }
 
 const propTypes = {
-  deadSnakes: React.PropTypes.object.isRequired,// eslint-disable-line
+  deadSnakes: React.PropTypes.array.isRequired,// eslint-disable-line
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
 };
@@ -68,9 +68,7 @@ class GameBoard extends React.Component {
     GameAction.pauseGame();
   }
 
-  renderGameBoard(mapEvent, tileSize, state) {
-    this.snakeLayer.removeAllChildren();
-
+  renderDeadSnakes(mapEvent, tileSize, state) {
     const allDeadSnakes = this.props.deadSnakes.filter(snake =>
       (mapEvent.worldTick >= snake.worldTick && snake.worldTick + snake.ttl >= mapEvent.worldTick)
     );
@@ -88,13 +86,16 @@ class GameBoard extends React.Component {
       } else {
         this.collisionLayer.removeAllChildren();
       }
-
-      // let msg = new SpeechSynthesisUtterance(JSON.stringify(allDeadSnakes));
-      // window.speechSynthesis.speak(msg);
     } else {
       this.deadSnakeLayer.removeAllChildren();
       this.collisionLayer.removeAllChildren();
     }
+  }
+
+  renderGameBoard(mapEvent, tileSize, state) {
+    this.snakeLayer.removeAllChildren();
+
+    this.renderDeadSnakes(mapEvent, tileSize, state);
 
     TileUtils.renderSnakes(this.snakeLayer, mapEvent, tileSize, state.colors);
     TileUtils.renderFood(this.snakeLayer, mapEvent, tileSize);
@@ -112,7 +113,7 @@ class GameBoard extends React.Component {
       return;
     }
 
-    const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
+    const size = mapIsEmpty ? {width: 0, height: 0} : BoardUtils.calculateSize(map);
     const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
 
     GameBoard.validateCanvas(this.canvas, size);

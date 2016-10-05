@@ -33,7 +33,6 @@ const snakeOrdering = (snake1, snake2) => {
     return -1;
   }
   return 0;
-
 };
 
 const Sidebar = function Sidebar(props) {

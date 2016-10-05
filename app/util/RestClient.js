@@ -42,7 +42,7 @@ export default {
           .filter(event => event.type === snakeDeadEvent);
 
 
-        console.log('Game was found in history', snakeDeadEvents);
+        console.log('Game was found in history', mapEvents, snakeDeadEvents);
 
         success(mapEvents, snakeDeadEvents);
       }, (response) => {
