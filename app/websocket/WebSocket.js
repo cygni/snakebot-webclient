@@ -68,7 +68,6 @@ const listen = (gameid) => {
         TournamentAction.invalidToken();
         break;
       case SNAKE_DEAD_EVENT:
-        console.log('Snake dead event: ', jsonData);
         GameAction.addDeadSnake(jsonData);
         break;
       default:
