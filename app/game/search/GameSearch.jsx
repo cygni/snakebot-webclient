@@ -77,7 +77,7 @@ class GameSearch extends React.Component {
             placeholder="Your name"
             onChange={this.handleChange}
           />
-          <input type="submit" value="Post" />
+          <input type="submit" value="Search" />
         </form>
         <h2>Search results</h2>
         { results }

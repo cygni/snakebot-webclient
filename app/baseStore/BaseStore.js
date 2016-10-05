@@ -1,16 +1,9 @@
-import {
-  EventEmitter,
-} from 'events';
-import {
-  hashHistory,
-} from 'react-router';
+import { EventEmitter } from 'events';
+import { hashHistory } from 'react-router';
 import _ from 'lodash';
 import restclient from '../util/RestClient.js';
 import Socket from '../websocket/WebSocket';
-import {
-  register,
-
-} from '../dispatchers/AppDispatcher';
+import { register } from '../dispatchers/AppDispatcher';
 import Constants from '../constants/Constants';
 import Colors from '../util/Colors';
 
@@ -22,13 +15,14 @@ const searchResults = {
   matchingGames: [],
 };
 
-let tournament = {};
+let _tournament = {};
 const _activeGameState = {};
+
+const _deadSnakesList = [];
 
 const _hasActiveGame = () => !_.isEmpty(_activeGameState);
 
 // Handling the frame updating
-
 const _frameCount = () => {
   if (_hasActiveGame()) {
     return _activeGameState.mapEvents.length - 1;
@@ -114,6 +108,7 @@ const _addGameInfo = (addedGames) => {
   const game = addedGames.find(g => g.gameId === _activeGameState.id);
   if (!game) {
     console.log('Games added did not match the id of the current game', addedGames, _activeGameState);
+    return;
   }
 
   const snakes = game.players.map((snake) => {
@@ -158,15 +153,15 @@ function _isLoggedIn() {
   return _token !== null && _token !== undefined;
 }
 
-// All tournament-related actions
+// All _tournament-related actions
 
-const _setActiveTournament = (tournamentInfo) => {
-  tournament = tournamentInfo;
-  tournament.finalPlacement = {
+const _setActiveTournament = (_tournamentInfo) => {
+  _tournament = _tournamentInfo;
+  _tournament.finalPlacement = {
     list: [],
     winner: {},
   };
-  console.log('Active tournament is set', tournament);
+  console.log('Active tournament is set', _tournament);
 };
 
 const _createTournament = (name) => {
@@ -182,7 +177,7 @@ const _createTournamentTable = () => {
   Socket.send({
     type: 'se.cygni.snake.eventapi.request.UpdateTournamentSettings',
     token: _getToken(),
-    gameSettings: tournament.gameSettings,
+    gameSettings: _tournament.gameSettings,
   });
 };
 
@@ -190,45 +185,44 @@ const _startTournament = () => {
   Socket.send({
     type: 'se.cygni.snake.eventapi.request.StartTournament',
     token: _getToken(),
-    tournamentId: tournament.tournamentId,
+    _tournamentId: _tournament._tournamentId,
   });
   hashHistory.push('tournament/tournamentbracket');
 };
 
-const _tournamentCreated = (tournamentInfo) => {
-  tournament = tournamentInfo;
-  tournament.finalPlacement = {
+const _tournamentCreated = (_tournamentInfo) => {
+  _tournament = _tournamentInfo;
+  _tournament.finalPlacement = {
     list: [],
     winner: {},
   };
 };
 
 const _tournamentEnded = (event) => {
-  console.log('Tournament ended', tournament, event);
-  tournament.finalPlacement.list = event.gameResult;
-  tournament.finalPlacement.list.sort((s1, s2) => s2.points - s1.points);
-  tournament.finalPlacement.winner =
-    tournament.finalPlacement.list.find(
+  console.log('Tournament ended', _tournament, event);
+  _tournament.finalPlacement.list = event.gameResult;
+  _tournament.finalPlacement.list.sort((s1, s2) => s2.points - s1.points);
+  _tournament.finalPlacement.winner =
+    _tournament.finalPlacement.list.find(
       snake => snake.playerId === event.playerWinnerId);
 
-  console.log('Tournament final placements are', tournament.finalPlacement);
+  console.log('Tournament final placements are', _tournament.finalPlacement);
 };
 
 const _killTournament = () => {
   Socket.send({
-    tournamentId: tournament.tournamentId,
+    _tournamentId: _tournament._tournamentId,
     type: 'se.cygni.snake.eventapi.request.KillTournament',
     token: _getToken(),
   });
 
-  tournament = {};
+  _tournament = {};
 };
 
 const _addMapEvent = (event, emitChange) => {
   if (event.gameId !== _activeGameState.id) {
     console.error('Received map event for a different game than the active one', event);
   }
-
   _activeGameState.mapEvents.push(event.map);
   _assignSnakeColors(event.map.snakeInfos);
 
@@ -240,6 +234,27 @@ const _addMapEvent = (event, emitChange) => {
     _startUpdatingFrames(emitChange);
   }
 };
+
+const _addDeadSnakeEvent = (event) => {
+  const mapEvent = _activeGameState.mapEvents[event.gameTick];
+
+  const deadSnake = mapEvent.snakeInfos.find(snake =>
+    snake.id === event.playerId
+  );
+
+  deadSnake.deathX = event.x;
+  deadSnake.deathY = event.y;
+  deadSnake.ttl = 3;
+  deadSnake.worldTick = event.gameTick;
+  _deadSnakesList.push(deadSnake);
+};
+
+const _addDeadSnakeEvents = (events) => {
+  events.forEach(event =>
+    _addDeadSnakeEvent(event)
+  );
+};
+
 
 // Methods using the the restclient
 
@@ -272,8 +287,9 @@ const _fetchActiveGame = (gameid, emitChange) => {
 
   restclient.fetchGame(
     gameid,
-    (mapEvents) => {
+    (mapEvents, snakeDeadEvents) => {
       _activeGameState.mapEvents = mapEvents;
+      _addDeadSnakeEvents(snakeDeadEvents);
       _assignSnakeColors(mapEvents[0].snakeInfos);
       _activeGameState.fetched = true;
       _renderObstacles(emitChange);
@@ -312,6 +328,10 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     return _activeGameState;
   },
 
+  getDeadSnakes() {
+    return _deadSnakesList;
+  },
+
   getFrameCount() {
     return _frameCount();
   },
@@ -325,27 +345,27 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   getActiveTournament() {
-    return tournament;
+    return _tournament;
   },
 
   getSettings() {
-    return tournament.gameSettings;
+    return _tournament.gameSettings;
   },
 
   getPlayerList() {
-    if (tournament.gamePlan) {
-      return tournament.gamePlan.players;
+    if (_tournament.gamePlan) {
+      return _tournament.gamePlan.players;
     }
 
     return [];
   },
 
   getTournamentGamePlan() {
-    return tournament.gamePlan;
+    return _tournament.gamePlan;
   },
 
   getFinalPlacement() {
-    return tournament.finalPlacement;
+    return _tournament.finalPlacement;
   },
 
   getUpdateFrequencyForTournament() {
@@ -396,13 +416,13 @@ BaseStore.dispatcher = register(
         _startTournament();
         break;
       case Constants.UPDATE_SETTINGS:
-        tournament.gameSettings[action.key] = action.value;
+        _tournament.gameSettings[action.key] = action.value;
         break;
       case Constants.TOURNAMENT_CREATED:
         _tournamentCreated(action.jsonData);
         break;
       case Constants.GAME_PLAN_RECEIVED:
-        tournament.gamePlan = action.jsonData;
+        _tournament.gamePlan = action.jsonData;
         break;
       case Constants.SET_ACTIVE_TOURNAMENT_GAME:
         hashHistory.push('/tournament/' + action.gameId);
@@ -468,6 +488,9 @@ BaseStore.dispatcher = register(
         break;
       case Constants.FETCH_ACTIVE_TOURNAMENT:
         _fetchActiveTournament(emitChange);
+        break;
+      case Constants.ADD_DEAD_SNAKE_EVENT:
+        _addDeadSnakeEvent(action.event);
         break;
       default:
         console.log('Store received unknown action', action);
