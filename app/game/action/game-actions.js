@@ -66,4 +66,10 @@ export default {
       actionType: Constants.SEARCH_FOR_OLD_GAMES_FOR_USER, name,
     });
   },
+
+  addDeadSnake(event) {
+    dispatch({
+      actionType: Constants.ADD_DEAD_SNAKE_EVENT, event,
+    });
+  },
 };

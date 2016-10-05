@@ -31,14 +31,20 @@ export default {
       .then((response) => {
         const json = response.entity;
         const mapUpdateEvent = 'se.cygni.snake.api.event.MapUpdateEvent';
+        const snakeDeadEvent = 'se.cygni.snake.api.event.SnakeDeadEvent';
         const mapEvents = json
                 .messages
                 .filter(event => event.type === mapUpdateEvent)
                 .map(type => type.map);
 
-        console.log('Game was found in history', mapEvents);
+        const snakeDeadEvents = json
+          .messages
+          .filter(event => event.type === snakeDeadEvent);
 
-        success(mapEvents);
+
+        console.log('Game was found in history', mapEvents, snakeDeadEvents);
+
+        success(mapEvents, snakeDeadEvents);
       }, (response) => {
         console.log('Unable to fetch game with id = ' + id);
         if (error) {
