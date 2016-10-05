@@ -22,14 +22,6 @@ const propTypes = {
 };
 
 class GameBoard extends React.Component {
-  static validateCanvas(canvas, size) {
-    if (canvas.width !== size.width && canvas.height !== size.height) {
-      canvas.width = size.width;
-      canvas.height = size.height;
-      canvas.className = '';
-    }
-  }
-
   componentWillMount() {
     console.log('GameBoard will mount');
     GameAction.activeGame(this.props.params.gameId);
@@ -92,7 +84,8 @@ class GameBoard extends React.Component {
     }
   }
 
-  renderGameBoard(mapEvent, tileSize, state) {
+  renderGameBoard(mapEvent, state) {
+    const tileSize = BoardUtils.getTileSize();
     this.snakeLayer.removeAllChildren();
 
     this.renderDeadSnakes(mapEvent, tileSize, state);
@@ -107,27 +100,19 @@ class GameBoard extends React.Component {
 
   renderBoard(state) {
     const map = state.mapEvents[state.currentFrame];
-    const mapIsEmpty = BoardUtils.mapIsEmpty(map);
-
-    if (mapIsEmpty || this.canvas.getContext('2d') === undefined) {
-      return;
-    }
-
-    const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
-    const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
-
-    GameBoard.validateCanvas(this.canvas, size);
-    this.renderGameBoard(map, tileSize, state);
+    this.renderGameBoard(map, state);
   }
 
   render() {
+    const size = BoardUtils.calculateSize();
     return (
       <section className="clear-fix">
         <Sidebar />
         <div className="gameboard">
           <canvas
             id="canvas"
-            className="hidden"
+            width={size.width}
+            height={size.height}
             ref={(c) => {
               this.canvas = c;
             }}

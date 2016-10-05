@@ -285,7 +285,8 @@ function _renderObstacles(stage, map, tileSize) {
         scale = 3;
       }
 
-      const blackHole = new lib.blackhole();
+      // the whole lib solution is a bit of a special case, so ignore eslint warnings
+      const blackHole = new lib.blackhole(); // eslint-disable-line
       blackHole.scaleX = (tileSize * scale) / blackHole.nominalBounds.height;
       blackHole.scaleY = (tileSize * scale) / blackHole.nominalBounds.width;
       blackHole.x = xPos;

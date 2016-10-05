@@ -12,8 +12,8 @@
     "no-underscore-dangle": ["off"],
     "prefer-template": 0,
     "no-use-before-define": ["error", "nofunc"],
-    "new-cap": ["error", {
-      "properties": false
+    "no-param-reassign": ["error", {
+      "props": false
     }],
     "no-console": ["off"]
   }
