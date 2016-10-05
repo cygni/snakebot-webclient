@@ -149,6 +149,15 @@ function _renderBodyPart(stage, pos, tileSize, color) {
   stage.addChild(rect);
 }
 
+function _renderDeathTile(stage, x, y, tileSize) {
+  const rect = new createjs.Shape();
+  rect.graphics
+    .beginFill('#ff0000')
+    .drawRect(x * tileSize, y * tileSize, tileSize, tileSize);
+  stage.addChild(rect);
+}
+
+
 function _renderImage(stage, pos, tileSize, imgSource, rotation) {
   const image = new Image();
   image.src = imgSource;
@@ -199,6 +208,42 @@ function _renderSnakes(stage, map, tileSize, colors) {
         _renderImage(stage, pos, tileSize, imgSource, rotation);
       } else {
         _renderBodyPart(stage, pos, tileSize, color);
+      }
+    });
+  });
+}
+
+function _renderCollisions(stage, snakes, tileSize) {
+  snakes.forEach(snake =>
+    _renderDeathTile(stage, snake.deathX, snake.deathY, tileSize)
+  );
+}
+
+function _renderDeadSnake(stage, map, snakes, tileSize, colors) {
+  snakes.forEach((snake) => {
+    const lastIndex = snake.positions.length - 1;
+
+
+    snake.positions.forEach((position, index) => {
+      const pos = _getTileCoordinate(position, map);
+      const color = colors[snake.id];
+
+
+      if (index === 0) {
+        // ensure that we know which direction the head will be facing
+        if (snake.positions.length > 1) {
+          const rotation = _getHeadRotation(snake.positions, map);
+          const imgSource = Images.getSnakeHead(color);
+          _renderImage(stage, pos, tileSize, imgSource, rotation);
+        } else {
+          _renderBodyPart(stage, pos, tileSize, '#d3d3d3');
+        }
+      } else if (index === lastIndex) {
+        const rotation = _getTailRotation(snake.positions, map);
+        const imgSource = Images.getSnakeTail(color);
+        _renderImage(stage, pos, tileSize, imgSource, rotation);
+      } else {
+        _renderBodyPart(stage, pos, tileSize, '#d3d3d3');
       }
     });
   });
@@ -360,6 +405,14 @@ function _getTileCoordinate(absolutePos, map) {
 export default {
   renderSnakes(stage, map, tileSize, _activeGame) {
     _renderSnakes(stage, map, tileSize, _activeGame);
+  },
+
+  renderDeadSnakes(stage, map, snakes, tileSize, colors) {
+    _renderDeadSnake(stage, map, snakes, tileSize, colors);
+  },
+
+  renderCollisions(stage, collitions, tileSize) {
+    _renderCollisions(stage, collitions, tileSize);
   },
 
   renderFood(stage, map, tileSize) {

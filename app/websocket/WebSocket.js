@@ -11,6 +11,7 @@ const MAP_UPDATE_EVENT = 'se.cygni.snake.api.event.MapUpdateEvent';
 const GAME_ENDED_EVENT = 'se.cygni.snake.api.event.GameEndedEvent';
 const TOURNAMENT_ENDED_EVENT = 'se.cygni.snake.api.event.TournamentEndedEvent';
 const UNAUTHORIZED = 'se.cygni.snake.eventapi.exception.Unauthorized';
+const SNAKE_DEAD_EVENT = 'se.cygni.snake.api.event.SnakeDeadEvent';
 
 const socket = new SockJS(Config.server + '/events');
 
@@ -65,6 +66,9 @@ const listen = (gameid) => {
         break;
       case UNAUTHORIZED:
         TournamentAction.invalidToken();
+        break;
+      case SNAKE_DEAD_EVENT:
+        GameAction.addDeadSnake(jsonData);
         break;
       default:
         console.log('Unrecognized datatype: ', jsonData.type);

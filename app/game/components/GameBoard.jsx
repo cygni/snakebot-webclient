@@ -10,10 +10,13 @@ import GameControl from './sidebar/GameControl.jsx';
 
 function getGameState() {
   const state = Store.getActiveGameState();
-  return { state };
+  const deadSnakes = Store.getDeadSnakes();
+
+  return {state, deadSnakes};
 }
 
 const propTypes = {
+  deadSnakes: React.PropTypes.array.isRequired,// eslint-disable-line
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
 };
@@ -35,9 +38,13 @@ class GameBoard extends React.Component {
   componentDidMount() {
     this.worldLayer = new createjs.Stage(this.canvas);
     this.snakeLayer = new createjs.Container();
+    this.deadSnakeLayer = new createjs.Container();
+    this.collisionLayer = new createjs.Container();
     createjs.Ticker.setFPS(lib.properties.fps);
     createjs.Ticker.addEventListener('tick', this.worldLayer);
+    this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
+    this.worldLayer.addChild(this.collisionLayer);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,13 +68,40 @@ class GameBoard extends React.Component {
     GameAction.pauseGame();
   }
 
-  renderGameBoard(map, tileSize, state) {
-    this.snakeLayer.removeAllChildren();
-    TileUtils.renderSnakes(this.snakeLayer, map, tileSize, state.colors);
-    TileUtils.renderFood(this.snakeLayer, map, tileSize);
+  renderDeadSnakes(mapEvent, tileSize, state) {
+    const allDeadSnakes = this.props.deadSnakes.filter(snake =>
+      (mapEvent.worldTick >= snake.worldTick && snake.worldTick + snake.ttl >= mapEvent.worldTick)
+    );
 
-    if (state.renderObstacles && map.obstaclePositions.length > 0) {
-      TileUtils.renderObstacles(this.worldLayer, map, tileSize);
+    const collisions = this.props.deadSnakes.filter(snake =>
+      mapEvent.worldTick === snake.worldTick
+    );
+
+    if (allDeadSnakes.length > 0) {
+      TileUtils.renderDeadSnakes(
+        this.deadSnakeLayer, mapEvent, allDeadSnakes, tileSize, state.colors
+      );
+      if (collisions.length > 0) {
+        TileUtils.renderCollisions(this.collisionLayer, collisions, tileSize);
+      } else {
+        this.collisionLayer.removeAllChildren();
+      }
+    } else {
+      this.deadSnakeLayer.removeAllChildren();
+      this.collisionLayer.removeAllChildren();
+    }
+  }
+
+  renderGameBoard(mapEvent, tileSize, state) {
+    this.snakeLayer.removeAllChildren();
+
+    this.renderDeadSnakes(mapEvent, tileSize, state);
+
+    TileUtils.renderSnakes(this.snakeLayer, mapEvent, tileSize, state.colors);
+    TileUtils.renderFood(this.snakeLayer, mapEvent, tileSize);
+
+    if (state.renderObstacles && mapEvent.obstaclePositions.length > 0) {
+      TileUtils.renderObstacles(this.worldLayer, mapEvent, tileSize);
     }
   }
 
@@ -79,7 +113,7 @@ class GameBoard extends React.Component {
       return;
     }
 
-    const size = mapIsEmpty ? { width: 0, height: 0 } : BoardUtils.calculateSize(map);
+    const size = mapIsEmpty ? {width: 0, height: 0} : BoardUtils.calculateSize(map);
     const tileSize = mapIsEmpty ? 0 : BoardUtils.getTileSize(map);
 
     GameBoard.validateCanvas(this.canvas, size);
@@ -94,7 +128,9 @@ class GameBoard extends React.Component {
           <canvas
             id="canvas"
             className="hidden"
-            ref={(c) => { this.canvas = c; }}
+            ref={(c) => {
+              this.canvas = c;
+            }}
           />
           <GameControl />
         </div>

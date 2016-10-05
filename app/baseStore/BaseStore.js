@@ -1,16 +1,9 @@
-import {
-  EventEmitter,
-} from 'events';
-import {
-  hashHistory,
-} from 'react-router';
+import { EventEmitter } from 'events';
+import { hashHistory } from 'react-router';
 import _ from 'lodash';
 import restclient from '../util/RestClient.js';
 import Socket from '../websocket/WebSocket';
-import {
-  register,
-
-} from '../dispatchers/AppDispatcher';
+import { register } from '../dispatchers/AppDispatcher';
 import Constants from '../constants/Constants';
 import Colors from '../util/Colors';
 
@@ -25,10 +18,11 @@ const searchResults = {
 let tournament = {};
 const _activeGameState = {};
 
+const deadSnakesList = [];
+
 const _hasActiveGame = () => !_.isEmpty(_activeGameState);
 
 // Handling the frame updating
-
 const _frameCount = () => {
   if (_hasActiveGame()) {
     return _activeGameState.mapEvents.length - 1;
@@ -216,7 +210,6 @@ const _addMapEvent = (event, emitChange) => {
   if (event.gameId !== _activeGameState.id) {
     console.error('Received map event for a different game than the active one', event);
   }
-
   _activeGameState.mapEvents.push(event.map);
   _assignSnakeColors(event.map);
 
@@ -228,6 +221,28 @@ const _addMapEvent = (event, emitChange) => {
     _startUpdatingFrames(emitChange);
   }
 };
+
+const _addDeadSnakeEvent = (event) => {
+  console.log(event);
+  const mapEvent = _activeGameState.mapEvents[event.gameTick];
+
+  const deadSnake = mapEvent.snakeInfos.find(snake =>
+    snake.id === event.playerId
+  );
+
+  deadSnake.deathX = event.x;
+  deadSnake.deathY = event.y;
+  deadSnake.ttl = 3;
+  deadSnake.worldTick = event.gameTick;
+  deadSnakesList.push(deadSnake);
+};
+
+const _addDeadSnakeEvents = (events) => {
+  events.forEach(event =>
+    _addDeadSnakeEvent(event)
+  );
+};
+
 
 // Methods using the the restclient
 
@@ -259,8 +274,9 @@ const _fetchActiveGame = (gameid, emitChange) => {
 
   restclient.fetchGame(
     gameid,
-    (mapEvents) => {
+    (mapEvents, snakeDeadEvents) => {
       _activeGameState.mapEvents = mapEvents;
+      _addDeadSnakeEvents(snakeDeadEvents);
       _assignSnakeColors(mapEvents[0]);
       _activeGameState.fetched = true;
       _renderObstacles(emitChange);
@@ -304,6 +320,10 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
 
   getActiveGameState() {
     return _activeGameState;
+  },
+
+  getDeadSnakes() {
+    return deadSnakesList;
   },
 
   getFrameCount() {
@@ -459,6 +479,9 @@ BaseStore.dispatcher = register(
         break;
       case Constants.FETCH_ACTIVE_TOURNAMENT:
         _fetchActiveTournament(emitChange);
+        break;
+      case Constants.ADD_DEAD_SNAKE_EVENT:
+        _addDeadSnakeEvent(action.event);
         break;
       default:
         console.log('Store received unknown action', action);
