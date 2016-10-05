@@ -210,7 +210,6 @@ const _addMapEvent = (event, emitChange) => {
   if (event.gameId !== _activeGameState.id) {
     console.error('Received map event for a different game than the active one', event);
   }
-  // event.map.hasDeadSnake = false;
   _activeGameState.mapEvents.push(event.map);
   _assignSnakeColors(event.map);
 
@@ -226,7 +225,6 @@ const _addMapEvent = (event, emitChange) => {
 const _addDeadSnakeEvent = (event) => {
   console.log(event);
   const mapEvent = _activeGameState.mapEvents[event.gameTick];
-  // mapEvent.hasDeadSnake = true;
 
   const deadSnake = mapEvent.snakeInfos.find(snake =>
     snake.id === event.playerId
