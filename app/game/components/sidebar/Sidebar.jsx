@@ -12,18 +12,43 @@ const propTypes = {
   state: React.PropTypes.object.isRequired,
 };
 
+const isSnakeDead = snake => snake.positions.length === 0;
+
+// Order by alive first, then by points, then by names
+const snakeOrdering = (snake1, snake2) => {
+  if (isSnakeDead(snake1) && !isSnakeDead(snake2)) {
+    return 1;
+  } else if (isSnakeDead(snake2) && !isSnakeDead(snake1)) {
+    return -1;
+  }
+
+  const pointDiff = snake2.points - snake1.points;
+  if (pointDiff !== 0) {
+    return pointDiff;
+  }
+
+  if (snake1.name > snake2.name) {
+    return 1;
+  } else if (snake2.name < snake2.name) {
+    return -1;
+  }
+  return 0;
+
+};
+
 const Sidebar = function Sidebar(props) {
   if (props.state && props.state.mapEvents) {
     const currentMap = props.state.mapEvents[props.state.currentFrame];
     const snakes = (currentMap && currentMap.snakeInfos) ? currentMap.snakeInfos : [];
-    snakes.sort((s1, s2) => s2.points - s1.points);
+    // TODO: live bots, dead bots, both by points
+    snakes.sort(snakeOrdering);
 
     const snakeColor = (snake) => {
-      if (snake.positions.length > 0) {
-        return props.state.colors[snake.id];
+      if (isSnakeDead(snake)) {
+        return '000000';
       }
 
-      return '000000';
+      return props.state.colors[snake.id];
     };
     const snakeHead = snake => Images.getSnakeHead(snakeColor(snake));
 
