@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { hashHistory } from 'react-router';
 import _ from 'lodash';
-import restclient from '../util/RestClient.js';
+import restclient from '../util/RestClient';
 import Socket from '../websocket/WebSocket';
 import { register } from '../dispatchers/AppDispatcher';
 import Constants from '../constants/Constants';

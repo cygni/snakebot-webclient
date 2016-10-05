@@ -12,24 +12,27 @@ const propTypes = {
   location: React.PropTypes.object.isRequired,
 };
 
+function cleanState() {
+  return {
+    user: '',
+    password: '',
+  };
+}
+
 class LoginPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      user: '',
-      password: '',
-    };
+    this.state = cleanState();
 
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
-    this.auth = new AuthService();
     this.handleUserChange = this.handleUserChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
 
   login(e) {
     e.preventDefault();
-    this.auth.login(
+    AuthService.login(
       this.state.user,
       this.state.password,
       () => {
@@ -41,13 +44,16 @@ class LoginPage extends React.Component {
         }
       },
       () => {
-        alert('There was an error logging in');
+        console.log(this);
+        this.setState({
+          error: 'There was an error logging in, did you type your username and password correctly?',
+        });
       });
   }
 
   logout() {
-    this.auth.logout();
-    this.state = { user: '', password: '' };
+    AuthService.logout();
+    this.state = cleanState();
   }
 
   handleUserChange(e) {
@@ -92,6 +98,9 @@ class LoginPage extends React.Component {
             />
             <button type="submit">Sign in</button>
           </form>
+          <span style={{ color: 'red' }}>
+            {this.state.error ? this.state.error : ''}
+          </span>
         </Col>
       </Row>
     );

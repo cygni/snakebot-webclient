@@ -1,12 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
 import Store from '../../baseStore/BaseStore';
-import StoreWatch from './watch/StoreWatch.jsx';
+import StoreWatch from './watch/StoreWatch';
 import BoardUtils from '../../util/BoardUtils';
 import TileUtils from '../../util/TileUtils';
 import GameAction from '../../game/action/game-actions';
-import Sidebar from './sidebar/Sidebar.jsx';
-import GameControl from './sidebar/GameControl.jsx';
+import Sidebar from './sidebar/Sidebar';
+import GameControl from './sidebar/GameControl';
 
 function getGameState() {
   const state = Store.getActiveGameState();

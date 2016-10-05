@@ -2,9 +2,9 @@ import React from 'react';
 import { Grid } from 'react-bootstrap';
 
 import Store from '../../../baseStore/BaseStore';
-import StoreWatch from '../../watch/StoreWatch.jsx';
-import CreateTournamentForm from './../forms/CreateTournamentForm.jsx';
-import ConfigureTournamentForm from './../forms/ConfigureTournamentForm.jsx';
+import StoreWatch from '../../watch/StoreWatch';
+import CreateTournamentForm from './../forms/CreateTournamentForm';
+import ConfigureTournamentForm from './../forms/ConfigureTournamentForm';
 
 function getActiveTournament() {
   const tournament = Store.getActiveTournament();

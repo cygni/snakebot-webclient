@@ -12,13 +12,9 @@
     "no-underscore-dangle": ["off"],
     "prefer-template": 0,
     "no-use-before-define": ["error", "nofunc"],
-    "no-param-reassign": ["error", {
-      "props": false
-    }],
     "new-cap": ["error", {
       "properties": false
     }],
-    "class-methods-use-this": ["warn"],
     "no-console": ["off"]
   }
 }

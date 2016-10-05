@@ -2,9 +2,9 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 
 import TournamentStore from '../../../baseStore/BaseStore';
-import StoreWatch from '../../watch/StoreWatch.jsx';
+import StoreWatch from '../../watch/StoreWatch';
 import TournamentAction from '../../action/tournament-actions';
-import FinalPlacementList from '../players/FinalPlacementList.jsx';
+import FinalPlacementList from '../players/FinalPlacementList';
 
 function getGamePlan() {
   const gamePlan = TournamentStore.getTournamentGamePlan();

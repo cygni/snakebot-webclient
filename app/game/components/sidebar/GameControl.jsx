@@ -1,7 +1,7 @@
 import React from 'react';
 
 import GameAction from '../../action/game-actions';
-import StoreWatch from '../watch/StoreWatch.jsx';
+import StoreWatch from '../watch/StoreWatch';
 import GameStore from '../../../baseStore/BaseStore';
 
 import Backwards from '../../../design/images/icons/icon-backwards.svg';

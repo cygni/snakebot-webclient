@@ -1,6 +1,6 @@
 import React from 'react';
-import Header from './header/PageHeader.jsx';
-import PageFooter from './footer/PageFooter.jsx';
+import Header from './header/PageHeader';
+import PageFooter from './footer/PageFooter';
 import '../../design/styles/stylesheet.scss';
 
 const propTypes = {

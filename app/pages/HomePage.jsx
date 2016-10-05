@@ -26,7 +26,7 @@ function HomePage() {
         Snake Bot and you will be competing against other bots!
         The concept is simple, your snake can move UP, DOWN, RIGHT
         or LEFT and the winner is the last snake alive. Extra points are awarded
-        when eating stars or nibbling on other snake's tails. Look out for the
+        when eating stars or nibbling on other snake&apos;s tails. Look out for the
         black holes though!
       </p>
       <p>

@@ -35,6 +35,9 @@ console.log('Building version: ' + configuration.version);
 console.log('Using snake server host: ' + configuration.server);
 
 module.exports = {
+  resolve: {
+    extensions: ['', '.js', '.jsx'],
+  },
   entry: './app/App.jsx',
   output: {
     path: './dist',

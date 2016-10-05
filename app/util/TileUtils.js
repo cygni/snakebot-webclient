@@ -257,6 +257,7 @@ function _renderFood(stage, map, tileSize) {
 
     const yPos = pos.y * tileSize;
     const xPos = pos.x * tileSize;
+
     const star = new createjs.Bitmap(image);
     star.scaleX = tileSize / star.image.width;
     star.scaleY = tileSize / star.image.height;

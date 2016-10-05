@@ -1,7 +1,7 @@
 import React from 'react';
-import StoreWatch from '../watch/StoreWatch.jsx';
+import StoreWatch from '../watch/StoreWatch';
 import GameStore from '../../../baseStore/BaseStore';
-import Images from '../../../constants/Images.js';
+import Images from '../../../constants/Images';
 
 function getActiveGame() {
   const state = GameStore.getActiveGameState();

@@ -2,9 +2,9 @@ import React from 'react';
 import { Row, Col, input, Button, ButtonGroup } from 'react-bootstrap';
 
 import Store from '../../../baseStore/BaseStore';
-import StoreWatch from '../../watch/StoreWatch.jsx';
+import StoreWatch from '../../watch/StoreWatch';
 import Action from '../../action/tournament-actions';
-import PlayerList from '../players/PlayerList.jsx';
+import PlayerList from '../players/PlayerList';
 
 
 function getSettings() {

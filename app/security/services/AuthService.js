@@ -4,7 +4,7 @@ import Config from 'Config'; // eslint-disable-line
 import Action from '../../tournament/action/tournament-actions';
 
 class AuthService {
-  login(username, password, success, error) {
+  static login(username, password, success, error) {
     const client = rest.wrap(errorCode);
     client({ path: `${Config.server}/login?login=${username}&password=${password}` })
       .then(
@@ -20,7 +20,7 @@ class AuthService {
         });
   }
 
-  logout() {
+  static logout() {
     Action.logoutUser();
   }
 }

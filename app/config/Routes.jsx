@@ -6,19 +6,19 @@ import {
   hashHistory,
 } from 'react-router';
 
-import LoginPage from '../security/components/LoginPage.jsx';
-import Gameboard from '../game/components/GameBoard.jsx';
-import PageTemplate from '../common/templates/PageTemplate.jsx';
-import HomePage from '../pages/HomePage.jsx';
-import GettingStartedPage from '../pages/GettingStartedPage.jsx';
-import AboutPage from '../pages/AboutPage.jsx';
-import StatusPage from '../pages/StatusPage.jsx';
+import LoginPage from '../security/components/LoginPage';
+import Gameboard from '../game/components/GameBoard';
+import PageTemplate from '../common/templates/PageTemplate';
+import HomePage from '../pages/HomePage';
+import GettingStartedPage from '../pages/GettingStartedPage';
+import AboutPage from '../pages/AboutPage';
+import StatusPage from '../pages/StatusPage';
 
-import TournamentSettings from '../tournament/components/settings/TournamentSettings.jsx';
-import Bracket from '../tournament/components/bracket/Bracket.jsx';
-import GameSearch from '../game/search/GameSearch.jsx';
-import Store from '../baseStore/BaseStore.js';
-import TournamentAction from '../tournament/action/tournament-actions.js';
+import TournamentSettings from '../tournament/components/settings/TournamentSettings';
+import Bracket from '../tournament/components/bracket/Bracket';
+import GameSearch from '../game/search/GameSearch';
+import Store from '../baseStore/BaseStore';
+import TournamentAction from '../tournament/action/tournament-actions';
 
 function enterTournamentPage(nextState, replace) {
   TournamentAction.fetchActiveTournament();

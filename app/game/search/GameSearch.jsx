@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import GameAction from '../action/game-actions.js';
+import GameAction from '../action/game-actions';
 import GameStore from '../../baseStore/BaseStore';
-import StoreWatch from '../components/watch/StoreWatch.jsx';
+import StoreWatch from '../components/watch/StoreWatch';
 
 function getSearchResults() {
   const searchResults = GameStore.getSearchResults();
