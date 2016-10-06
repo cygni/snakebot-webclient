@@ -3,7 +3,6 @@ import {
   Link,
 } from 'react-router';
 import '../design/styles/stylesheet.scss';
-import exampleGame from '../design/images/matter/example_game.gif';
 import Config from 'Config'; // eslint-disable-line
 
 function HomePage() {
@@ -31,11 +30,20 @@ function HomePage() {
       </p>
       <p>
         <Link to="gettingstarted">Getting started</Link> is really easy.
-        We have implementations in several popular programming languages. Checkout
+        We have implementations in several popular programming languages. Clone
         an example Snake bot and get going!
       </p>
       <p>
-        <img src={exampleGame} alt="Example game" />
+        Checkout the screencasts below:
+      </p>
+      <p>
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/videoseries?list=PL_mlNK0QR9ykOvFg3z4nmAT_aZxCVCrD4"
+          frameBorder="0"
+          allowFullscreen
+        />
       </p>
     </section>
   );
