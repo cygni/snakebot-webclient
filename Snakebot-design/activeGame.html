@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Active game</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link href="stylesheet.css" rel="stylesheet" />
+</head>
+<body >
+    <header class="clear-fix">
+        <img src="img/snakelogo.png" alt="Snakebot-logo"/>
+        <nav>
+            <ul>
+                <li><a href="index.html">Start</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="gettingstarted.html">Getting started</a></li>
+                <li><a href="activeGame.html" class="selected">Games</a></li>
+                <li><a href="tournament.html">Tournaments</a></li>
+                <li><a href="login.html">Log in</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="page clear-fix">
+        <div class="thegame clear-fix">
+            <div class="box activePlayers">
+                <ul>
+                    <li><figure><img src="img/blue.svg" alt="Blue player"></figure><strong>19</strong> Player name</li>
+                    <li><figure><img src="img/green.svg" alt="Green player"></figure><strong>15</strong> This is a player sds dddd deee dasdsad</li>
+                    <li><figure><img src="img/orange.svg" alt="Orange player"></figure><strong>12</strong> Just one more</li>
+                    <li><figure><img src="img/pink.svg" alt="Pink player"></figure><strong>8</strong> A person</li>
+                    <li><figure><img src="img/Purple.svg" alt="Purple player"></figure><strong>7</strong> A player</li>
+                    <li><figure><img src="img/white.svg" alt="White player"></figure><strong>4</strong> One more time </li>
+                    <li><figure><img src="img/yellow.svg" alt="Yellow player"></figure><strong>2</strong> Egon</li>
+                </ul>
+
+            </div><!--- activePlayers -->
+            <div class="gameboard">
+                <img src="img/gameBackground.png" alt="Spelplan" />
+                <div class="box controlpanel">
+                    <input type="range" step="100" min="100" max="2000" value="200" class="react-native-slider">
+                    <div class="controlbuttons">
+                        <input type="image" src="img/icon-backwards.svg" name="ButtonBackwards" class="backwardsButton"/>
+                        <input type="image" src="img/icon-play.svg" name="PlayButton" class="playButton"/>
+                        <input type="image" src="img/icon-forward.svg" name="ButtonForward" class="forwardButton"/>
+                    </div>
+                </div><!-- end controlpanel -->
+            </div><!-- end gameboard -->
+        </div>
+        
+        
+    </section>
+    
+    <footer class="clear-fix">
+        <img src="img/cygni_vit.svg" alt="Cygni logo"/>
+        <p>Jakobsbergsgatan 22, 111 44 STOCKHOLM </p>
+    </footer>
+
+</body>
+</html>
