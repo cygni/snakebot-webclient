@@ -67,7 +67,7 @@ class GameControl extends React.Component {
   render() {
     const state = this.getState();
     return (
-      <div className="controlpanel">
+      <div className="box controlpanel">
         <input
           type="range"
           step="1"

@@ -58,13 +58,15 @@ const Sidebar = function Sidebar(props) {
     const snakeHead = snake => Images.getSnakeHead(snakeColor(snake));
 
     return (
-      <div className="active-players">
+      <div className="box activePlayers">
         <ul>
           {
             snakes.map(snake => (
               <li key={snake.id}>
-                <img src={snakeHead(snake)} alt={snakeColor(snake)} />
-                <strong>{snake.points} {snake.name}</strong>
+                <figure>
+                  <img src={snakeHead(snake)} alt={snakeColor(snake)} />
+                </figure>
+                <strong>{snake.points}</strong> {snake.name}
               </li>
             ))}
         </ul>

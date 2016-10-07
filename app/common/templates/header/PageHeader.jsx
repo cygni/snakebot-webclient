@@ -26,16 +26,17 @@ const PageHeader = () => {
       </Link>
       <nav>
         <ul>
-          <li><Link to="about" activeClassName="active">ABOUT</Link></li>
-          <li><Link to="gettingstarted" activeClassName="active">GETTING STARTED</Link></li>
-          <li><Link to="viewgame" activeClassName="active">GAMES</Link></li>
+          <li><Link to="" activeClassName="selected">Start</Link></li>
+          <li><Link to="about" activeClassName="selected">About</Link></li>
+          <li><Link to="gettingstarted" activeClassName="selected">Getting started</Link></li>
+          <li><Link to="viewgame" activeClassName="selected">Games</Link></li>
           {loggedIn ?
-            <li><Link to="tournament" activeClassName="active">TOURNAMENT</Link></li>
+            <li><Link to="tournament" activeClassName="selected">Tournament</Link></li>
             : null
           }
           {loggedIn ?
-            <li> <button className="btn-link" onClick={tryLogout}>LOG OUT</button> </li> :
-            <li><Link to="auth" activeClassName="active">LOG IN</Link></li>
+            <li><a href="" onClick={tryLogout}>Log out</a></li> :
+            <li><Link to="auth" activeClassName="selected">Log in</Link></li>
           }
         </ul>
       </nav>

@@ -106,18 +106,18 @@ class GameBoard extends React.Component {
   render() {
     const size = BoardUtils.calculateSize();
     return (
-      <section className="clear-fix">
-        <Sidebar />
-        <div className="gameboard">
-          <canvas
-            id="canvas"
-            width={size.width}
-            height={size.height}
-            ref={(c) => {
-              this.canvas = c;
-            }}
-          />
-          <GameControl />
+      <section className="page clear-fix">
+        <div className="thegame clear-fix">
+          <Sidebar />
+          <div className="gameboard">
+            <canvas
+              id="canvas"
+              width={size.width}
+              height={size.height}
+              ref={(c) => { this.canvas = c; }}
+            />
+            <GameControl />
+          </div>
         </div>
       </section>
     );

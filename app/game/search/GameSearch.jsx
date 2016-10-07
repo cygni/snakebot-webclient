@@ -57,31 +57,50 @@ class GameSearch extends React.Component {
         >No result found</p>);
     } else {
       results = (
-        <ul> {
+        <ul className="searchresults"> {
           this.props.searchResults.matchingGames.map((game, index) => (
             <li key={index}>
-              <Link to={{ pathname: '/viewgame/' + game.gameId }}>{index}: {game.gameId} </Link>
+              <h3 className="searchheadline">
+                <Link to={{ pathname: '/viewgame/' + game.gameId }}>
+                  <span className="date">Date: {game.gameDate}</span>
+                </Link>
+              </h3>
+              <ul className="players"> {
+                game.players.map((player, i) => (
+                  <li key={i} className={(this.state.searchName === player ? 'match' : '')}>
+                    { player }
+                  </li>
+                ))}
+              </ul>
             </li>
           ))}
         </ul>);
     }
 
     return (
-      <div className="information">
-        <h2>Search for games by snake name</h2>
-        <form className="commentForm" onSubmit={this.handleSubmit}>
-          <input
-            id="yourName"
-            type="text"
-            value={this.props.text}
-            placeholder="Your name"
-            onChange={this.handleChange}
-          />
-          <input type="submit" value="Search" />
-        </form>
-        <h2>Search results</h2>
-        { results }
-      </div>
+      <section className="page clear-fix">
+        <article>
+          <h1>Search for old games</h1>
+          <p className="searchintro">
+            You can find old games here by searching for the snake name.
+          </p>
+          <div className="text-content">
+            <form className="clear-fix" onSubmit={this.handleSubmit}>
+              <input
+                id="yourName"
+                type="text"
+                value={this.props.text}
+                placeholder="Snake name"
+                onChange={this.handleChange}
+                className="searchfield"
+              />
+              <input className="searchbtn" type="submit" value="Search" />
+            </form>
+            <h2 className="searchresultsheadline">Results</h2>
+            { results }
+          </div>
+        </article>
+      </section>
     );
   }
 }
