@@ -333,6 +333,10 @@ li {
     text-overflow: ellipsis;
 }
 
+.game li:hover {
+    background-color: #f7f7e9;
+}
+
 
 .spacer {
     background-color: #ddd;
@@ -358,12 +362,16 @@ li {
     padding: 1rem;
 }
 
+.thefinalwinner li:hover {
+    background-color: gold;
+}
+
 .winner {
     
 }
 
-.looser {
-    background-color: #eee!important;
+li.looser {
+    background-color: #eee;
     color: #999;
 }
 
@@ -378,6 +386,18 @@ li {
     height: 16px;
     float: right;
     margin-top: 3px;
+}
+
+li.gotogame {
+    background-color: transparent;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+}
+
+li.gotogame:hover {
+    background-color: transparent;
 }
 
 /* Gameboard with controlls */
