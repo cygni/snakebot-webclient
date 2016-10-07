@@ -1,0 +1,86 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" x="0px" y="0px" width="40px" height="40px" viewBox="0 0 40 40">
+<defs>
+<radialGradient id="Gradient_1" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="18.900000000000006" fx="0" fy="0" gradientTransform="matrix( 0.9999999999999998, 0, 0, 0.9999999999999998, 18,18) " spreadMethod="pad">
+<stop  offset="0%" stop-color="#F1BC14"/>
+
+<stop  offset="100%" stop-color="#FFDF4A" stop-opacity="0"/>
+</radialGradient>
+
+<filter id="Filter_1" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+<feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.27 0" result="result1"/>
+</filter>
+
+<g id="Fade_0_Layer0_0_FILL">
+<path fill="url(#Gradient_1)" stroke="none" d="
+M 30.7 30.7
+Q 36 25.45 36 18 36 10.55 30.7 5.25 25.45 0 18 0 10.55 0 5.25 5.25 0 10.55 0 18 0 25.45 5.25 30.7 10.55 36 18 36 25.45 36 30.7 30.7 Z"/>
+</g>
+
+<g id="Star_2_0_Layer1_0_FILL">
+<path fill="#FFDF4A" stroke="none" d="
+M -8.2 4.55
+L -8.1 4.65 -12.4 19 -12.35 19 0.05 0.15
+Q -4.1 2.35 -8.2 4.55
+M -5.05 -4.9
+L -19.95 -4.55 -19.95 -4.5 -0.05 0 -5.05 -4.9
+M 0.05 0.05
+L 8.15 4.65 8.1 4.55 20 -4.5 0.05 0.05
+M 0.05 0.15
+L 0.05 10.65 12.4 19.05 0.05 0.15
+M 5.1 -4.9
+L 5.05 -4.9 0.05 -19.05 0 -18.9 0 0 0.05 0.05 5.1 -4.9 Z"/>
+
+<path fill="#F1BC14" stroke="none" d="
+M 8.15 4.65
+L 0.05 0.05 0 0 0 -18.9 -5.05 -4.9 -0.05 0 -19.95 -4.5 -8.2 4.55
+Q -4.1 2.35 0.05 0.15
+L 12.4 19.05 8.15 4.65
+M 0.05 10.65
+L 0.05 0.15 -12.35 19 0 10.6 0.05 10.65
+M 20 -4.5
+L 5.1 -4.9 0.05 0.05 20 -4.5 Z"/>
+</g>
+
+<g id="Star_2_0_Layer0_0_FILL">
+<path fill="#FFDF4A" stroke="none" d="
+M -8.1 4.65
+L -12.4 19 -12.35 19 0.05 0.15
+Q -4.1 2.35 -8.2 4.55
+L -8.1 4.65
+M -5.05 -4.9
+L -19.95 -4.55 -19.95 -4.5 -0.05 0 -5.05 -4.9
+M 0.05 0.05
+L 8.15 4.65 8.1 4.55 20 -4.5 0.05 0.05
+M 0.05 10.65
+L 12.4 19.05 0.05 0.15 0.05 10.65
+M 5.05 -4.9
+L 0.05 -19.05 0 -18.9 0 0 0.05 0.05 5.1 -4.9 5.05 -4.9 Z"/>
+
+<path fill="#F1BC14" stroke="none" d="
+M 0.05 10.65
+L 0.05 0.15 -12.35 19 0 10.6 0.05 10.65
+M 0.05 0.15
+L 12.4 19.05 8.15 4.65 0.05 0.05 0 0 0 -18.9 -5.05 -4.9 -0.05 0 -19.95 -4.5 -8.2 4.55
+Q -4.1 2.35 0.05 0.15
+M 20 -4.5
+L 5.1 -4.9 0.05 0.05 20 -4.5 Z"/>
+</g>
+</defs>
+
+<g transform="matrix( 1, 0, 0, 1, 2,2) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use filter="url(#Filter_1)" xlink:href="#Fade_0_Layer0_0_FILL"/>
+</g>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 20,20) ">
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Star_2_0_Layer1_0_FILL"/>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Star_2_0_Layer0_0_FILL"/>
+</g>
+</g>
+</svg>

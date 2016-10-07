@@ -317,28 +317,22 @@ li {
     list-style: none;
     padding: 0;
     width: 200px;
-    background-color: #fff;
     margin: 0 1rem;
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 0;
     overflow: auto;
 }
 
 .game li {
-    border-top: 1px solid #ddd;
-    padding: 8px 0 0 0;
-    margin: 8px 0 0 0;
+    background-color: #fff;
+    padding: 5px 10px;
+    margin:0 0 3px 0;
     font-size:14px;
+    border-radius: 6px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.game li:first-child {
-    border-top: none;
-    margin-top: 0;
-    padding-top: 0;
-}
 
 .spacer {
     background-color: #ddd;
@@ -349,7 +343,6 @@ li {
 
 .thefinalwinner {
     display: block;
-    background-color: gold;
     width: 400px;
     margin: auto;
     margin-bottom: 3rem;
@@ -361,24 +354,30 @@ li {
     font-weight: bold;
     text-align: center;
     text-transform: uppercase;
+    background-color: gold;
+    padding: 1rem;
 }
 
 .winner {
-    font-weight: bold;
+    
 }
 
 .looser {
-    color: #bbb;
+    background-color: #eee!important;
+    color: #999;
 }
 
 .points {
     display: inline-block;
     width: 24px;
-    height: 24px;
-    background-color: #ddd;
-    text-align: center;
-    line-height: 24px;
-    border-radius:6px;
+    font-weight: bold;
+}
+
+.livedlongest {
+    width: 16px;
+    height: 16px;
+    float: right;
+    margin-top: 3px;
 }
 
 /* Gameboard with controlls */
