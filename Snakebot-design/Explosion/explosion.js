@@ -114,49 +114,31 @@ p.nominalBounds = new cjs.Rectangle(-92.2,-94.2,190.8,188.5);
 (lib.explosion = function(mode,startPosition,loop) {
 if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
 
-	// Orange copy 2
+	// Orange
 	this.instance = new lib.Exploasionlayerorange();
 	this.instance.parent = this;
 	this.instance.setTransform(20,20.1,0.05,0.05);
 	this.instance.alpha = 0;
 	this.instance._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance).wait(28).to({_off:false},0).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},5).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},5,cjs.Ease.get(0.1)).wait(1));
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(11).to({_off:false},0).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},5).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},5,cjs.Ease.get(0.3)).wait(1));
 
-	// Yellow copy
+	// Yellow
 	this.instance_1 = new lib.Exploasionlayeryellow();
 	this.instance_1.parent = this;
 	this.instance_1.setTransform(20,20.1,0.05,0.05);
 	this.instance_1.alpha = 0;
 	this.instance_1._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_1).wait(21).to({_off:false},0).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},5).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},5,cjs.Ease.get(0.1)).to({_off:true},1).wait(7));
+	this.timeline.addTween(cjs.Tween.get(this.instance_1).wait(4).to({_off:false},0).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},5).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},5,cjs.Ease.get(0.1)).to({_off:true},1).wait(7));
 
 	// Orange copy
 	this.instance_2 = new lib.Exploasionlayerorange();
 	this.instance_2.parent = this;
 	this.instance_2.setTransform(20,20.1,0.05,0.05);
 	this.instance_2.alpha = 0;
-	this.instance_2._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_2).wait(14).to({_off:false},0).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},5).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},5,cjs.Ease.get(0.1)).to({_off:true},1).wait(14));
-
-	// Yellow
-	this.instance_3 = new lib.Exploasionlayeryellow();
-	this.instance_3.parent = this;
-	this.instance_3.setTransform(20,20.1,0.05,0.05);
-	this.instance_3.alpha = 0;
-	this.instance_3._off = true;
-
-	this.timeline.addTween(cjs.Tween.get(this.instance_3).wait(7).to({_off:false},0).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},5).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},5,cjs.Ease.get(0.1)).to({_off:true},1).wait(21));
-
-	// Orange
-	this.instance_4 = new lib.Exploasionlayerorange();
-	this.instance_4.parent = this;
-	this.instance_4.setTransform(20,20.1,0.05,0.05);
-	this.instance_4.alpha = 0;
-
-	this.timeline.addTween(cjs.Tween.get(this.instance_4).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},5).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},5,cjs.Ease.get(0.1)).to({_off:true},1).wait(28));
+	this.timeline.addTween(cjs.Tween.get(this.instance_2).to({regX:0.7,regY:0.7,scaleX:0.08,scaleY:0.08,alpha:1},2).to({regX:0,regY:0,scaleX:0.14,scaleY:0.14},3).to({regX:0.3,scaleX:0.16,scaleY:0.16},2).to({regX:0,scaleX:0.21,scaleY:0.21,alpha:0},3,cjs.Ease.get(0.1)).to({_off:true},1).wait(15));
 
 }).prototype = p = new cjs.MovieClip();
 p.nominalBounds = new cjs.Rectangle(35.3,35.3,9.6,9.5);
