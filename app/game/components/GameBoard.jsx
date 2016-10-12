@@ -75,12 +75,9 @@ class GameBoard extends React.Component {
       );
       if (collisions.length > 0) {
         TileUtils.renderCollisions(this.collisionLayer, collisions, tileSize);
-      } else {
-        this.collisionLayer.removeAllChildren();
       }
     } else {
       this.deadSnakeLayer.removeAllChildren();
-      this.collisionLayer.removeAllChildren();
     }
   }
 

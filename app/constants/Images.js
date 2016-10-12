@@ -1,5 +1,4 @@
 import star from '../design/images/star/star.svg';
-
 import snake0EBDE7 from '../design/images/snakes/0EBDE7/0EBDE7.png';
 import snake3CC321 from '../design/images/snakes/3CC321/3CC321.png';
 import snakeFF8F35 from '../design/images/snakes/FF8F35/FF8F35.png';
@@ -11,7 +10,7 @@ import snake000000 from '../design/images/snakes/000000/000000.png';
 import snakeFF4848 from '../design/images/snakes/FF4848/FF4848.png';
 import snake9AF48E from '../design/images/snakes/9AF48E/9AF48E.png';
 import snake9BF3F0 from '../design/images/snakes/9BF3F0/9BF3F0.png';
-
+import deadSnakeHead from '../design/images/snakes/999999/999999.svg';
 import snake0EBDE7Tail from '../design/images/snakes/0EBDE7/0EBDE7_TAIL.png';
 import snake3CC321Tail from '../design/images/snakes/3CC321/3CC321_TAIL.png';
 import snakeFF8F35Tail from '../design/images/snakes/FF8F35/FF8F35_TAIL.png';
@@ -23,8 +22,12 @@ import snake000000Tail from '../design/images/snakes/000000/000000_TAIL.png';
 import snakeFF4848Tail from '../design/images/snakes/FF4848/FF4848_TAIL.png';
 import snake9AF48ETail from '../design/images/snakes/9AF48E/9AF48E_TAIL.png';
 import snake9BF3F0Tail from '../design/images/snakes/9BF3F0/9BF3F0_TAIL.png';
+import deadSnakeTail from '../design/images/snakes/999999/999999_TAIL.svg';
+
 
 const starImg = star;
+const deadTailImg = deadSnakeTail;
+const deadHeadImg = deadSnakeHead;
 
 function _getSnakeHead(color) {
   switch (color) {
@@ -86,6 +89,8 @@ function _getSnakeTail(color) {
 
 export default {
   STAR: starImg,
+  DEAD_HEAD: deadHeadImg,
+  DEAD_TAIL: deadTailImg,
   getSnakeHead(color) {
     return _getSnakeHead(color);
   },

@@ -1,145 +1,145 @@
-import TileTypes from '../constants/TileTypes';
-import Images from '../constants/Images';
+import TileTypes from "../constants/TileTypes";
+import Images from "../constants/Images";
 
-function isConnectingPart(me, map, x, y) {
-  const tile = _getTileAt(x, y, map);
-  return tile.playerId === me.playerId && Math.abs(tile.order - me.order) <= 1;
-}
+// function isConnectingPart(me, map, x, y) {
+//   const tile = _getTileAt(x, y, map);
+//   return tile.playerId === me.playerId && Math.abs(tile.order - me.order) <= 1;
+// }
 
-function getTileType(me, x, y, map) {
-  if (!me.playerId) {
-    return 'none';
-  }
+// function getTileType(me, x, y, map) {
+//   if (!me.playerId) {
+//     return 'none';
+//   }
+//
+//   const hasTop = isConnectingPart(me, map, x, y - 1) ? 0x1000 : 0;
+//   const hasRight = isConnectingPart(me, map, x + 1, y) ? 0x0100 : 0;
+//   const hasBot = isConnectingPart(me, map, x, y + 1) ? 0x0010 : 0;
+//   const hasLeft = isConnectingPart(me, map, x - 1, y) ? 0x0001 : 0;
+//
+//   // it works, so we'll allow it for now
+//   const config = hasTop | hasBot | hasLeft | hasRight; // eslint-disable-line
+//
+//   switch (config) {
+//     case 0x1000:
+//       return 'endBottom';
+//     case 0x0100:
+//       return 'endLeft';
+//     case 0x0010:
+//       return 'endTop';
+//     case 0x0001:
+//       return 'endRight';
+//     case 0x0101:
+//       return 'vertical';
+//     case 0x1010:
+//       return 'horizontal';
+//     case 0x0011:
+//       return 'rightTopCorner';
+//     case 0x0110:
+//       return 'leftTopCorner';
+//     case 0x1001:
+//       return 'rightBotCorner';
+//     case 0x1100:
+//       return 'leftBotCorner';
+//     case 0x0000:
+//       return 'single';
+//     default:
+//       return 'none';
+//   }
+// }
 
-  const hasTop = isConnectingPart(me, map, x, y - 1) ? 0x1000 : 0;
-  const hasRight = isConnectingPart(me, map, x + 1, y) ? 0x0100 : 0;
-  const hasBot = isConnectingPart(me, map, x, y + 1) ? 0x0010 : 0;
-  const hasLeft = isConnectingPart(me, map, x - 1, y) ? 0x0001 : 0;
+// function _getTileAt(x, y, map) {
+//   const atCoordinate = pos => pos.x === x && pos.y === y;
+//
+//   if (map.foodPositions.some(atCoordinate)) {
+//     return {
+//       content: TileTypes.FOOD,
+//     };
+//   } else if (map.obstaclePositions.some(atCoordinate)) {
+//     return {
+//       content: TileTypes.OBSTACLE,
+//     };
+//   }
+//
+//   let tile = {content: TileTypes.EMPTY};
+//
+//   map.snakeInfos.forEach((snakeInfo) => {
+//     snakeInfo.positions.forEach((snakePosition, index) => {
+//       if (atCoordinate(snakePosition)) {
+//         tile = {
+//           content: index === 0 ? TileTypes.SNAKE_HEAD : TileTypes.SNAKE_BODY,
+//           playerId: snakeInfo.id,
+//           order: index,
+//         };
+//       }
+//     });
+//   });
+//
+//   return tile;
+// }
 
-  // it works, so we'll allow it for now
-  const config = hasTop | hasBot | hasLeft | hasRight; // eslint-disable-line
-
-  switch (config) {
-    case 0x1000:
-      return 'endBottom';
-    case 0x0100:
-      return 'endLeft';
-    case 0x0010:
-      return 'endTop';
-    case 0x0001:
-      return 'endRight';
-    case 0x0101:
-      return 'vertical';
-    case 0x1010:
-      return 'horizontal';
-    case 0x0011:
-      return 'rightTopCorner';
-    case 0x0110:
-      return 'leftTopCorner';
-    case 0x1001:
-      return 'rightBotCorner';
-    case 0x1100:
-      return 'leftBotCorner';
-    case 0x0000:
-      return 'single';
-    default:
-      return 'none';
-  }
-}
-
-function _getTileAt(x, y, map) {
-  const atCoordinate = pos => pos.x === x && pos.y === y;
-
-  if (map.foodPositions.some(atCoordinate)) {
-    return {
-      content: TileTypes.FOOD,
-    };
-  } else if (map.obstaclePositions.some(atCoordinate)) {
-    return {
-      content: TileTypes.OBSTACLE,
-    };
-  }
-
-  let tile = { content: TileTypes.EMPTY };
-
-  map.snakeInfos.forEach((snakeInfo) => {
-    snakeInfo.positions.forEach((snakePosition, index) => {
-      if (atCoordinate(snakePosition)) {
-        tile = {
-          content: index === 0 ? TileTypes.SNAKE_HEAD : TileTypes.SNAKE_BODY,
-          playerId: snakeInfo.id,
-          order: index,
-        };
-      }
-    });
-  });
-
-  return tile;
-}
-
-function buildTileObject(tile, key, tileSize, _activeGame) {
-  let item = {};
-
-  switch (tile.content) {
-    default:
-      break;
-    case TileTypes.EMPTY: {
-      item = {
-        key,
-        height: tileSize,
-        width: tileSize,
-        color: '',
-        type: TileTypes.EMPTY,
-      };
-      break;
-    }
-    case TileTypes.SNAKE_BODY: {
-      const snake = _activeGame.players.find(s => s.id === tile.playerId);
-
-      item = {
-        key,
-        height: tileSize,
-        width: tileSize,
-        color: snake && snake.alive ? snake.color : 'grey',
-        type: TileTypes.SNAKE_BODY,
-        tileType: tile.tileType,
-      };
-      break;
-    }
-    case TileTypes.SNAKE_HEAD: {
-      const snake = _activeGame.players.find(s => s.id === tile.playerId);
-      item = {
-        key,
-        height: tileSize,
-        width: tileSize,
-        color: snake && snake.alive ? snake.color : 'grey',
-        type: TileTypes.SNAKE_HEAD,
-      };
-      break;
-    }
-    case TileTypes.OBSTACLE: {
-      item = {
-        key,
-        height: tileSize,
-        width: tileSize,
-        color: 'black',
-        type: TileTypes.OBSTACLE,
-      };
-      break;
-    }
-    case TileTypes.FOOD: {
-      item = {
-        key,
-        height: tileSize,
-        width: tileSize,
-        color: 'green',
-        type: TileTypes.FOOD,
-      };
-      break;
-    }
-  }
-  return item;
-}
+// function buildTileObject(tile, key, tileSize, _activeGame) {
+//   let item = {};
+//
+//   switch (tile.content) {
+//     default:
+//       break;
+//     case TileTypes.EMPTY: {
+//       item = {
+//         key,
+//         height: tileSize,
+//         width: tileSize,
+//         color: '',
+//         type: TileTypes.EMPTY,
+//       };
+//       break;
+//     }
+//     case TileTypes.SNAKE_BODY: {
+//       const snake = _activeGame.players.find(s => s.id === tile.playerId);
+//
+//       item = {
+//         key,
+//         height: tileSize,
+//         width: tileSize,
+//         color: snake && snake.alive ? snake.color : 'grey',
+//         type: TileTypes.SNAKE_BODY,
+//         tileType: tile.tileType,
+//       };
+//       break;
+//     }
+//     case TileTypes.SNAKE_HEAD: {
+//       const snake = _activeGame.players.find(s => s.id === tile.playerId);
+//       item = {
+//         key,
+//         height: tileSize,
+//         width: tileSize,
+//         color: snake && snake.alive ? snake.color : 'grey',
+//         type: TileTypes.SNAKE_HEAD,
+//       };
+//       break;
+//     }
+//     case TileTypes.OBSTACLE: {
+//       item = {
+//         key,
+//         height: tileSize,
+//         width: tileSize,
+//         color: 'black',
+//         type: TileTypes.OBSTACLE,
+//       };
+//       break;
+//     }
+//     case TileTypes.FOOD: {
+//       item = {
+//         key,
+//         height: tileSize,
+//         width: tileSize,
+//         color: 'green',
+//         type: TileTypes.FOOD,
+//       };
+//       break;
+//     }
+//   }
+//   return item;
+// }
 
 function _renderBodyPart(stage, pos, tileSize, color) {
   const rect = new createjs.Shape();
@@ -148,15 +148,6 @@ function _renderBodyPart(stage, pos, tileSize, color) {
     .drawRect(pos.x * tileSize, pos.y * tileSize, tileSize, tileSize);
   stage.addChild(rect);
 }
-
-function _renderDeathTile(stage, x, y, tileSize) {
-  const rect = new createjs.Shape();
-  rect.graphics
-    .beginFill('#ff0000')
-    .drawRect(x * tileSize, y * tileSize, tileSize, tileSize);
-  stage.addChild(rect);
-}
-
 
 function _renderImage(stage, pos, tileSize, imgSource, rotation) {
   const image = new Image();
@@ -226,28 +217,46 @@ function _renderDeadSnake(stage, map, snakes, tileSize, colors) {
 
     snake.positions.forEach((position, index) => {
       const pos = _getTileCoordinate(position, map);
-      const color = colors[snake.id];
-
 
       if (index === 0) {
         // ensure that we know which direction the head will be facing
         if (snake.positions.length > 1) {
           const rotation = _getHeadRotation(snake.positions, map);
-          const imgSource = Images.getSnakeHead(color);
-          _renderImage(stage, pos, tileSize, imgSource, rotation);
+          _renderImage(stage, pos, tileSize, Images.DEAD_HEAD, rotation);
         } else {
-          _renderBodyPart(stage, pos, tileSize, '#d3d3d3');
+          _renderBodyPart(stage, pos, tileSize, '#999999');
         }
       } else if (index === lastIndex) {
         const rotation = _getTailRotation(snake.positions, map);
-        const imgSource = Images.getSnakeTail(color);
-        _renderImage(stage, pos, tileSize, imgSource, rotation);
+        _renderImage(stage, pos, tileSize, Images.DEAD_TAIL, rotation);
       } else {
-        _renderBodyPart(stage, pos, tileSize, '#d3d3d3');
+        _renderBodyPart(stage, pos, tileSize, '#999999');
       }
     });
   });
 }
+
+
+function _renderDeathTile(stage, x, y, tileSize) {
+  const xPos = x * (20);
+  const yPos = y * (20);
+
+  // let scale = 1;
+  // the whole lib solution is a bit of a special case, so ignore eslint warnings
+  const explosion = new lib.explosion(); // eslint-disable-line
+
+
+  console.log(explosion);
+
+  // explosion.scaleX = tileSize / explosion.nominalBounds.height;
+  // explosion.scaleY = tileSize / explosion.nominalBounds.width;
+
+  explosion.x = (xPos);
+  explosion.y = (yPos);
+  stage.addChild(explosion);
+
+}
+
 
 function _renderFood(stage, map, tileSize) {
   map.foodPositions.forEach((foodPosition) => {
@@ -287,6 +296,7 @@ function _renderObstacles(stage, map, tileSize) {
 
       // the whole lib solution is a bit of a special case, so ignore eslint warnings
       const blackHole = new lib.blackhole(); // eslint-disable-line
+      console.log(blackHole.nominalBounds.height, blackHole.nominalBounds.width);
       blackHole.scaleX = (tileSize * scale) / blackHole.nominalBounds.height;
       blackHole.scaleY = (tileSize * scale) / blackHole.nominalBounds.width;
       blackHole.x = xPos;
@@ -304,9 +314,9 @@ function _groupObstacles(obstaclePositions) {
     if (!ready.includes(concatCoordinate(obstaclePosition))) {
       const group = [];
       const r1 = obstaclePositions.filter(ob => !ready.includes(concatCoordinate(ob)))
-          .filter(o => (o.x === (obstaclePosition.x + 1) && obstaclePosition.y === o.y));
+        .filter(o => (o.x === (obstaclePosition.x + 1) && obstaclePosition.y === o.y));
       const r2 = obstaclePositions.filter(ob => !ready.includes(concatCoordinate(ob)))
-          .filter(o => (o.x === (obstaclePosition.x + 2) && obstaclePosition.y === o.y));
+        .filter(o => (o.x === (obstaclePosition.x + 2) && obstaclePosition.y === o.y));
 
       if (r1.length === 0) {
         group.push(obstaclePosition);
@@ -362,7 +372,7 @@ function concatCoordinate(obstaclePosition) {
 }
 
 function createObstacle(xPos, yPos) {
-  return { x: xPos, y: yPos };
+  return {x: xPos, y: yPos};
 }
 
 function _getRotation(first, second) {
@@ -401,7 +411,7 @@ function _getTileCoordinate(absolutePos, map) {
   const y = Math.floor(absolutePos / map.width);
   const x = absolutePos - (y * map.width);
 
-  return { x, y };
+  return {x, y};
 }
 
 export default {
@@ -425,14 +435,14 @@ export default {
     _renderObstacles(stage, map, tileSize);
   },
 
-  getTileAt(x, y, map, tileSize, activeGame) {
-    const key = '' + x + '-' + y;
-    const tile = _getTileAt(x, y, map);
-
-    if (tile.content === TileTypes.SNAKE_BODY) {
-      tile.tileType = getTileType(tile, x, y, map);
-    }
-
-    return buildTileObject(tile, key, tileSize, activeGame);
-  },
+  // getTileAt(x, y, map, tileSize, activeGame) {
+  //   const key = '' + x + '-' + y;
+  //   const tile = _getTileAt(x, y, map);
+  //
+  //   if (tile.content === TileTypes.SNAKE_BODY) {
+  //     tile.tileType = getTileType(tile, x, y, map);
+  //   }
+  //
+  //   return buildTileObject(tile, key, tileSize, activeGame);
+  // },
 };
