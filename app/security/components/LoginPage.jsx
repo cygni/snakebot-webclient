@@ -1,11 +1,6 @@
 import React from 'react';
-import {
-  Row,
-  Col,
-} from 'react-bootstrap';
 import { withRouter } from 'react-router';
 import AuthService from '../services/AuthService';
-import Store from '../../baseStore/BaseStore';
 
 const propTypes = {
   router: React.PropTypes.object.isRequired,
@@ -69,40 +64,32 @@ class LoginPage extends React.Component {
   }
 
   render() {
-    if (Store.isLoggedIn()) {
-      return (
-        <Row>
-          <Col xs={10} md={6}>
-            <form role="form" onSubmit={this.logout}>
-              <button type="submit">Sign out</button>
-            </form>
-          </Col>
-        </Row>
-      );
-    }
-
     return (
-      <Row>
-        <Col xs={18} md={6} mdOffset={3}>
-          <h1>Sign in</h1>
-        </Col>
-        <Col xs={10} md={6} mdOffset={3}>
-          <form role="form" onSubmit={this.login}>
-            <input
-              value={this.state.user} onChange={this.handleUserChange} type="text"
-              label="Username" placeholder="username"
-            />
-            <input
-              onChange={this.handlePasswordChange}
-              label="Password" type="password" placeholder="password"
-            />
-            <button type="submit">Sign in</button>
-          </form>
-          <span style={{ color: 'red' }}>
-            {this.state.error ? this.state.error : ''}
-          </span>
-        </Col>
-      </Row>
+      <section className="page clear-fix">
+        <article>
+          <h1>Log in</h1>
+          <div className="text-content">
+            <div className="box">
+              <form onSubmit={this.login}>
+                <label htmlFor="username">Username</label>
+                <input
+                  value={this.state.user} onChange={this.handleUserChange} type="text"
+                  id="username" placeholder="your.name@cygni.se"
+                />
+                <label htmlFor="password">Password</label>
+                <input
+                  onChange={this.handlePasswordChange}
+                  id="password" type="password" placeholder="password"
+                />
+                <input type="submit" value="Log in" />
+              </form>
+              <span style={{ color: 'red' }}>
+                {this.state.error ? this.state.error : ''}
+              </span>
+            </div>
+          </div>
+        </article>
+      </section>
     );
   }
 }
