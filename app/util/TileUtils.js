@@ -238,8 +238,8 @@ function _renderDeadSnake(stage, map, snakes, tileSize, colors) {
 
 
 function _renderDeathTile(stage, x, y, tileSize) {
-  const xPos = x * (20);
-  const yPos = y * (20);
+  const xPos = x * tileSize;
+  const yPos = y * tileSize;
 
   // let scale = 1;
   // the whole lib solution is a bit of a special case, so ignore eslint warnings
