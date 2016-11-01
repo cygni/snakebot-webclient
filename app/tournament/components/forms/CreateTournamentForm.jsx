@@ -16,7 +16,7 @@ class CreateTournamentForm extends React.Component {
       {
         tempGameName: e.target.value,
       }
-        );
+    );
   }
 
   createTournament(e) {
@@ -26,23 +26,23 @@ class CreateTournamentForm extends React.Component {
 
   render() {
     return (
-    <section className="page clear-fix">
-      <article>
-        <h1>Create a new tournament</h1>
-        <div className="text-content">
-          <div className="box">
-            <form onSubmit={this.createTournament}>
-              <label htmlFor="username">Tournament name</label>
-              <input
-                value={this.state.tempGameName} onChange={this.handleTextChange} type="text"
-                id="tournamentName" placeholder="your tournament game..."
-              />
-              <input type="submit" value="Create Tournament" />
-            </form>
+      <section className="page clear-fix">
+        <article>
+          <h1>Create a new tournament</h1>
+          <div className="text-content">
+            <div className="box">
+              <form onSubmit={this.createTournament}>
+                <label htmlFor="username">Tournament name</label>
+                <input
+                  value={this.state.tempGameName} onChange={this.handleTextChange} type="text"
+                  id="tournamentName" placeholder="tournament name..."
+                />
+                <input type="submit" value="Create Tournament" />
+              </form>
+            </div>
           </div>
-        </div>
-      </article>
-    </section>
+        </article>
+      </section>
     );
   }
 }
