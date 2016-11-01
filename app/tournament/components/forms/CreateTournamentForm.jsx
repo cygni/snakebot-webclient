@@ -32,7 +32,7 @@ class CreateTournamentForm extends React.Component {
           <div className="text-content">
             <div className="box">
               <form onSubmit={this.createTournament}>
-                <label htmlFor="username">Tournament name</label>
+                <label htmlFor="tournamentName">Tournament name</label>
                 <input
                   value={this.state.tempGameName} onChange={this.handleTextChange} type="text"
                   id="tournamentName" placeholder="tournament name..."
