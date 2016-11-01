@@ -1,5 +1,4 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
 import TournamentAction from '../../action/tournament-actions';
 
 class CreateTournamentForm extends React.Component {
@@ -17,7 +16,7 @@ class CreateTournamentForm extends React.Component {
       {
         tempGameName: e.target.value,
       }
-        );
+    );
   }
 
   createTournament(e) {
@@ -27,22 +26,23 @@ class CreateTournamentForm extends React.Component {
 
   render() {
     return (
-      <Row>
-        <Col xs={18} md={12}>
-          <h1> Create a new tournament</h1>
-        </Col>
-        <Col xs={10} md={6}>
-          <form role="form" onSubmit={this.createTournament}>
-            <input
-              value={this.state.tempGameName}
-              onChange={this.handleTextChange}
-              type="text"
-              label="Tournament name" placeholder="Enter name"
-            />
-            <input type="submit" value="Create Tournament" />
-          </form>
-        </Col>
-      </Row>
+      <section className="page clear-fix">
+        <article>
+          <h1>Create a new tournament</h1>
+          <div className="text-content">
+            <div className="box">
+              <form onSubmit={this.createTournament}>
+                <label htmlFor="username">Tournament name</label>
+                <input
+                  value={this.state.tempGameName} onChange={this.handleTextChange} type="text"
+                  id="tournamentName" placeholder="tournament name..."
+                />
+                <input type="submit" value="Create Tournament" />
+              </form>
+            </div>
+          </div>
+        </article>
+      </section>
     );
   }
 }
