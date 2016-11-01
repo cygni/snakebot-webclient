@@ -1,5 +1,4 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap';
 import TournamentAction from '../../action/tournament-actions';
 
 class CreateTournamentForm extends React.Component {
