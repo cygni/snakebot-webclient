@@ -31,12 +31,10 @@ class GameBoard extends React.Component {
     this.worldLayer = new createjs.Stage(this.canvas);
     this.snakeLayer = new createjs.Container();
     this.deadSnakeLayer = new createjs.Container();
-    this.collisionLayer = new createjs.Container();
     createjs.Ticker.setFPS(lib.properties.fps);
     createjs.Ticker.addEventListener('tick', this.worldLayer);
     this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
-    this.worldLayer.addChild(this.collisionLayer);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -75,7 +73,7 @@ class GameBoard extends React.Component {
         this.deadSnakeLayer, mapEvent, allDeadSnakes, tileSize, state.colors
       );
       if (collisions.length > 0) {
-        TileUtils.renderCollisions(this.collisionLayer, collisions, tileSize);
+        TileUtils.renderCollisions(this.worldLayer, collisions, tileSize);
       }
     }
   }
