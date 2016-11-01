@@ -9,12 +9,12 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 }
 
 
-body { 
-    
+body {
+
     background-color: #141631;
-    
-    font:100%/1.3125rem 'Open Sans', sans-serif; 
-    color:#333; 
+
+    font:100%/1.3125rem 'Open Sans', sans-serif;
+    color:#333;
     /*background-image: url('img/background.png');*/
 /*
     background-repeat: no-repeat;
@@ -27,9 +27,9 @@ body {
     padding-bottom: 4rem;
 }
 
-img { 
-    border: none; 
-    width:100%; 
+img {
+    border: none;
+    width:100%;
 }
 
 /* Headlines and paragraohs */
@@ -217,7 +217,7 @@ li {
     background-color: #141631;
     margin: 5px 5px 0 0;
     border-radius: 3px
-} 
+}
 
 
 .activePlayers figure img {
@@ -257,7 +257,7 @@ li {
 
 /* Tournament */
 .tournament {
-    
+
 }
 
 .flex {
@@ -367,7 +367,7 @@ li {
 }
 
 .winner {
-    
+
 }
 
 li.looser {
@@ -409,7 +409,7 @@ li.gotogame:hover {
 .controlpanel {
     width: 100%;
     padding: 0 1rem;
-    
+
 }
 
 .controlbuttons {
@@ -680,7 +680,7 @@ button:hover, button:focus {
 .players li {
     display: inline-block;
     margin: 0 0 0 1rem;
-    
+
 }
 
 .players li:first-child {
@@ -701,4 +701,3 @@ button:hover, button:focus {
 .searchintro {
     margin-bottom: 1rem;
 }
-
