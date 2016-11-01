@@ -69,18 +69,14 @@ class GameBoard extends React.Component {
       mapEvent.worldTick === snake.worldTick
     );
 
+    this.deadSnakeLayer.removeAllChildren();
     if (allDeadSnakes.length > 0) {
       TileUtils.renderDeadSnakes(
         this.deadSnakeLayer, mapEvent, allDeadSnakes, tileSize, state.colors
       );
       if (collisions.length > 0) {
         TileUtils.renderCollisions(this.collisionLayer, collisions, tileSize);
-      } else {
-        this.collisionLayer.removeAllChildren();
       }
-    } else {
-      this.deadSnakeLayer.removeAllChildren();
-      this.collisionLayer.removeAllChildren();
     }
   }
 
