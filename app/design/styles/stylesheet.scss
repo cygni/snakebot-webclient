@@ -338,7 +338,7 @@ li {
 }
 
 li {
-  .looser {
+  &.looser {
     background-color: #eee;
     color: #999;
   }
@@ -613,6 +613,29 @@ button {
   color: #fff;
   background: #1c5a97;
   border-bottom: 2px solid #1c5a97;
+
+  &.button-link {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    font: inherit;
+    border-bottom: 0;
+    cursor: pointer;
+
+    color: #1c5a97;
+    text-decoration: underline;
+
+    &:hover {
+      color: #eb6d1e;
+    }
+  }
+}
+
+.gotogame {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0;
 }
 
 button:hover, button:focus {
