@@ -55,7 +55,7 @@ export default {
 
   searchForGames: (name, success, error) => {
     const encoded = encodeURIComponent(name);
-    console.log(`Searching for games with name = \'${encoded}\'`);
+    console.log(`Searching for games with name = '${encoded}'`);
     client({ path: `/history/search/${encoded}` })
       .then(
         (response) => {

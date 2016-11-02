@@ -15,6 +15,7 @@
     "no-param-reassign": ["error", {
       "props": false
     }],
-    "no-console": ["off"]
+    "no-console": ["off"],
+    "react/jsx-indent": ["off"]
   }
 }
