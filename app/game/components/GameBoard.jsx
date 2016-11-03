@@ -59,14 +59,12 @@ class GameBoard extends React.Component {
   }
 
   renderDeadSnakes(mapEvent, tileSize, state) {
-    console.log("WorldTick " + mapEvent.worldTick);
     const allDeadSnakes = this.props.deadSnakes.filter(snake =>
       (mapEvent.worldTick > snake.worldTick && snake.worldTick + snake.ttl >= mapEvent.worldTick)
     );
 
-    const collisions = this.props.deadSnakes.filter(snake => {
-        return mapEvent.worldTick === (snake.worldTick + 1)
-      }
+    const collisions = this.props.deadSnakes.filter(snake =>
+      mapEvent.worldTick === (snake.worldTick + 1)
     );
 
     this.deadSnakeLayer.removeAllChildren();
@@ -110,7 +108,9 @@ class GameBoard extends React.Component {
               id="canvas"
               width={size.width + 1}
               height={size.height + 1}
-              ref={(c) => { this.canvas = c; }}
+              ref={(c) => {
+                this.canvas = c;
+              }}
             />
             <GameControl />
           </div>
