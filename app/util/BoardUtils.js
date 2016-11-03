@@ -1,26 +1,20 @@
 const MAP_HEIGHT = 34;
 const MAP_WIDTH = 46;
 
+const WANTED_SIZE_PX = 1000;
+
+// choose integer and set width/height in px as factor of that
+const TILE_SIZE = Math.floor(WANTED_SIZE_PX / MAP_WIDTH); // TILE_SIZE = 21;
+
+const MAP_HEIGHT_PX = MAP_HEIGHT * TILE_SIZE;
+const MAP_WIDTH_PX = MAP_WIDTH * TILE_SIZE; // 966px close to 1000 px
+
 export default {
   getTileSize() {
-    const size = this.calculateSize();
-    return size.width / MAP_WIDTH;
+    return TILE_SIZE;
   },
 
   calculateSize() {
-    const height = MAP_HEIGHT;
-    const width = MAP_WIDTH;
-
-    if (width === height) {
-      return { width: 1000, height: 1000 };
-    }
-
-    if (width > height) {
-      const ratio = width / height;
-      return { width: 1000, height: 1000 / ratio };
-    }
-
-    const ratio = height / width;
-    return { width: 1000 / ratio, height: 1000 };
+    return { width: MAP_WIDTH_PX, height: MAP_HEIGHT_PX };
   },
 };

@@ -106,8 +106,8 @@ class GameBoard extends React.Component {
           <div className="gameboard">
             <canvas
               id="canvas"
-              width={size.width}
-              height={size.height}
+              width={size.width + 1}
+              height={size.height + 1}
               ref={(c) => { this.canvas = c; }}
             />
             <GameControl />
