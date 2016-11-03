@@ -32,9 +32,13 @@ export default {
         const json = response.entity;
         const mapUpdateEvent = 'se.cygni.snake.api.event.MapUpdateEvent';
         const snakeDeadEvent = 'se.cygni.snake.api.event.SnakeDeadEvent';
+        const gameEndedEvent = 'se.cygni.snake.api.event.GameEndedEvent';
+
+
+        console.log(json.messages);
         const mapEvents = json
                 .messages
-                .filter(event => event.type === mapUpdateEvent)
+                .filter(event => event.type === mapUpdateEvent || event.type === gameEndedEvent)
                 .map(type => type.map);
 
         const snakeDeadEvents = json
