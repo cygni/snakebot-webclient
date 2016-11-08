@@ -71,7 +71,8 @@ class GameControl extends React.Component {
         <input
           type="range"
           step="1"
-          min="0" max={this.props.frameCount}
+          min="0"
+          max={this.props.frameCount}
           value={this.props.gameState.currentFrame}
           className="react-native-slider"
           onChange={GameControl.currentFrameChanged}

@@ -7,6 +7,9 @@ import TileUtils from '../../util/TileUtils';
 import GameAction from '../../game/action/game-actions';
 import Sidebar from './sidebar/Sidebar';
 import GameControl from './sidebar/GameControl';
+import {
+  hashHistory,
+} from 'react-router';
 
 function getGameState() {
   const state = Store.getActiveGameState();
@@ -101,6 +104,9 @@ class GameBoard extends React.Component {
     const size = BoardUtils.calculateSize();
     return (
       <section className="page clear-fix">
+        <div className="">
+          <button onClick={hashHistory.goBack}>Back</button>
+        </div>
         <div className="thegame clear-fix">
           <Sidebar />
           <div className="gameboard">

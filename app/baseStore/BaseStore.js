@@ -200,7 +200,7 @@ const _tournamentEnded = (event) => {
   console.log('Tournament ended', _tournament, event);
   _tournament.finalPlacement.list = event.gameResult;
   _tournament.finalPlacement.list.sort((s1, s2) => s2.points - s1.points);
-  _tournament.finalPlacement.winner =
+  _tournament.winner =
     _tournament.finalPlacement.list.find(
       snake => snake.playerId === event.playerWinnerId);
 
@@ -361,6 +361,14 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
 
   getTournamentGamePlan() {
     return _tournament.gamePlan;
+  },
+
+  getTournamentGamePlan() {
+    return _tournament.gamePlan;
+  },
+
+  getTournamentWinner() {
+    return  _tournament.winner;
   },
 
   getFinalPlacement() {
