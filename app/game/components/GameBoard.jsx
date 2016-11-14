@@ -18,7 +18,7 @@ const propTypes = {
   deadSnakes: React.PropTypes.array.isRequired,// eslint-disable-line
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
-  route: React.PropTypes.object.isRequired,
+  routes: React.PropTypes.object.isRequired,
 };
 
 class GameBoard extends React.Component {
