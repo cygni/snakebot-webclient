@@ -102,6 +102,20 @@ const _startGame = (emitChange) => {
   }
 };
 
+const _startPrefetchingGame = () => {
+  console.log('Starting the game', _activeGameState);
+
+  if (!_activeGameState.fetched) {
+    console.log('Game has not been fetched, so ask the server to start it');
+    Socket.send({
+      gameId: _activeGameState.id,
+      type: 'se.cygni.snake.eventapi.request.StartGame',
+    });
+    _activeGameState.fetched = true;
+  }
+};
+
+
 const _addGameInfo = (addedGames) => {
   const game = addedGames.find(g => g.gameId === _activeGameState.id);
   if (!game) {
@@ -109,13 +123,11 @@ const _addGameInfo = (addedGames) => {
     return;
   }
 
-  const snakes = game.players.map((snake) => {
+  _activeGameState.players = game.players.map((snake) => {
     snake.positions = [];
     snake.points = 0;
     return snake;
   });
-
-  _activeGameState.players = snakes;
   _assignSnakeColors(game.players);
 };
 
@@ -200,7 +212,7 @@ const _tournamentEnded = (event) => {
   console.log('Tournament ended', _tournament, event);
   _tournament.finalPlacement.list = event.gameResult;
   _tournament.finalPlacement.list.sort((s1, s2) => s2.points - s1.points);
-  _tournament.finalPlacement.winner =
+  _tournament.winner =
     _tournament.finalPlacement.list.find(
       snake => snake.playerId === event.playerWinnerId);
 
@@ -255,7 +267,6 @@ const _addDeadSnakeEvents = (events) => {
 
 
 // Methods using the the restclient
-
 const _fetchActiveTournament = (emitChange) => {
   if (!_isLoggedIn()) {
     return;
@@ -266,6 +277,31 @@ const _fetchActiveTournament = (emitChange) => {
       _setActiveTournament(activeTournament);
       emitChange();
     });
+};
+
+const _moveToBracket = () => {
+  hashHistory.push('tournament/tournamentbracket');
+};
+
+const _moveToNextTournamentGame = (id) => {
+  const currentLevel = _tournament.gamePlan.tournamentLevels.find(level =>
+    level.tournamentGames.find(game =>
+      game.gameId === id
+    )
+  );
+
+  if (currentLevel) {
+    const nextGame = currentLevel.tournamentGames.find(game =>
+      game.gamePlayed === false && game.gameId !== id
+    );
+    if (nextGame) {
+      hashHistory.push('tournament/' + nextGame.gameId);
+    } else {
+      hashHistory.push('tournament/tournamentbracket');
+    }
+  } else {
+    hashHistory.push('tournament/tournamentbracket');
+  }
 };
 
 const _fetchActiveGame = (gameid, emitChange) => {
@@ -311,6 +347,8 @@ const _fetchGamesByName = (name, emitChange) => {
 };
 
 const BaseStore = Object.assign({}, EventEmitter.prototype, {
+
+
   emitChange() {
     this.emit(CHANGE_EVENT);
   },
@@ -361,6 +399,18 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
 
   getTournamentGamePlan() {
     return _tournament.gamePlan;
+  },
+
+  moveToNextTournamentGame(id) {
+    _moveToNextTournamentGame(id);
+  },
+
+  moveToBracket() {
+    _moveToBracket();
+  },
+
+  getTournamentWinner() {
+    return _tournament.winner;
   },
 
   getFinalPlacement() {
@@ -490,6 +540,9 @@ BaseStore.dispatcher = register(
         break;
       case Constants.ADD_DEAD_SNAKE_EVENT:
         _addDeadSnakeEvent(action.event);
+        break;
+      case Constants.PREFETCH_GAME:
+        _startPrefetchingGame();
         break;
       default:
         console.log('Store received unknown action', action);

@@ -110,16 +110,10 @@ function _renderDeadSnake(stage, map, snakes, tileSize) {
 function _renderDeathTile(stage, x, y, tileSize) {
   const xPos = x * tileSize;
   const yPos = y * tileSize;
+  const explosion = new lib.explosion(); // eslint-disable-lint
 
-  // let scale = 1;
-  // the whole lib solution is a bit of a special case, so ignore eslint warnings
-  const explosion = new lib.explosion(); // eslint-disable-line
-
-  // explosion.scaleX = tileSize / explosion.nominalBounds.height;
-  // explosion.scaleY = tileSize / explosion.nominalBounds.width;
-
-  explosion.x = (xPos - 10);
-  explosion.y = (yPos - 10);
+  explosion.x = (xPos - (tileSize / 2));
+  explosion.y = (yPos - (tileSize / 2));
   stage.addChild(explosion);
 }
 

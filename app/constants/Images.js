@@ -21,21 +21,18 @@ import snake000000Tail from '../design/images/snakes/000000/000000_TAIL.png';
 import snakeFF4848Tail from '../design/images/snakes/FF4848/FF4848_TAIL.png';
 import snake9AF48ETail from '../design/images/snakes/9AF48E/9AF48E_TAIL.png';
 import snake9BF3F0Tail from '../design/images/snakes/9BF3F0/9BF3F0_TAIL.png';
+// 50% alpha
 import deadSnakeTail50 from '../design/images/snakes/999999/grey-dead-tail-50.svg';
 import deadSnakeHead50 from '../design/images/snakes/999999/grey-dead-head-50.svg';
 import deadSnakeBody50 from '../design/images/snakes/999999/grey-dead-body-50.svg';
+// 70% alpha
 import deadSnakeTail70 from '../design/images/snakes/999999/grey-dead-tail-70.svg';
 import deadSnakeHead70 from '../design/images/snakes/999999/grey-dead-head-70.svg';
 import deadSnakeBody70 from '../design/images/snakes/999999/grey-dead-body-70.svg';
+// 100% alpha
 import deadSnakeTail100 from '../design/images/snakes/999999/grey-dead-tail-100.svg';
 import deadSnakeHead100 from '../design/images/snakes/999999/grey-dead-head-100.svg';
 import deadSnakeBody100 from '../design/images/snakes/999999/grey-dead-body-100.svg';
-// 50% alpha
-
-// 70% alpha
-
-// 100% alpha
-
 
 const starImg = star;
 
@@ -63,6 +60,9 @@ function _getSnakeHead(color) {
       return snake9AF48E;
     case '#9BF3F0' :
       return snake9BF3F0;
+    case '#dead' : {
+      return deadSnakeHead100;
+    }
     default:
       return snake000000;
   }

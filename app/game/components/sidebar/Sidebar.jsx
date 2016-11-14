@@ -50,7 +50,7 @@ const Sidebar = function Sidebar(props) {
 
     const snakeColor = (snake) => {
       if (isSnakeDead(snake)) {
-        return '000000';
+        return '#dead';
       }
 
       return props.state.colors[snake.id];

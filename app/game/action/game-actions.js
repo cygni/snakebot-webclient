@@ -13,6 +13,18 @@ export default {
     });
   },
 
+  startGame() {
+    dispatch({
+      actionType: Constants.START_GAME,
+    });
+  },
+
+  startPrefetchingGame(id) {
+    dispatch({
+      actionType: Constants.PREFETCH_GAME, id,
+    });
+  },
+
   pauseGame(id) {
     dispatch({
       actionType: Constants.PAUSE_GAME, id,
