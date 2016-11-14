@@ -71,6 +71,9 @@ class GameBoard extends React.Component {
     this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
     GameAction.activeGame(this.props.params.gameId);
+    if (this.isTournament()) {
+      GameAction.startPrefetchingGame(this.props.params.gameId);
+    }
   }
 
 
@@ -85,7 +88,7 @@ class GameBoard extends React.Component {
   }
 
   isTournament() {
-    return this.props.route.path.startsWith('/tournament');
+    return this.props.routes[0].path.startsWith('/tournament');
   }
 
   renderDeadSnakes(mapEvent, tileSize, state) {
