@@ -7,14 +7,10 @@ import TileUtils from '../../util/TileUtils';
 import GameAction from '../../game/action/game-actions';
 import Sidebar from './sidebar/Sidebar';
 import GameControl from './sidebar/GameControl';
-import {
-  hashHistory,
-} from 'react-router';
 
 function getGameState() {
   const state = Store.getActiveGameState();
   const deadSnakes = Store.getDeadSnakes();
-
   return { state, deadSnakes };
 }
 
@@ -22,11 +18,19 @@ const propTypes = {
   deadSnakes: React.PropTypes.array.isRequired,// eslint-disable-line
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
+  route: React.PropTypes.object.isRequired,
 };
 
 class GameBoard extends React.Component {
+  static moveToBracket() {
+    Store.moveToBracket();
+  }
+
+  static startGame() {
+    GameAction.startGame();
+  }
+
   componentWillMount() {
-    console.log('GameBoard will mount');
     GameAction.activeGame(this.props.params.gameId);
   }
 
@@ -38,6 +42,10 @@ class GameBoard extends React.Component {
     createjs.Ticker.addEventListener('tick', this.worldLayer);
     this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
+
+    if (this.isTournament()) {
+      GameAction.startPrefetchingGame(this.props.params.gameId);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -56,9 +64,28 @@ class GameBoard extends React.Component {
     return false;
   }
 
+  componentDidUpdate() {
+    this.snakeLayer.removeAllChildren();
+    this.deadSnakeLayer.removeAllChildren();
+    this.worldLayer.removeAllChildren();
+    this.worldLayer.addChild(this.deadSnakeLayer);
+    this.worldLayer.addChild(this.snakeLayer);
+    GameAction.activeGame(this.props.params.gameId);
+  }
+
+
   componentWillUnmount() {
     console.log('Unmounting GameBoard');
     GameAction.pauseGame();
+  }
+
+  moveToNextGame(id) {
+    Store.moveToNextTournamentGame(id);
+    this.forceUpdate();
+  }
+
+  isTournament() {
+    return this.props.route.path.startsWith('/tournament');
   }
 
   renderDeadSnakes(mapEvent, tileSize, state) {
@@ -100,13 +127,24 @@ class GameBoard extends React.Component {
     this.renderGameBoard(map, state);
   }
 
+
   render() {
     const size = BoardUtils.calculateSize();
+
+    const navigation =
+      this.isTournament() ? <div>
+        <div>
+          <button onClick={() => GameBoard.moveToBracket()}>Back</button>
+          <button style={{ float: 'right' }} onClick={() => this.moveToNextGame(this.props.params.gameId)}>Forward
+          </button>
+        </div>
+      </div> : <div />;
+
+
     return (
       <section className="page clear-fix">
-        <div className="">
-          <button onClick={hashHistory.goBack}>Back</button>
-        </div>
+        {navigation}
+
         <div className="thegame clear-fix">
           <Sidebar />
           <div className="gameboard">
