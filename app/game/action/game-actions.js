@@ -7,11 +7,6 @@ export default {
       actionType: Constants.ADD_GAMES, games,
     });
   },
-  startGame(id) {
-    dispatch({
-      actionType: Constants.START_GAME, id,
-    });
-  },
 
   startGame() {
     dispatch({

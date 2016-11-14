@@ -22,8 +22,8 @@ const propTypes = {
 };
 
 class GameControl extends React.Component {
-  static startGame(id) {
-    GameAction.startGame(id);
+  static startGame() {
+    GameAction.startGame();
   }
 
   static pauseGame(id) {
@@ -61,7 +61,7 @@ class GameControl extends React.Component {
       return { icon: Play, action: () => GameControl.resumeGame(this.props.gameState.id) };
     }
 
-    return { icon: Play, action: () => GameControl.startGame(this.props.gameState.id) };
+    return { icon: Play, action: () => GameControl.startGame() };
   }
 
   render() {
