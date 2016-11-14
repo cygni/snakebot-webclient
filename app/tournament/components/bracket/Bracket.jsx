@@ -41,9 +41,6 @@ class Bracket extends React.Component {
     return [...Array(game.expectedNoofPlayers).keys()].map((i) => {
       const player = game.players[i];
 
-      console.log(player);
-
-
       if (!player) {
         // if we have less players then expected for this game
         if (game.players.length > 0) {
@@ -53,7 +50,7 @@ class Bracket extends React.Component {
         return <li key={i}>???</li>;
       }
 
-      const star = <img src={Star} alt="Lived the longest" className="livedlongest"/>;
+      const star = <img src={Star} alt="Lived the longest" className="livedlongest" />;
 
       if (game.gamePlayed) {
         return (
@@ -94,14 +91,11 @@ class Bracket extends React.Component {
 
     return (
       <ul className="game thefinalwinner">
-        <li>"winner"</li>
-      </ul>)
-
+        <li>{winner.name}</li>
+      </ul>);
   }
 
   render() {
-    console.log('Rendering Bracket', this.props);
-    console.log('Winner ', this.props.winner);
     if (!this.props.gamePlan) {
       return (<div />);
     }
@@ -111,8 +105,8 @@ class Bracket extends React.Component {
 
     return (
       <section className="page clear-fix">
-        <article>
-          <h1>Tournament</h1>
+        <article style={{ textAlign: 'center' }}>
+          <h1>{this.props.gamePlan.tournamentName}</h1>
         </article>
         <div className="tournament">
           {Bracket.renderWinner(this.props.winner)}
@@ -129,7 +123,7 @@ class Bracket extends React.Component {
                   ))}
                 </div>
               </div>
-              { level.level > 0 ? <div className="spacer"/> : <div /> }
+              { level.level > 0 ? <div className="spacer" /> : <div /> }
             </div>
           ))}
         </div>
