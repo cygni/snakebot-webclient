@@ -16,8 +16,10 @@ const SNAKE_DEAD_EVENT = 'se.cygni.snake.api.event.SnakeDeadEvent';
 const socket = new SockJS(Config.server + '/events');
 
 const sendObj = (msg) => {
-  console.log('Sending message via socket:', msg);
-  socket.send(JSON.stringify(msg));
+  if (socket.readyState === 1) {
+    console.log('Sending message via socket:', msg);
+    socket.send(JSON.stringify(msg));
+  }
 };
 
 const setGameFilter = (gameid) => {

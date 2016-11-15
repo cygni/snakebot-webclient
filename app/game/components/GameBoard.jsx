@@ -30,6 +30,10 @@ class GameBoard extends React.Component {
     GameAction.startGame();
   }
 
+  static sleep(ms) {
+    setTimeout(() => GameAction.startGame(), ms);
+  }
+
   componentWillMount() {
     GameAction.activeGame(this.props.params.gameId);
   }
@@ -38,13 +42,17 @@ class GameBoard extends React.Component {
     this.worldLayer = new createjs.Stage(this.canvas);
     this.snakeLayer = new createjs.Container();
     this.deadSnakeLayer = new createjs.Container();
+    this.countDownLayer = new createjs.Container();
     createjs.Ticker.setFPS(lib.properties.fps);
     createjs.Ticker.addEventListener('tick', this.worldLayer);
     this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
+    this.worldLayer.addChild(this.countDownLayer);
 
     if (this.isTournament()) {
       GameAction.startPrefetchingGame(this.props.params.gameId);
+      TileUtils.addCountDown(this.countDownLayer);
+      GameBoard.sleep(7100);
     }
   }
 
@@ -70,12 +78,14 @@ class GameBoard extends React.Component {
     this.worldLayer.removeAllChildren();
     this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
+    this.worldLayer.addChild(this.countDownLayer);
     GameAction.activeGame(this.props.params.gameId);
     if (this.isTournament()) {
       GameAction.startPrefetchingGame(this.props.params.gameId);
+      TileUtils.addCountDown(this.countDownLayer);
+      GameBoard.sleep(7100);
     }
   }
-
 
   componentWillUnmount() {
     console.log('Unmounting GameBoard');
