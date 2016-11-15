@@ -165,6 +165,13 @@ function _renderObstacles(stage, map, tileSize) {
   });
 }
 
+function _addCountDown(layer) {
+  const clock = new lib.countdown(); // eslint-disable-line
+  clock.x = 140;
+  clock.y = 60;
+  layer.addChild(clock);
+}
+
 function _groupObstacles(obstaclePositions) {
   const ready = [];
   const cluster = [];
@@ -292,5 +299,9 @@ export default {
 
   renderObstacles(stage, map, tileSize) {
     _renderObstacles(stage, map, tileSize);
+  },
+
+  addCountDown(layer) {
+    _addCountDown(layer);
   },
 };
