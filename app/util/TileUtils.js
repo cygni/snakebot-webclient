@@ -1,5 +1,7 @@
 import Images from '../constants/Images';
 
+const deadSnakes = [];
+
 function _renderBodyPart(stage, pos, tileSize, color) {
   const rect = new createjs.Shape();
   rect.graphics
@@ -63,9 +65,26 @@ function _renderSnakes(stage, map, tileSize, colors) {
   });
 }
 
-function _renderCollisions(stage, snakes, tileSize) {
-  snakes.forEach(snake =>
-    _renderDeathTile(stage, snake.deathX, snake.deathY, tileSize)
+function _renderCollisions(stage, snakes, tileSize, isTournament) {
+  let msg;
+  if (isTournament) {
+    msg = new SpeechSynthesisUtterance();
+    const voices = speechSynthesis.getVoices();
+
+    msg.rate = 0;
+    msg.volume = 2;
+    msg.voice = voices.find(voice => voice.name === 'Karen');
+  }
+
+  snakes.forEach((snake) => {
+    if (!deadSnakes.includes(snake.id) && isTournament) {
+      msg.text = snake.name + ' died';
+      speechSynthesis.speak(msg);
+    }
+
+    _renderDeathTile(stage, snake.deathX, snake.deathY, tileSize);
+    deadSnakes.push(snake.id);
+  }
   );
 }
 
@@ -105,7 +124,6 @@ function _renderDeadSnake(stage, map, snakes, tileSize) {
     });
   });
 }
-
 
 function _renderDeathTile(stage, x, y, tileSize) {
   const xPos = x * tileSize;
@@ -289,8 +307,8 @@ export default {
     _renderDeadSnake(stage, map, snakes, tileSize);
   },
 
-  renderCollisions(stage, collitions, tileSize) {
-    _renderCollisions(stage, collitions, tileSize);
+  renderCollisions(stage, collitions, tileSize, isTournament) {
+    _renderCollisions(stage, collitions, tileSize, isTournament);
   },
 
   renderFood(stage, map, tileSize) {
