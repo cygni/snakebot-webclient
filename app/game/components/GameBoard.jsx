@@ -50,6 +50,7 @@ class GameBoard extends React.Component {
     this.worldLayer.addChild(this.countDownLayer);
 
     if (this.isTournament()) {
+      window.speechSynthesis.getVoices();
       GameAction.startPrefetchingGame(this.props.params.gameId);
       TileUtils.addCountDown(this.countDownLayer);
       GameBoard.sleep(7100);
@@ -116,7 +117,7 @@ class GameBoard extends React.Component {
         this.deadSnakeLayer, mapEvent, allDeadSnakes, tileSize, state.colors
       );
       if (collisions.length > 0) {
-        TileUtils.renderCollisions(this.worldLayer, collisions, tileSize);
+        TileUtils.renderCollisions(this.worldLayer, collisions, tileSize, this.isTournament());
       }
     }
   }
