@@ -191,7 +191,7 @@ function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
 	this.instance.shadow = new cjs.Shadow("rgba(0,0,0,1)",1,1,0);
 	this.instance._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance).wait(80).to({_off:false},0).to({alpha:1},4).wait(14).to({alpha:0},4).wait(1));
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(145).to({_off:false},0).to({alpha:1},5).wait(26).to({alpha:0},5).wait(1));
 
 	// 1
 	this.instance_1 = new lib._1();
@@ -201,7 +201,7 @@ function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
 	this.instance_1.shadow = new cjs.Shadow("rgba(0,0,0,1)",1,1,0);
 	this.instance_1._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_1).wait(60).to({_off:false},0).to({scaleX:3.69,scaleY:3.69,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:1.38,scaleY:1.38,x:320.1,y:280.2},10).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5,cjs.Ease.get(-0.3)).to({_off:true},1).wait(22));
+	this.timeline.addTween(cjs.Tween.get(this.instance_1).wait(116).to({_off:false},0).to({scaleX:3.8,scaleY:3.8,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:0.85,scaleY:0.85,x:320.1,y:280.1},24).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5).to({_off:true},1).wait(31));
 
 	// 2
 	this.instance_2 = new lib._2();
@@ -211,7 +211,7 @@ function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
 	this.instance_2.shadow = new cjs.Shadow("rgba(0,0,0,1)",1,1,0);
 	this.instance_2._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_2).wait(45).to({_off:false},0).to({scaleX:3.69,scaleY:3.69,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:1.38,scaleY:1.38,x:320.1,y:280.2},10).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5,cjs.Ease.get(-0.3)).to({_off:true},1).wait(37));
+	this.timeline.addTween(cjs.Tween.get(this.instance_2).wait(87).to({_off:false},0).to({scaleX:3.8,scaleY:3.8,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:0.85,scaleY:0.85,x:320.1,y:280.1},24).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5).to({_off:true},1).wait(60));
 
 	// 3
 	this.instance_3 = new lib._3();
@@ -221,7 +221,7 @@ function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
 	this.instance_3.shadow = new cjs.Shadow("rgba(0,0,0,1)",1,1,0);
 	this.instance_3._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_3).wait(30).to({_off:false},0).to({scaleX:3.69,scaleY:3.69,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:1.38,scaleY:1.38,x:320.1,y:280.2},10).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5,cjs.Ease.get(-0.3)).to({_off:true},1).wait(52));
+	this.timeline.addTween(cjs.Tween.get(this.instance_3).wait(58).to({_off:false},0).to({scaleX:3.8,scaleY:3.8,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:0.85,scaleY:0.85,x:320.1,y:280.1},24).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5).to({_off:true},1).wait(89));
 
 	// 4
 	this.instance_4 = new lib._4();
@@ -231,7 +231,7 @@ function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
 	this.instance_4.shadow = new cjs.Shadow("rgba(0,0,0,1)",1,1,0);
 	this.instance_4._off = true;
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_4).wait(15).to({_off:false},0).to({scaleX:3.69,scaleY:3.69,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:1.38,scaleY:1.38,x:320.1,y:280.2},10).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5,cjs.Ease.get(-0.3)).to({_off:true},1).wait(67));
+	this.timeline.addTween(cjs.Tween.get(this.instance_4).wait(29).to({_off:false},0).to({scaleX:3.8,scaleY:3.8,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:0.85,scaleY:0.85,x:320.1,y:280.1},24).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5).to({_off:true},1).wait(118));
 
 	// 5
 	this.instance_5 = new lib._5();
@@ -240,7 +240,7 @@ function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
 	this.instance_5.alpha = 0;
 	this.instance_5.shadow = new cjs.Shadow("rgba(0,0,0,1)",1,1,0);
 
-	this.timeline.addTween(cjs.Tween.get(this.instance_5).to({scaleX:3.69,scaleY:3.69,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:1.38,scaleY:1.38,x:320.1,y:280.2},10).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5,cjs.Ease.get(-0.3)).to({_off:true},1).wait(82));
+	this.timeline.addTween(cjs.Tween.get(this.instance_5).to({scaleX:3.8,scaleY:3.8,alpha:1},5,cjs.Ease.get(0.3)).to({regX:0.1,regY:0.2,scaleX:0.85,scaleY:0.85,x:320.1,y:280.1},24).to({regX:0.2,regY:0.5,scaleX:0.23,scaleY:0.23,x:320,y:280,alpha:0},5).to({_off:true},1).wait(147));
 
 }).prototype = p = new cjs.MovieClip();
 p.nominalBounds = new cjs.Rectangle(538,418.9,216,295);
@@ -248,7 +248,7 @@ p.nominalBounds = new cjs.Rectangle(538,418.9,216,295);
 lib.properties = {
 	width: 640,
 	height: 560,
-	fps: 30,
+	fps: 24,
 	color: "#454545",
 	opacity: 1.00,
 	webfonts: {},
