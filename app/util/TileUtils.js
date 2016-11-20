@@ -2,12 +2,55 @@ import Images from '../constants/Images';
 
 const deadSnakes = [];
 
-function _renderBodyPart(stage, pos, tileSize, color) {
-  const rect = new createjs.Shape();
-  rect.graphics
-    .beginFill(color)
-    .drawRect(pos.x * tileSize, pos.y * tileSize, tileSize, tileSize);
-  stage.addChild(rect);
+function _renderSnakeBody(stage, map, snake, tileSize, color) {
+  const line = new createjs.Shape();
+  const lastIndex = snake.positions.length - 1;
+  const lineWidth = tileSize - 1;
+  const halfTile = Math.floor(tileSize / 2);
+
+  line.graphics
+      .setStrokeStyle(lineWidth, 'round', 'round')
+      .beginStroke(color);
+
+  snake.positions.forEach((position, index) => {
+    const pos = _getTileCoordinate(position, map);
+    const posX = pos.x * tileSize;
+    const posY = pos.y * tileSize;
+
+    if (index === 0) {
+      // start line at head position
+      line.graphics.moveTo(posX + halfTile, posY + halfTile);
+    } else if (index !== lastIndex) {
+      const prevPos = _getTileCoordinate(snake.positions[index - 1], map);
+      const nextPos = _getTileCoordinate(snake.positions[index + 1], map);
+      const rotation = _getRotation(prevPos, pos);
+      const nextRotation = _getRotation(pos, nextPos);
+
+      // draw lines to each body position where rotation changes but last(tail)
+      if (nextRotation !== rotation || index === lastIndex - 1) {
+        line.graphics.lineTo(posX + halfTile, posY + halfTile);
+      }
+
+      if (index === lastIndex - 1) {
+        // Draw from current position (center) to pos where tail connects to this body part using
+        // non-round stroke. This extra work can been avoided if we could do lineTo() from
+        // head to tail with rounded stroke, then replace/overwrite tail with its images instead,
+        // by doing a clearRect() at head and tail, and then draw images instead
+        // but it seems that easel.js does not support a "clear/undo" of graphics rectangle
+        const tail = _getTileCoordinate(snake.positions[lastIndex], map);
+        const dX = Math.ceil(((tail.x * tileSize) - posX) / 2);
+        // adjust with +/-tileSize/2 to reach tail pos
+        const dY = Math.ceil(((tail.y * tileSize) - posY) / 2);
+
+        line.graphics.setStrokeStyle(lineWidth)
+            .moveTo(posX + halfTile, posY + halfTile)
+            .lineTo(posX + halfTile + dX, posY + halfTile + dY);
+      }
+    }
+  });
+  line.x = 0;
+  line.y = 0;
+  stage.addChild(line);
 }
 
 function _renderImage(stage, pos, tileSize, imgSource, rotation) {
@@ -39,29 +82,25 @@ function _renderImage(stage, pos, tileSize, imgSource, rotation) {
 }
 
 function _renderSnakes(stage, map, tileSize, colors) {
-  map.snakeInfos.forEach((snake) => {
+  map.snakeInfos.filter(si => si.positions.length > 0).forEach((snake) => {
     const lastIndex = snake.positions.length - 1;
-    snake.positions.forEach((position, index) => {
-      const pos = _getTileCoordinate(position, map);
-      const color = colors[snake.id];
+    const color = colors[snake.id];
 
-      if (index === 0) {
-        // ensure that we know which direction the head will be facing
-        if (snake.positions.length > 1) {
-          const rotation = _getHeadRotation(snake.positions, map);
-          const imgSource = Images.getSnakeHead(color);
-          _renderImage(stage, pos, tileSize, imgSource, rotation);
-        } else {
-          _renderBodyPart(stage, pos, tileSize, color);
-        }
-      } else if (index === lastIndex) {
-        const rotation = _getTailRotation(snake.positions, map);
-        const imgSource = Images.getSnakeTail(color);
-        _renderImage(stage, pos, tileSize, imgSource, rotation);
-      } else {
-        _renderBodyPart(stage, pos, tileSize, color);
-      }
-    });
+    // Body
+    _renderSnakeBody(stage, map, snake, tileSize, color);
+
+    // Head - overwrites first position of body using the head image
+    const headPos = _getTileCoordinate(snake.positions[0], map);
+    // ensure that we know which direction the head will be facing, set 90 (right) at first frame
+    const rotation = (snake.positions.length > 1) ? _getHeadRotation(snake.positions, map) : 90;
+    _renderImage(stage, headPos, tileSize, Images.getSnakeHead(color), rotation);
+
+    // Tail
+    if (snake.positions.length > 1) {
+      const tailPos = _getTileCoordinate(snake.positions[lastIndex], map);
+      const tailRotation = _getTailRotation(snake.positions, map);
+      _renderImage(stage, tailPos, tileSize, Images.getSnakeTail(color), tailRotation);
+    }
   });
 }
 
