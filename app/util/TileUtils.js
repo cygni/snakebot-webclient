@@ -82,7 +82,7 @@ function _renderImage(stage, pos, tileSize, imgSource, rotation) {
 }
 
 function _renderSnakes(stage, map, tileSize, colors) {
-  map.snakeInfos.forEach((snake) => {
+  map.snakeInfos.filter(si => si.positions.length > 0).forEach((snake) => {
     const lastIndex = snake.positions.length - 1;
     const color = colors[snake.id];
 
