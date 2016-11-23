@@ -16,8 +16,8 @@ function _edgePositionLineCap(bodyPos, headOrTailPos, tileSize, halfTile, halfMa
 function _renderSnakeBody(stage, map, snake, tileSize, color) {
   const line = new createjs.Shape();
   const lastIndex = snake.positions.length - 1;
-  const margin = 1; // pixels space margin to tile size.
-  const halfMargin = Math.ceil(margin / 2);
+  const margin = 2; // pixels space margin to tile size.
+  const halfMargin = Math.ceil(margin / 2) + 1;
 
   const lineWidth = tileSize - margin;
   const halfTile = Math.floor(tileSize / 2);
