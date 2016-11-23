@@ -124,14 +124,16 @@ function _getDeadImage(part, alpha) {
 }
 
 export default {
-  STAR: starImg,
+  getStarImage(position) {
+    return { src: starImg, key: 'star_' + position };
+  },
   getDeadImage(part, alpha) {
-    return _getDeadImage(part, alpha);
+    return { src: _getDeadImage(part, alpha), key: undefined };
   },
   getSnakeHead(color) {
-    return _getSnakeHead(color);
+    return { src: _getSnakeHead(color), key: 'head_' + color };
   },
   getSnakeTail(color) {
-    return _getSnakeTail(color);
+    return { src: _getSnakeTail(color), key: 'tail_' + color };
   },
 };

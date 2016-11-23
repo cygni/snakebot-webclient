@@ -1,15 +1,29 @@
 import Images from '../constants/Images';
 
 const deadSnakes = [];
+const imgCache = {};
+
+// Calculates the edge positions for use with "square" line cap canvas line strokes.
+function _edgePositionLineCap(bodyPos, headOrTailPos, tileSize, halfTile, halfMargin) {
+  const posX = bodyPos.x * tileSize;
+  const posY = bodyPos.y * tileSize;
+  const dX = (headOrTailPos.x - bodyPos.x) * halfMargin;
+  const dY = (headOrTailPos.y - bodyPos.y) * halfMargin;
+
+  return { x: posX + halfTile + dX, y: posY + halfTile + dY };
+}
 
 function _renderSnakeBody(stage, map, snake, tileSize, color) {
   const line = new createjs.Shape();
   const lastIndex = snake.positions.length - 1;
-  const lineWidth = tileSize - 1;
+  const margin = 1; // pixels space margin to tile size.
+  const halfMargin = Math.ceil(margin / 2);
+
+  const lineWidth = tileSize - margin;
   const halfTile = Math.floor(tileSize / 2);
 
   line.graphics
-      .setStrokeStyle(lineWidth, 'round', 'round')
+      .setStrokeStyle(lineWidth, 'square', 'round')
       .beginStroke(color);
 
   snake.positions.forEach((position, index) => {
@@ -18,33 +32,36 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
     const posY = pos.y * tileSize;
 
     if (index === 0) {
-      // start line at head position
-      line.graphics.moveTo(posX + halfTile, posY + halfTile);
+      // head
     } else if (index !== lastIndex) {
       const prevPos = _getTileCoordinate(snake.positions[index - 1], map);
+
+      if (index === 1 && lastIndex > 0) {
+        // starting position for drawing a snake line using "square" line cap
+        const edgePos = _edgePositionLineCap(pos, prevPos, tileSize, halfTile, halfMargin);
+        line.graphics.moveTo(edgePos.x, edgePos.y);
+      }
+
       const nextPos = _getTileCoordinate(snake.positions[index + 1], map);
       const rotation = _getRotation(prevPos, pos);
       const nextRotation = _getRotation(pos, nextPos);
 
-      // draw lines to each body position where rotation changes but last(tail)
+      // draw lines to each body position where rotation changes and last body part (not tail)
       if (nextRotation !== rotation || index === lastIndex - 1) {
         line.graphics.lineTo(posX + halfTile, posY + halfTile);
       }
 
       if (index === lastIndex - 1) {
         // Draw from current position (center) to pos where tail connects to this body part using
-        // non-round stroke. This extra work can been avoided if we could do lineTo() from
+        // cap mode "square" strokes.
+        // This extra work can been avoided if we could do lineTo() from
         // head to tail with rounded stroke, then replace/overwrite tail with its images instead,
         // by doing a clearRect() at head and tail, and then draw images instead
         // but it seems that easel.js does not support a "clear/undo" of graphics rectangle
         const tail = _getTileCoordinate(snake.positions[lastIndex], map);
-        const dX = Math.ceil(((tail.x * tileSize) - posX) / 2);
-        // adjust with +/-tileSize/2 to reach tail pos
-        const dY = Math.ceil(((tail.y * tileSize) - posY) / 2);
-
-        line.graphics.setStrokeStyle(lineWidth)
-            .moveTo(posX + halfTile, posY + halfTile)
-            .lineTo(posX + halfTile + dX, posY + halfTile + dY);
+        // adjust with +/-margin/2 to reach tail pos
+        const edgePos = _edgePositionLineCap(pos, tail, tileSize, halfTile, halfMargin);
+        line.graphics.lineTo(edgePos.x, edgePos.y);
       }
     }
   });
@@ -53,10 +70,21 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
   stage.addChild(line);
 }
 
-function _renderImage(stage, pos, tileSize, imgSource, rotation) {
+function createBitmap(imgSource) {
   const image = new Image();
   image.src = imgSource;
-  const bitmap = new createjs.Bitmap(image);
+  return new createjs.Bitmap(image);
+}
+
+function getCachedBitmap(imgSource) {
+  if (imgSource.key) {
+    return imgCache[imgSource.key] || (imgCache[imgSource.key] = createBitmap(imgSource.src));
+  }
+  return createBitmap(imgSource.src);
+}
+
+function _renderImage(stage, pos, tileSize, imgSource, rotation) {
+  const bitmap = getCachedBitmap(imgSource);
 
   // Use a container to be able to positon it with top/left orientation
   const headContainer = new createjs.Container();
@@ -177,13 +205,11 @@ function _renderDeathTile(stage, x, y, tileSize) {
 function _renderFood(stage, map, tileSize) {
   map.foodPositions.forEach((foodPosition) => {
     const pos = _getTileCoordinate(foodPosition, map);
-    const image = new Image();
-    image.src = Images.STAR;
+    const star = getCachedBitmap(Images.getStarImage(foodPosition));
 
     const yPos = pos.y * tileSize;
     const xPos = pos.x * tileSize;
 
-    const star = new createjs.Bitmap(image);
     star.scaleX = tileSize / star.image.width;
     star.scaleY = tileSize / star.image.height;
     star.x = xPos;
