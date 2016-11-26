@@ -18,7 +18,8 @@ const propTypes = {
   deadSnakes: React.PropTypes.array.isRequired,// eslint-disable-line
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
-  routes: React.PropTypes.object.isRequired,
+  routes: React.PropTypes.object,
+  autostart: React.PropTypes.boolean,
 };
 
 class GameBoard extends React.Component {
@@ -51,9 +52,9 @@ class GameBoard extends React.Component {
 
     if (this.isTournament()) {
       window.speechSynthesis.getVoices();
-      GameAction.startPrefetchingGame(this.props.params.gameId);
-      TileUtils.addCountDown(this.countDownLayer);
-      GameBoard.sleep(7100);
+      this.countdownAndStartGame();
+    } else if (this.shouldAutostart()) {
+      this.countdownAndStartGame();
     }
   }
 
@@ -81,10 +82,8 @@ class GameBoard extends React.Component {
     this.worldLayer.addChild(this.snakeLayer);
     this.worldLayer.addChild(this.countDownLayer);
     GameAction.activeGame(this.props.params.gameId);
-    if (this.isTournament()) {
-      GameAction.startPrefetchingGame(this.props.params.gameId);
-      TileUtils.addCountDown(this.countDownLayer);
-      GameBoard.sleep(7100);
+    if (this.isTournament() || this.shouldAutostart()) {
+      this.countdownAndStartGame();
     }
   }
 
@@ -93,13 +92,23 @@ class GameBoard extends React.Component {
     GameAction.pauseGame();
   }
 
+  countdownAndStartGame() {
+    GameAction.startPrefetchingGame(this.props.params.gameId);
+    TileUtils.addCountDown(this.countDownLayer);
+    GameBoard.sleep(7100);
+  }
+
   moveToNextGame(id) {
     Store.moveToNextTournamentGame(id);
     this.forceUpdate();
   }
 
   isTournament() {
-    return this.props.routes[0].path.startsWith('/tournament');
+    return this.props.routes && this.props.routes[0].path.startsWith('/tournament');
+  }
+
+  shouldAutostart() {
+    return this.props.autostart;
   }
 
   renderDeadSnakes(mapEvent, tileSize, state) {
