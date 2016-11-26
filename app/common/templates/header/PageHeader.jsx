@@ -29,7 +29,7 @@ const PageHeader = () => {
           <li><Link to="" activeClassName="selected">Start</Link></li>
           <li><Link to="about" activeClassName="selected">About</Link></li>
           <li><Link to="gettingstarted" activeClassName="selected">Getting started</Link></li>
-          <li><Link to="arena/official-ranked" activeClassName="selected">Arena</Link></li>
+          <li><Link to="arena" activeClassName="selected">Arena</Link></li>
           <li><Link to="viewgame" activeClassName="selected">Games</Link></li>
           {loggedIn ?
             <li><Link to="tournament" activeClassName="selected">Tournament</Link></li>

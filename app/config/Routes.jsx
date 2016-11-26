@@ -13,6 +13,7 @@ import HomePage from '../pages/HomePage';
 import GettingStartedPage from '../pages/GettingStartedPage';
 import AboutPage from '../pages/AboutPage';
 import StatusPage from '../pages/StatusPage';
+import ArenaSelectPage from '../arena/components/ArenaSelectPage';
 
 import TournamentSettings from '../tournament/components/settings/TournamentSettings';
 import Bracket from '../tournament/components/bracket/Bracket';
@@ -51,6 +52,9 @@ export default () => (
     </Route>
     <Route path="/arena/:arenaName" component={PageTemplate}>
       <IndexRoute component={ArenaPage} />
+    </Route>
+    <Route path="/arena" component={PageTemplate}>
+      <IndexRoute component={ArenaSelectPage} />
     </Route>
     <Route
       path="/tournament"
