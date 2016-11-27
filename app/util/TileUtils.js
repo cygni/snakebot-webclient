@@ -1,30 +1,44 @@
 import Images from '../constants/Images';
+import Colors from './Colors';
 
 const deadSnakes = [];
 const imgCache = {};
 
-// Calculates the edge positions for use with "square" line cap canvas line strokes.
-function _edgePositionLineCap(bodyPos, headOrTailPos, tileSize, halfTile, halfMargin) {
-  const posX = bodyPos.x * tileSize;
-  const posY = bodyPos.y * tileSize;
-  const dX = (headOrTailPos.x - bodyPos.x) * halfMargin;
-  const dY = (headOrTailPos.y - bodyPos.y) * halfMargin;
-
-  return { x: posX + halfTile + dX, y: posY + halfTile + dY };
-}
-
 function _renderSnakeBody(stage, map, snake, tileSize, color) {
-  const line = new createjs.Shape();
   const lastIndex = snake.positions.length - 1;
+
   const margin = 2; // pixels space margin to tile size.
   const halfMargin = Math.ceil(margin / 2) + 1;
-
   const lineWidth = tileSize - margin;
   const halfTile = Math.floor(tileSize / 2);
 
+/* for marking of tile boundaries when debugging rendering problems
+  snake.positions.forEach((position, index) => {
+    const pos = _getTileCoordinate(position, map);
+
+    const rect = new createjs.Shape();
+    stage.addChild(rect);
+    rect.graphics
+        .beginFill('yellow')
+        .drawRect(pos.x * tileSize, pos.y * tileSize, tileSize, tileSize);
+    rect.alpha = 1;
+
+    const box = new createjs.Shape();
+    stage.addChild(box);
+    box.graphics
+        .beginFill('#000000')
+        .drawRect(pos.x * tileSize + 1, pos.y * tileSize + 1, tileSize - 2, tileSize - 2);
+    box.alpha = 1;
+  });
+*/
+
+  const line = new createjs.Shape();
+  stage.addChild(line);
+
   line.graphics
-      .setStrokeStyle(lineWidth, 'square', 'round')
-      .beginStroke(color);
+    .setStrokeStyle(lineWidth, 'square', 'round')
+    .beginStroke(color.code);
+  line.alpha = color.alpha;
 
   snake.positions.forEach((position, index) => {
     const pos = _getTileCoordinate(position, map);
@@ -32,11 +46,19 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
     const posY = pos.y * tileSize;
 
     if (index === 0) {
-      // head
-    } else if (index !== lastIndex) {
+      // Head
+      // ensure that we know which direction the head will be facing, set 90 (right) at first frame
+      const rotation = (snake.positions.length > 1) ? _getHeadRotation(snake.positions, map) : 90;
+      _renderImage(stage, pos, tileSize, Images.getSnakeHead(color.code), rotation, color.alpha, lineWidth);
+    } else if (index === lastIndex) {
+      // Tail
+      const rotation = _getTailRotation(snake.positions, map);
+      const alpha = color.alpha - (0.15 * snake.tailProtectedForGameTicks);
+      _renderImage(stage, pos, tileSize, Images.getSnakeTail(color.code), rotation, alpha, lineWidth);
+    } else {
       const prevPos = _getTileCoordinate(snake.positions[index - 1], map);
 
-      if (index === 1 && lastIndex > 0) {
+      if (index === 1) {
         // starting position for drawing a snake line using "square" line cap
         const edgePos = _edgePositionLineCap(pos, prevPos, tileSize, halfTile, halfMargin);
         line.graphics.moveTo(edgePos.x, edgePos.y);
@@ -65,9 +87,15 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
       }
     }
   });
-  line.x = 0;
-  line.y = 0;
-  stage.addChild(line);
+}
+
+// Calculates the edge positions for use with "square" line cap canvas line strokes.
+function _edgePositionLineCap(bodyPos, headOrTailPos, tileSize, halfTile, halfMargin) {
+  const posX = bodyPos.x * tileSize;
+  const posY = bodyPos.y * tileSize;
+  const dX = (headOrTailPos.x - bodyPos.x) * halfMargin;
+  const dY = (headOrTailPos.y - bodyPos.y) * halfMargin;
+  return { x: posX + halfTile + dX, y: posY + halfTile + dY };
 }
 
 function createBitmap(imgSource) {
@@ -83,7 +111,7 @@ function getCachedBitmap(imgSource) {
   return createBitmap(imgSource.src);
 }
 
-function _renderImage(stage, pos, tileSize, imgSource, rotation) {
+function _renderImage(stage, pos, tileSize, imgSource, rotation, alpha, lineWidth) {
   const bitmap = getCachedBitmap(imgSource);
 
   // Use a container to be able to positon it with top/left orientation
@@ -93,42 +121,36 @@ function _renderImage(stage, pos, tileSize, imgSource, rotation) {
   headContainer.x = pos.x * tileSize;
   headContainer.y = pos.y * tileSize;
 
-  bitmap.scaleX = tileSize / bitmap.image.width;
+  bitmap.scaleX = lineWidth / bitmap.image.width; // Snake width is same as line width
   bitmap.scaleY = tileSize / bitmap.image.height;
 
   // Set the registration point to the middle of the image (this ignores scaling)
-  bitmap.regX = bitmap.image.width / 2;
-  bitmap.regY = bitmap.image.width / 2;
+  bitmap.regX = bitmap.regY = bitmap.image.width / 2;
 
   // And put the registration point in the middle (this time taking scaling into consideration)
-  bitmap.x = tileSize / 2;
-  bitmap.y = tileSize / 2;
-
+  bitmap.x = bitmap.y = Math.floor(tileSize / 2);
   bitmap.rotation = rotation;
+  bitmap.alpha = alpha;
 
   stage.addChild(headContainer);
 }
 
+// Render live snakes
 function _renderSnakes(stage, map, tileSize, colors) {
-  map.snakeInfos.filter(si => si.positions.length > 0).forEach((snake) => {
-    const lastIndex = snake.positions.length - 1;
-    const color = colors[snake.id];
+  const snakes = map.snakeInfos.filter(si => si.positions.length > 0);
 
-    // Body
+  function colorsFn(snake) {
+    return { code: colors[snake.id], alpha: 1 };
+  }
+
+  _renderAnySnakes(snakes, stage, map, tileSize, colorsFn);
+}
+
+// General - dead or live snakes
+function _renderAnySnakes(snakes, stage, map, tileSize, colorsFn) {
+  snakes.forEach((snake) => {
+    const color = colorsFn(snake);
     _renderSnakeBody(stage, map, snake, tileSize, color);
-
-    // Head - overwrites first position of body using the head image
-    const headPos = _getTileCoordinate(snake.positions[0], map);
-    // ensure that we know which direction the head will be facing, set 90 (right) at first frame
-    const rotation = (snake.positions.length > 1) ? _getHeadRotation(snake.positions, map) : 90;
-    _renderImage(stage, headPos, tileSize, Images.getSnakeHead(color), rotation);
-
-    // Tail
-    if (snake.positions.length > 1) {
-      const tailPos = _getTileCoordinate(snake.positions[lastIndex], map);
-      const tailRotation = _getTailRotation(snake.positions, map);
-      _renderImage(stage, tailPos, tileSize, Images.getSnakeTail(color), tailRotation);
-    }
   });
 }
 
@@ -155,41 +177,26 @@ function _renderCollisions(stage, snakes, tileSize, isTournament) {
   );
 }
 
+// Render dead snakes
 function _renderDeadSnake(stage, map, snakes, tileSize) {
-  snakes.forEach((snake) => {
-    const lastIndex = snake.positions.length - 1;
-    const alpha = (snake.worldTick + snake.ttl) - map.worldTick;
-    snake.positions.forEach((position, index) => {
-      const pos = _getTileCoordinate(position, map);
-      let ending;
-      if (alpha > 1) {
-        ending = 100;
-      } else if (alpha === 1) {
-        ending = 70;
-      } else {
-        ending = 50;
-      }
-      if (index === 0) {
-        // ensure that we know which direction the head will be facing
-        const rotation = _getHeadRotation(snake.positions, map);
-        if (snake.positions.length > 1) {
-          const imgSource = Images.getDeadImage('head', ending);
-          console.log(imgSource);
-          _renderImage(stage, pos, tileSize, imgSource, rotation);
-        } else {
-          const imgSource = Images.getDeadImage('body', ending);
-          _renderImage(stage, pos, tileSize, imgSource, rotation);
-        }
-      } else if (index === lastIndex) {
-        const rotation = _getTailRotation(snake.positions, map);
-        const imgSource = Images.getDeadImage('tail', ending);
-        _renderImage(stage, pos, tileSize, imgSource, rotation);
-      } else {
-        const imgSource = Images.getDeadImage('body', ending);
-        _renderImage(stage, pos, tileSize, imgSource, 0);
-      }
-    });
-  });
+
+  function colorsFn(snake) {
+    const alphaCountdown = (snake.worldTick + snake.ttl) - map.worldTick;
+
+    let alpha;
+    if (alphaCountdown > 1) {
+      alpha = 1;
+    } else if (alphaCountdown === 1) {
+      alpha = 0.7;
+    } else {
+      alpha = 0.5;
+    }
+
+    const code = Colors.DEAD_SNAKE;
+    return { code, alpha };
+  }
+
+  _renderAnySnakes(snakes, stage, map, tileSize, colorsFn);
 }
 
 function _renderDeathTile(stage, x, y, tileSize) {
@@ -263,53 +270,26 @@ function _groupObstacles(obstaclePositions) {
     if (!ready.includes(concatCoordinate(obstaclePosition))) {
       const group = [];
       const r1 = obstaclePositions.filter(ob => !ready.includes(concatCoordinate(ob)))
-        .filter(o => (o.x === (obstaclePosition.x + 1) && obstaclePosition.y === o.y));
+          .filter(o => (o.x === (obstaclePosition.x + 1) && obstaclePosition.y === o.y));
       const r2 = obstaclePositions.filter(ob => !ready.includes(concatCoordinate(ob)))
-        .filter(o => (o.x === (obstaclePosition.x + 2) && obstaclePosition.y === o.y));
+          .filter(o => (o.x === (obstaclePosition.x + 2) && obstaclePosition.y === o.y));
 
-      if (r1.length === 0) {
-        group.push(obstaclePosition);
-        ready.push(concatCoordinate(obstaclePosition));
-      } else if (r1.length === 1 && !(r2.length > 0)) {
-        const down = createObstacle(obstaclePosition.x, obstaclePosition.y + 1);
-        const right = createObstacle(obstaclePosition.x + 1, obstaclePosition.y);
-        const rightDown = createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 1);
-        group.push(obstaclePosition);
-        group.push(down);
-        group.push(right);
-        group.push(rightDown);
-        ready.push(concatCoordinate(obstaclePosition));
-        ready.push(concatCoordinate(down));
-        ready.push(concatCoordinate(right));
-        ready.push(concatCoordinate(rightDown));
-      } else if (r2.length > 0) {
-        const down = createObstacle(obstaclePosition.x, obstaclePosition.y + 1);
-        const down2 = createObstacle(obstaclePosition.x, obstaclePosition.y + 2);
-        const right = createObstacle(obstaclePosition.x + 1, obstaclePosition.y);
-        const right2 = createObstacle(obstaclePosition.x + 2, obstaclePosition.y);
-        const rightDown = createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 1);
-        const rightDown2 = createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 2);
-        const rightDown3 = createObstacle(obstaclePosition.x + 2, obstaclePosition.y + 1);
-        const rightDown4 = createObstacle(obstaclePosition.x + 2, obstaclePosition.y + 2);
-        group.push(obstaclePosition);
-        group.push(down);
-        group.push(down2);
-        group.push(right);
-        group.push(right2);
-        group.push(rightDown);
-        group.push(rightDown2);
-        group.push(rightDown3);
-        group.push(rightDown4);
-        ready.push(concatCoordinate(obstaclePosition));
-        ready.push(concatCoordinate(down));
-        ready.push(concatCoordinate(down2));
-        ready.push(concatCoordinate(right));
-        ready.push(concatCoordinate(right2));
-        ready.push(concatCoordinate(rightDown));
-        ready.push(concatCoordinate(rightDown2));
-        ready.push(concatCoordinate(rightDown3));
-        ready.push(concatCoordinate(rightDown4));
+      group.push(obstaclePosition);
+      if (r1.length > 0 || r2.length > 0) {
+        group.push(createObstacle(obstaclePosition.x    , obstaclePosition.y + 1)); // eslint-disable-line
+        group.push(createObstacle(obstaclePosition.x + 1, obstaclePosition.y));     // right
+        group.push(createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 1)); // rightDown
       }
+      if (r2.length > 0) {
+        group.push(createObstacle(obstaclePosition.x    , obstaclePosition.y + 2)); // eslint-disable-line
+        group.push(createObstacle(obstaclePosition.x + 2, obstaclePosition.y));     // right2
+        group.push(createObstacle(obstaclePosition.x + 1, obstaclePosition.y + 2)); // rightDown2
+        group.push(createObstacle(obstaclePosition.x + 2, obstaclePosition.y + 1)); // rightDown3
+        group.push(createObstacle(obstaclePosition.x + 2, obstaclePosition.y + 2)); // rightDown4
+      }
+      group.forEach((obstacle) => {
+        ready.push(concatCoordinate(obstacle));
+      });
       cluster.push(group);
     }
   });
@@ -364,8 +344,8 @@ function _getTileCoordinate(absolutePos, map) {
 }
 
 export default {
-  renderSnakes(stage, map, tileSize, _activeGame) {
-    _renderSnakes(stage, map, tileSize, _activeGame);
+  renderSnakes(stage, map, tileSize, colors) {
+    _renderSnakes(stage, map, tileSize, colors);
   },
 
   renderDeadSnakes(stage, map, snakes, tileSize) {
