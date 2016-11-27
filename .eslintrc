@@ -16,7 +16,6 @@
       "props": false
     }],
     "no-console": ["off"],
-    "no-mixed-operators": ["off"],
     "react/jsx-indent": ["off"]
   }
 }
