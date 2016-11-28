@@ -19,7 +19,7 @@ const propTypes = {
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
   routes: React.PropTypes.object,
-  autostart: React.PropTypes.boolean,
+  autostart: React.PropTypes.bool,
 };
 
 class GameBoard extends React.Component {

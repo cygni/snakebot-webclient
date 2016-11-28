@@ -20,7 +20,7 @@ class ArenaSelectPage extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    window.location = '/#arena/' + this.state.arenaName
+    window.location = '/#arena/' + this.state.arenaName;
   }
 
   render() {

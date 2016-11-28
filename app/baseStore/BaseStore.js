@@ -17,6 +17,9 @@ const searchResults = {
 
 let _tournament = {};
 const _activeGameState = {};
+const _activeArenaState = {
+  arenaState: {},
+};
 
 const _hasActiveGame = () => !_.isEmpty(_activeGameState);
 
@@ -433,6 +436,10 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     return _getToken();
   },
 
+  getArenaState() {
+    return _activeArenaState;
+  },
+
   isLoggedIn() {
     return _isLoggedIn();
   },
@@ -544,6 +551,15 @@ BaseStore.dispatcher = register(
       case Constants.PREFETCH_GAME:
         _startPrefetchingGame();
         break;
+
+      case Constants.SET_ACTIVE_ARENA:
+        Socket.initArena(action.arenaName);
+        break;
+      case Constants.UPDATE_ARENA:
+        console.log('updating arenastate', action.arenaState);
+        _activeArenaState.arenaState = action.arenaState;
+        break;
+
       default:
         console.log('Store received unknown action', action);
         break;
