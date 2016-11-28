@@ -53,8 +53,7 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
     } else if (index === lastIndex) {
       // Tail
       const rotation = _getTailRotation(snake.positions, map);
-      const alpha = color.alpha - (0.15 * snake.tailProtectedForGameTicks);
-      _renderImage(stage, pos, tileSize, Images.getSnakeTail(color.code), rotation, alpha, lineWidth);
+      _renderImage(stage, pos, tileSize, Images.getSnakeTail(color.code), rotation, color.alpha, lineWidth);
     } else {
       const prevPos = _getTileCoordinate(snake.positions[index - 1], map);
 
