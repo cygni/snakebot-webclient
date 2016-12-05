@@ -10,15 +10,13 @@ import GameControl from './sidebar/GameControl';
 
 function getGameState() {
   const state = Store.getActiveGameState();
-  const deadSnakes = Store.getDeadSnakes();
-  return { state, deadSnakes };
+  return { state };
 }
 
 const propTypes = {
-  deadSnakes: React.PropTypes.array.isRequired,// eslint-disable-line
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
-  routes: React.PropTypes.object.isRequired,
+  routes: React.PropTypes.array.isRequired,
 };
 
 class GameBoard extends React.Component {
@@ -103,11 +101,11 @@ class GameBoard extends React.Component {
   }
 
   renderDeadSnakes(mapEvent, tileSize, state) {
-    const allDeadSnakes = this.props.deadSnakes.filter(snake =>
+    const allDeadSnakes = state.deadSnakes.filter(snake =>
       (mapEvent.worldTick > snake.worldTick && snake.worldTick + snake.ttl >= mapEvent.worldTick)
     );
 
-    const collisions = this.props.deadSnakes.filter(snake =>
+    const collisions = state.deadSnakes.filter(snake =>
       mapEvent.worldTick === (snake.worldTick + 1)
     );
 
@@ -164,8 +162,8 @@ class GameBoard extends React.Component {
           <div className="gameboard">
             <canvas
               id="canvas"
-              width={size.width + 1}
-              height={size.height + 1}
+              width={size.width + 0}
+              height={size.height + 0}
               ref={(c) => {
                 this.canvas = c;
               }}
