@@ -54,6 +54,17 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
       // Tail
       const rotation = _getTailRotation(snake.positions, map);
       _renderImage(stage, pos, tileSize, Images.getSnakeTail(color.code), rotation, color.alpha, lineWidth);
+
+      const ticks = snake.tailProtectedForGameTicks;
+      if (ticks > 0) {
+        var arc= new createjs.Shape();
+        const angle = rotation + 90;
+        arc.graphics
+            .setStrokeStyle(ticks + 1)
+            .beginStroke('white')
+            .arc(posX + halfTile, posY + halfTile, halfTile, (angle - 45)*Math.PI/180, (angle + 45)*Math.PI/180);
+        stage.addChild(arc);
+      }
     } else {
       const prevPos = _getTileCoordinate(snake.positions[index - 1], map);
       const nextPos = _getTileCoordinate(snake.positions[index + 1], map);
