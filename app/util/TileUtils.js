@@ -36,7 +36,7 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
   stage.addChild(line);
 
   line.graphics
-    .setStrokeStyle(lineWidth, 'square', 'round')
+    .setStrokeStyle(lineWidth, 'butt', 'round')
     .beginStroke(color.code);
   line.alpha = color.alpha;
 
@@ -56,16 +56,15 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
       _renderImage(stage, pos, tileSize, Images.getSnakeTail(color.code), rotation, color.alpha, lineWidth);
     } else {
       const prevPos = _getTileCoordinate(snake.positions[index - 1], map);
-
-      if (index === 1) {
-        // starting position for drawing a snake line using "square" line cap
-        const edgePos = _edgePositionLineCap(pos, prevPos, tileSize, halfTile, halfMargin);
-        line.graphics.moveTo(edgePos.x, edgePos.y);
-      }
-
       const nextPos = _getTileCoordinate(snake.positions[index + 1], map);
       const rotation = _getRotation(prevPos, pos);
       const nextRotation = _getRotation(pos, nextPos);
+
+      if (index === 1) {
+        // starting position for drawing a snake line at position where head starts
+        const fromEdge = _edgePositionLineCap(rotation, tileSize, halfTile);
+        line.graphics.moveTo(posX + fromEdge.dX, posY + fromEdge.dY);
+      }
 
       // draw lines to each body position where rotation changes and last body part (not tail)
       if (nextRotation !== rotation || index === lastIndex - 1) {
@@ -73,28 +72,32 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
       }
 
       if (index === lastIndex - 1) {
-        // Draw from current position (center) to pos where tail connects to this body part using
-        // cap mode "square" strokes.
-        // This extra work can been avoided if we could do lineTo() from
-        // head to tail with rounded stroke, then replace/overwrite tail with its images instead,
-        // by doing a clearRect() at head and tail, and then draw images instead
-        // but it seems that easel.js does not support a "clear/undo" of graphics rectangle
         const tail = _getTileCoordinate(snake.positions[lastIndex], map);
+        const rotation = _getRotation(tail, pos);
         // adjust with +/-margin/2 to reach tail pos
-        const edgePos = _edgePositionLineCap(pos, tail, tileSize, halfTile, halfMargin);
-        line.graphics.lineTo(edgePos.x, edgePos.y);
+        const toEdge = _edgePositionLineCap(rotation, tileSize, halfTile);
+        line.graphics.lineTo(posX + toEdge.dX, posY + toEdge.dY);
       }
     }
   });
 }
 
-// Calculates the edge positions for use with "square" line cap canvas line strokes.
-function _edgePositionLineCap(bodyPos, headOrTailPos, tileSize, halfTile, halfMargin) {
-  const posX = bodyPos.x * tileSize;
-  const posY = bodyPos.y * tileSize;
-  const dX = (headOrTailPos.x - bodyPos.x) * halfMargin;
-  const dY = (headOrTailPos.y - bodyPos.y) * halfMargin;
-  return { x: posX + halfTile + dX, y: posY + halfTile + dY };
+// Calculate x,y distances from current position (center of tile) to position where head/tail connects to this body part.
+function _edgePositionLineCap(rotation, tileSize, halfTile) {
+  let dX = halfTile;
+  let dY = halfTile;
+
+  if (rotation === 0) {
+    dY = -1;
+  } else if (rotation === 180) {
+    dY = tileSize;
+  } else if (rotation === 90) {
+    dX = tileSize;
+  } else {
+    dX = -1;
+  }
+
+  return { dX, dY };
 }
 
 function createBitmap(imgSource) {
