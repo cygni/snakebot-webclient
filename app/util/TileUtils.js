@@ -3,6 +3,7 @@ import Colors from './Colors';
 
 const deadSnakes = [];
 const imgCache = {};
+const toRad = Math.PI / 180;
 
 function _renderSnakeBody(stage, map, snake, tileSize, color) {
   const lastIndex = snake.positions.length - 1;
@@ -55,6 +56,19 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
       const rotation = _getTailRotation(snake.positions, map);
       const snakeTail = Images.getSnakeTail(color.code);
       _renderImage(stage, pos, tileSize, snakeTail, rotation, color.alpha, lineWidth);
+
+      const ticks = snake.tailProtectedForGameTicks;
+      if (ticks > 0) {
+        const arc = new createjs.Shape();
+        const angle = rotation + 90;
+
+        arc.graphics
+            .setStrokeStyle(ticks + 1)
+            .beginStroke('white')
+            .arc(posX + halfTile, posY + halfTile, halfTile,
+                (angle - 45) * toRad, (angle + 45) * toRad);
+        stage.addChild(arc);
+      }
     } else {
       const prevPos = _getTileCoordinate(snake.positions[index - 1], map);
       const nextPos = _getTileCoordinate(snake.positions[index + 1], map);
