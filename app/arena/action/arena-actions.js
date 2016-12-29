@@ -8,6 +8,11 @@ export default {
       actionType: Constants.SET_ACTIVE_ARENA, arenaName,
     });
   },
+  startGame(arenaName) {
+    dispatch({
+      actionType: Constants.START_ARENA_GAME, arenaName,
+    });
+  },
 
   // Response
   updateArena(arenaState) {

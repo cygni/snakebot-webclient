@@ -105,6 +105,15 @@ const _startGame = (emitChange) => {
   }
 };
 
+const _startArenaGame = (arenaName) => {
+  console.log('Requesting game for arena', arenaName);
+
+  Socket.send({
+    arenaName,
+    type: 'se.cygni.snake.eventapi.request.StartArenaGame',
+  });
+};
+
 const _startPrefetchingGame = () => {
   console.log('Starting the game', _activeGameState);
 
@@ -556,8 +565,11 @@ BaseStore.dispatcher = register(
         Socket.initArena(action.arenaName);
         break;
       case Constants.UPDATE_ARENA:
-        console.log('updating arenastate', action.arenaState);
         _activeArenaState.arenaState = action.arenaState;
+        break;
+      case Constants.START_ARENA_GAME:
+        console.log(action.arenaName);
+        _startArenaGame(action.arenaName);
         break;
 
       default:
