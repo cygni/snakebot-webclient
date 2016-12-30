@@ -4,6 +4,7 @@ import Store from '../../baseStore/BaseStore';
 import StoreWatch from './watch/StoreWatch';
 import ArenaAction from '../action/arena-actions';
 import GameBoard from '../../game/components/GameBoard';
+import SnakeRanking from './SnakeRanking';
 import '../../design/styles/stylesheet.scss';
 
 function getArenaState() {
@@ -54,7 +55,7 @@ class ArenaPage extends React.Component {
     const players = this.props.arenaState.onlinePlayers || [];
     const gameRunning = gameId !== null && gameId !== undefined;
     const gameStartable = !ranked && players.length >= 2;
-´
+
     let noGameMessage = '';
     if (players.length < 2) {
       noGameMessage = 'At least two connected players are required to start a game';
@@ -66,24 +67,21 @@ class ArenaPage extends React.Component {
       <section className="page clear-fix">
         <h1>{this.getArenaDisplayName()}</h1>
 
-        {ranked ?
-          <p>In this arena, games are started automatically, and results are added to a rating
-            calculated with the Glicko2 algorithm {JSON.stringify(rating)}</p>
-          : ''
-        }
-
-        <p>
-          { gameStartable ?
-            <button onClick={this.startGame} disabled={!gameStartable}>Start New Game</button>
-            : null }
-          &nbsp;
-          <span>Connected players: {players.join(' ') || 'none'}</span>
-          &nbsp;
-        </p>
+        {!ranked ?
+          <p>
+            { gameStartable ?
+              <button onClick={this.startGame} disabled={!gameStartable}>Start New Game</button>
+              : null }
+            &nbsp;
+            <span>Connected players: {players.join(' ') || 'none'}</span>
+            &nbsp;
+          </p>
+          : <SnakeRanking rating={rating} connected={players} /> }
 
         {gameRunning ?
           <GameBoard key={gameId} params={params} autostart />
           : <p>{noGameMessage}</p> }
+
       </section>
     );
   }
