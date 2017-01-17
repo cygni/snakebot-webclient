@@ -16,6 +16,7 @@ const SNAKE_DEAD_EVENT = 'se.cygni.snake.api.event.SnakeDeadEvent';
 const ARENA_UPDATE_EVENT = 'se.cygni.snake.api.event.ArenaUpdateEvent';
 
 const socket = new SockJS(Config.server + '/events');
+let onConnectQueue = [];
 
 const sendObj = (msg) => {
   if (socket.readyState === 1) {
@@ -24,22 +25,34 @@ const sendObj = (msg) => {
   }
 };
 
+const sendWhenOpen = (msg) => {
+  if (socket.readyState === 1) {
+    sendObj(msg);
+  } else {
+    onConnectQueue.push(msg);
+  }
+};
+
 const setGameFilter = (gameid) => {
   const included = gameid ? [gameid] : [];
-  sendObj({
+  sendWhenOpen({
     includedGameIds: included,
     type: 'se.cygni.snake.eventapi.request.SetGameFilter',
   });
 };
 
-const listen = (gameid) => {
-  if (socket.readyState === 1) {
-    setGameFilter(gameid);
-  }
+const setCurrentArena = (arenaName) => {
+  sendWhenOpen({
+    currentArena: arenaName,
+    type: 'se.cygni.snake.eventapi.request.SetCurrentArena',
+  });
+};
 
+const listen = () => {
   socket.onopen = function onSocketOpen() {
-    console.log('Socket is open');
-    setGameFilter(gameid);
+    console.log('Socket is open, sending stored messages', onConnectQueue);
+    onConnectQueue.forEach(msg => sendObj(msg));
+    onConnectQueue = [];
   };
 
   socket.onmessage = function onSocketMessage(e) {
@@ -88,35 +101,16 @@ const listen = (gameid) => {
   };
 };
 
-const setCurrentArena = (arenaName) => {
-  sendObj({
-    currentArena: arenaName,
-    type: 'se.cygni.snake.eventapi.request.SetCurrentArena',
-  });
-};
-
-const listenArena = (arenaName) => {
-  listen();
-
-  if (socket.readyState === 1) {
-    setCurrentArena(arenaName);
-  }
-
-  socket.onopen = function onSocketOpen() {
-    console.log('Socket is open');
-    setCurrentArena(arenaName);
-  };
-};
-
 export default {
   init(gameid) {
+    listen();
+    setGameFilter(gameid);
     console.log('Initialized socket with with gameid:', gameid);
-    listen(gameid);
   },
   initArena(arenaName) {
-    // Not the most pretty thing, initialize socket with arena name, game init will overwrite later
+    listen();
+    setCurrentArena(arenaName);
     console.log('Initialized socket with with arena name:', arenaName);
-    listenArena(arenaName);
   },
   send: sendObj,
   state() {
