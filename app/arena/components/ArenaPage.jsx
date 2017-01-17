@@ -1,5 +1,6 @@
 import React from 'react';
-import { withRouter } from 'react-router';
+import { Link, withRouter } from 'react-router';
+import _ from 'lodash';
 import Store from '../../baseStore/BaseStore';
 import StoreWatch from './watch/StoreWatch';
 import ArenaAction from '../action/arena-actions';
@@ -50,6 +51,7 @@ class ArenaPage extends React.Component {
     const gameId = this.props.arenaState.gameId;
     const ranked = this.props.arenaState.ranked;
     const rating = this.props.arenaState.rating;
+    const history = this.props.arenaState.gameHistory;
     const params = { gameId };
 
     const players = this.props.arenaState.onlinePlayers || [];
@@ -82,6 +84,22 @@ class ArenaPage extends React.Component {
           <GameBoard key={gameId} params={params} autostart />
           : <p>{noGameMessage}</p> }
 
+        <h3>Arena game History</h3>
+
+        {history && history.length > 0 ?
+          <table className="arena-history-table">
+            <thead>
+            <th>Game</th>
+            <th>Result</th>
+            </thead>
+            <tbody>
+            {_.map(history, (gh, index) => <tr key={index}>
+              <td><Link to={{ pathname: '/viewgame/' + gh.gameId }}>{gh.gameId}</Link></td>
+              <td>{gh.playerPositions.join(', ')}</td>
+            </tr>)}
+            </tbody>
+          </table>
+          : <span>There are no recorded games for this arena.</span>}
       </section>
     );
   }
