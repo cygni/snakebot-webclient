@@ -248,10 +248,12 @@ const _addMapEvent = (event, emitChange) => {
 const _addDeadSnakeEvent = (event) => {
   const mapEvent = _activeGameState.mapEvents[event.gameTick];
 
-  const deadSnake = mapEvent.snakeInfos.find(snake =>
+  const deadSnakeOrig = mapEvent.snakeInfos.find(snake =>
     snake.id === event.playerId
   );
 
+  // Don't clutter original snake Object with new attributes
+  const deadSnake = Object.create(deadSnakeOrig);
   deadSnake.deathX = event.x;
   deadSnake.deathY = event.y;
   deadSnake.ttl = 3;
