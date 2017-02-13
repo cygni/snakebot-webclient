@@ -12,6 +12,8 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
   const lineWidth = tileSize - margin;
   const halfTile = Math.floor(tileSize / 2);
 
+  const isDeadSnake = color.code === Colors.DEAD_SNAKE;
+
 /* for marking of tile boundaries when debugging rendering problems
   snake.positions.forEach((position, index) => {
     const pos = _getTileCoordinate(position, map);
@@ -49,12 +51,12 @@ function _renderSnakeBody(stage, map, snake, tileSize, color) {
       // Head
       // ensure that we know which direction the head will be facing, set 90 (right) at first frame
       const rotation = (snake.positions.length > 1) ? _getHeadRotation(snake.positions, map) : 90;
-      const snakeHead = Images.getSnakeHead(color.code);
+      const snakeHead = Images.getSnakeHead(color.code, isDeadSnake);
       _renderImage(stage, pos, tileSize, snakeHead, rotation, color.alpha, lineWidth);
     } else if (index === lastIndex) {
       // Tail
       const rotation = _getTailRotation(snake.positions, map);
-      const snakeTail = Images.getSnakeTail(color.code);
+      const snakeTail = Images.getSnakeTail(color.code, isDeadSnake);
       _renderImage(stage, pos, tileSize, snakeTail, rotation, color.alpha, lineWidth);
 
       const ticks = snake.tailProtectedForGameTicks;

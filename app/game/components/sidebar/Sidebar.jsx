@@ -55,7 +55,7 @@ const Sidebar = function Sidebar(props) {
 
       return props.state.colors[snake.id];
     };
-    const snakeHead = snake => Images.getSnakeHead(snakeColor(snake)).src;
+    const snakeHead = snake => Images.getSnakeHead(snakeColor(snake), true).src;
 
     return (
       <div className="box activePlayers">

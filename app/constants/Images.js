@@ -94,10 +94,10 @@ export default {
   getStarImage(position) {
     return { src: starImg, key: 'star_' + position };
   },
-  getSnakeHead(color) {
-    return { src: _getSnakeHead(color), key: 'head_' + color };
+  getSnakeHead(color, ignoreCache) {
+    return { src: _getSnakeHead(color), key: ignoreCache ? undefined : 'head_' + color };
   },
-  getSnakeTail(color) {
-    return { src: _getSnakeTail(color), key: 'tail_' + color };
+  getSnakeTail(color, ignoreCache) {
+    return { src: _getSnakeTail(color), key: ignoreCache ? undefined : 'tail_' + color };
   },
 };
