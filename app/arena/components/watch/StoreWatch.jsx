@@ -17,8 +17,7 @@ export default (InnerComponent, stateCallback) => class extends React.Component 
   }
 
   _onChange() {
-    // setTimeout as a hack to work around flux limitations on dispatches in dispatches
-    setTimeout(() => this.setState(stateCallback()), 100);
+    this.setState(stateCallback());
   }
 
   render() {

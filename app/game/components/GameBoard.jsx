@@ -22,6 +22,7 @@ const propTypes = {
   params: React.PropTypes.object.isRequired,
   routes: React.PropTypes.object,
   autostart: React.PropTypes.bool,
+  suppressAutoDispatch: React.PropTypes.bool,
 };
 
 class GameBoard extends React.Component {
@@ -38,7 +39,7 @@ class GameBoard extends React.Component {
   }
 
   componentWillMount() {
-    GameAction.activeGame(this.props.params.gameId);
+    this.setActiveGame();
   }
 
   componentDidMount() {
@@ -82,17 +83,33 @@ class GameBoard extends React.Component {
     this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
     this.worldLayer.addChild(this.countDownLayer);
-    GameAction.activeGame(this.props.params.gameId);
+    this.setActiveGame();
     this.checkForAutostart();
   }
 
   componentWillUnmount() {
     console.log('Unmounting GameBoard');
-    GameAction.pauseGame();
+    if (this.allowAutoDispatch()) {
+      GameAction.pauseGame();
+    }
+  }
+
+  setActiveGame() {
+    if (this.allowAutoDispatch()) {
+      GameAction.activeGame(this.props.params.gameId);
+    }
+  }
+
+  // Having the gameboard dispatching on mount and state changes will break parent components
+  // Allow parent components to suppress this behavior
+  allowAutoDispatch() {
+    return this.props.suppressAutoDispatch !== true;
   }
 
   countdownAndStartGame() {
-    GameAction.startPrefetchingGame(this.props.params.gameId);
+    if (this.allowAutoDispatch()) {
+      GameAction.startPrefetchingGame(this.props.params.gameId);
+    }
     TileUtils.addCountDown(this.countDownLayer);
     GameBoard.sleep(COUNTDOWN_DELAY_MS);
   }

@@ -81,7 +81,7 @@ class ArenaPage extends React.Component {
           : <SnakeRanking rating={rating} connected={players} /> }
 
         {gameRunning ?
-          <GameBoard key={gameId} params={params} autostart />
+          <GameBoard key={gameId} params={params} autostart suppressAutoDispatch />
           : <p>{noGameMessage}</p> }
 
         <h3>Arena game History</h3>
@@ -89,8 +89,10 @@ class ArenaPage extends React.Component {
         {history && history.length > 0 ?
           <table className="arena-history-table">
             <thead>
-            <th>Game</th>
-            <th>Result</th>
+            <tr>
+              <th>Game</th>
+              <th>Result</th>
+            </tr>
             </thead>
             <tbody>
             {_.map(history, (gh, index) => <tr key={index}>

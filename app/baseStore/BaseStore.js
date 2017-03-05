@@ -17,7 +17,7 @@ const searchResults = {
 
 let _tournament = {};
 const _activeGameState = {};
-const _activeArenaState = {
+const _arena = {
   arenaState: {},
 };
 
@@ -319,6 +319,8 @@ const _moveToNextTournamentGame = (id) => {
 const _fetchActiveGame = (gameid, emitChange) => {
   console.log('Setting active game to ' + gameid);
 
+  Socket.init(gameid);
+
   _activeGameState.id = gameid;
   _activeGameState.fetched = false;
   _activeGameState.started = false;
@@ -446,7 +448,7 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
   },
 
   getArenaState() {
-    return _activeArenaState;
+    return _arena;
   },
 
   isLoggedIn() {
@@ -526,7 +528,6 @@ BaseStore.dispatcher = register(
         _startGame(emitChange);
         break;
       case Constants.SET_ACTIVE_GAME:
-        Socket.init(action.gameId);
         _fetchActiveGame(action.gameId, emitChange);
         break;
       case Constants.ADD_GAMES:
@@ -565,7 +566,12 @@ BaseStore.dispatcher = register(
         Socket.initArena(action.arenaName);
         break;
       case Constants.UPDATE_ARENA:
-        _activeArenaState.arenaState = action.arenaState;
+        _arena.arenaState = action.arenaState;
+        _stopUpdatingFrames();
+        if (action.arenaState.gameId) {
+          _fetchActiveGame(action.arenaState.gameId, emitChange);
+          _startPrefetchingGame();
+        }
         break;
       case Constants.START_ARENA_GAME:
         console.log(action.arenaName);

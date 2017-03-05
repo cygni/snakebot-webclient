@@ -3,8 +3,8 @@ import _ from 'lodash';
 import Images from '../../constants/Images';
 
 const propTypes = {
-  rating: React.PropTypes.array.isRequired,
-  connected: React.PropTypes.object.isRequired,
+  rating: React.PropTypes.object.isRequired,
+  connected: React.PropTypes.array.isRequired,
 };
 
 const SnakeRanking = function SnakeRanking(props) {
@@ -20,7 +20,9 @@ const SnakeRanking = function SnakeRanking(props) {
 
   return (
     <div className="activePlayers">
-      <h3>Glicko2 Rating</h3>
+      {rankedSnakes.length > 0 ?
+        <h3>Glicko2 Rating</h3>
+        : null }
       <ul>
         {rankedSnakes.map(snake => (
           <li key={snake.name}>
