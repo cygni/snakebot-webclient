@@ -18,6 +18,8 @@ const SnakeRanking = function SnakeRanking(props) {
     .value()
     .reverse();
 
+  const snakeHead = color => Images.getSnakeHead(color, true).src;
+
   return (
     <div className="activePlayers">
       {rankedSnakes.length > 0 ?
@@ -28,8 +30,8 @@ const SnakeRanking = function SnakeRanking(props) {
           <li key={snake.name}>
             <figure>
               { connected.includes(snake.name) ?
-                <img src={Images.getSnakeHead('#9BF3F0')} alt="connected" title="connected" />
-                : <img src={Images.getSnakeHead(snake)} alt="offline" title="offline" /> }
+                <img src={snakeHead('#9BF3F0')} alt="connected" title="connected" />
+                : <img src={snakeHead(snake)} alt="offline" title="offline" /> }
             </figure>
             <strong>{snake.rating}</strong> {snake.name}
           </li>
