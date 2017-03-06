@@ -13,10 +13,14 @@ function getGameState() {
   return { state };
 }
 
+const COUNTDOWN_DELAY_MS = 7100;
+
 const propTypes = {
   state: React.PropTypes.object.isRequired, // eslint-disable-line
   params: React.PropTypes.object.isRequired,
   routes: React.PropTypes.array.isRequired,
+  autostart: React.PropTypes.bool,
+  suppressAutoDispatch: React.PropTypes.bool,
 };
 
 class GameBoard extends React.Component {
@@ -33,7 +37,7 @@ class GameBoard extends React.Component {
   }
 
   componentWillMount() {
-    GameAction.activeGame(this.props.params.gameId);
+    this.setActiveGame();
   }
 
   componentDidMount() {
@@ -49,10 +53,9 @@ class GameBoard extends React.Component {
 
     if (this.isTournament()) {
       window.speechSynthesis.getVoices();
-      GameAction.startPrefetchingGame(this.props.params.gameId);
-      TileUtils.addCountDown(this.countDownLayer);
-      GameBoard.sleep(7100);
     }
+
+    this.checkForAutostart();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -78,17 +81,35 @@ class GameBoard extends React.Component {
     this.worldLayer.addChild(this.deadSnakeLayer);
     this.worldLayer.addChild(this.snakeLayer);
     this.worldLayer.addChild(this.countDownLayer);
-    GameAction.activeGame(this.props.params.gameId);
-    if (this.isTournament()) {
-      GameAction.startPrefetchingGame(this.props.params.gameId);
-      TileUtils.addCountDown(this.countDownLayer);
-      GameBoard.sleep(7100);
-    }
+    this.setActiveGame();
+    this.checkForAutostart();
   }
 
   componentWillUnmount() {
     console.log('Unmounting GameBoard');
-    GameAction.pauseGame();
+    if (this.allowAutoDispatch()) {
+      GameAction.pauseGame();
+    }
+  }
+
+  setActiveGame() {
+    if (this.allowAutoDispatch()) {
+      GameAction.activeGame(this.props.params.gameId);
+    }
+  }
+
+  // Having the gameboard dispatching on mount and state changes will break parent components
+  // Allow parent components to suppress this behavior
+  allowAutoDispatch() {
+    return this.props.suppressAutoDispatch !== true;
+  }
+
+  countdownAndStartGame() {
+    if (this.allowAutoDispatch()) {
+      GameAction.startPrefetchingGame(this.props.params.gameId);
+    }
+    TileUtils.addCountDown(this.countDownLayer);
+    GameBoard.sleep(COUNTDOWN_DELAY_MS);
   }
 
   moveToNextGame(id) {
@@ -97,7 +118,13 @@ class GameBoard extends React.Component {
   }
 
   isTournament() {
-    return this.props.routes[0].path.startsWith('/tournament');
+    return this.props.routes && this.props.routes[0].path.startsWith('/tournament');
+  }
+
+  checkForAutostart() {
+    if (this.isTournament() || this.props.autostart) {
+      this.countdownAndStartGame();
+    }
   }
 
   renderDeadSnakes(mapEvent, tileSize, state) {

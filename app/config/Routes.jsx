@@ -13,12 +13,14 @@ import HomePage from '../pages/HomePage';
 import GettingStartedPage from '../pages/GettingStartedPage';
 import AboutPage from '../pages/AboutPage';
 import StatusPage from '../pages/StatusPage';
+import ArenaSelectPage from '../arena/components/ArenaSelectPage';
 
 import TournamentSettings from '../tournament/components/settings/TournamentSettings';
 import Bracket from '../tournament/components/bracket/Bracket';
 import GameSearch from '../game/search/GameSearch';
 import Store from '../baseStore/BaseStore';
 import TournamentAction from '../tournament/action/tournament-actions';
+import ArenaPage from '../arena/components/ArenaPage';
 
 function enterTournamentPage(nextState, replace) {
   TournamentAction.fetchActiveTournament();
@@ -47,6 +49,12 @@ export default () => (
     </Route>
     <Route path="/status" component={PageTemplate}>
       <IndexRoute component={StatusPage} />
+    </Route>
+    <Route path="/arena/:arenaName" component={PageTemplate}>
+      <IndexRoute component={ArenaPage} />
+    </Route>
+    <Route path="/arena" component={PageTemplate}>
+      <IndexRoute component={ArenaSelectPage} />
     </Route>
     <Route
       path="/tournament"

@@ -2,6 +2,7 @@ import Config from 'Config'; // eslint-disable-line
 import SockJS from 'sockjs-client';
 import TournamentAction from '../tournament/action/tournament-actions';
 import GameAction from '../game/action/game-actions';
+import ArenaAction from '../arena/action/arena-actions';
 
 const TOURNAMENT_INFO = 'se.cygni.snake.eventapi.model.TournamentInfo';
 const TOURNAMENT_CREATED = 'se.cygni.snake.eventapi.response.TournamentCreated';
@@ -12,8 +13,10 @@ const GAME_ENDED_EVENT = 'se.cygni.snake.api.event.GameEndedEvent';
 const TOURNAMENT_ENDED_EVENT = 'se.cygni.snake.api.event.TournamentEndedEvent';
 const UNAUTHORIZED = 'se.cygni.snake.eventapi.exception.Unauthorized';
 const SNAKE_DEAD_EVENT = 'se.cygni.snake.api.event.SnakeDeadEvent';
+const ARENA_UPDATE_EVENT = 'se.cygni.snake.api.event.ArenaUpdateEvent';
 
 const socket = new SockJS(Config.server + '/events');
+let onConnectQueue = [];
 
 const sendObj = (msg) => {
   if (socket.readyState === 1) {
@@ -22,22 +25,34 @@ const sendObj = (msg) => {
   }
 };
 
+const sendWhenOpen = (msg) => {
+  if (socket.readyState === 1) {
+    sendObj(msg);
+  } else {
+    onConnectQueue.push(msg);
+  }
+};
+
 const setGameFilter = (gameid) => {
   const included = gameid ? [gameid] : [];
-  sendObj({
+  sendWhenOpen({
     includedGameIds: included,
     type: 'se.cygni.snake.eventapi.request.SetGameFilter',
   });
 };
 
-const listen = (gameid) => {
-  if (socket.readyState === 1) {
-    setGameFilter(gameid);
-  }
+const setCurrentArena = (arenaName) => {
+  sendWhenOpen({
+    currentArena: arenaName,
+    type: 'se.cygni.snake.eventapi.request.SetCurrentArena',
+  });
+};
 
+const listen = () => {
   socket.onopen = function onSocketOpen() {
-    console.log('Socket is open');
-    setGameFilter(gameid);
+    console.log('Socket is open, sending stored messages', onConnectQueue);
+    onConnectQueue.forEach(msg => sendObj(msg));
+    onConnectQueue = [];
   };
 
   socket.onmessage = function onSocketMessage(e) {
@@ -72,6 +87,9 @@ const listen = (gameid) => {
       case SNAKE_DEAD_EVENT:
         GameAction.addDeadSnake(jsonData);
         break;
+      case ARENA_UPDATE_EVENT:
+        ArenaAction.updateArena(jsonData);
+        break;
       default:
         console.log('Unrecognized datatype: ', jsonData.type);
         break;
@@ -85,8 +103,14 @@ const listen = (gameid) => {
 
 export default {
   init(gameid) {
+    listen();
+    setGameFilter(gameid);
     console.log('Initialized socket with with gameid:', gameid);
-    listen(gameid);
+  },
+  initArena(arenaName) {
+    listen();
+    setCurrentArena(arenaName);
+    console.log('Initialized socket with with arena name:', arenaName);
   },
   send: sendObj,
   state() {

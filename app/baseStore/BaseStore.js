@@ -17,6 +17,9 @@ const searchResults = {
 
 let _tournament = {};
 const _activeGameState = {};
+const _arena = {
+  arenaState: {},
+};
 
 const _hasActiveGame = () => !_.isEmpty(_activeGameState);
 
@@ -100,6 +103,15 @@ const _startGame = (emitChange) => {
     });
     _activeGameState.fetched = true;
   }
+};
+
+const _startArenaGame = (arenaName) => {
+  console.log('Requesting game for arena', arenaName);
+
+  Socket.send({
+    arenaName,
+    type: 'se.cygni.snake.eventapi.request.StartArenaGame',
+  });
 };
 
 const _startPrefetchingGame = () => {
@@ -307,6 +319,8 @@ const _moveToNextTournamentGame = (id) => {
 const _fetchActiveGame = (gameid, emitChange) => {
   console.log('Setting active game to ' + gameid);
 
+  Socket.init(gameid);
+
   _activeGameState.id = gameid;
   _activeGameState.fetched = false;
   _activeGameState.started = false;
@@ -433,6 +447,10 @@ const BaseStore = Object.assign({}, EventEmitter.prototype, {
     return _getToken();
   },
 
+  getArenaState() {
+    return _arena;
+  },
+
   isLoggedIn() {
     return _isLoggedIn();
   },
@@ -510,7 +528,6 @@ BaseStore.dispatcher = register(
         _startGame(emitChange);
         break;
       case Constants.SET_ACTIVE_GAME:
-        Socket.init(action.gameId);
         _fetchActiveGame(action.gameId, emitChange);
         break;
       case Constants.ADD_GAMES:
@@ -544,6 +561,23 @@ BaseStore.dispatcher = register(
       case Constants.PREFETCH_GAME:
         _startPrefetchingGame();
         break;
+
+      case Constants.SET_ACTIVE_ARENA:
+        Socket.initArena(action.arenaName);
+        break;
+      case Constants.UPDATE_ARENA:
+        _arena.arenaState = action.arenaState;
+        _stopUpdatingFrames();
+        if (action.arenaState.gameId) {
+          _fetchActiveGame(action.arenaState.gameId, emitChange);
+          _startPrefetchingGame();
+        }
+        break;
+      case Constants.START_ARENA_GAME:
+        console.log(action.arenaName);
+        _startArenaGame(action.arenaName);
+        break;
+
       default:
         console.log('Store received unknown action', action);
         break;
