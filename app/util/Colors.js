@@ -34,8 +34,8 @@ export default {
   getBoardColor(i) {
     return boardColors[i];
   },
-
   getSnakeColor(i) {
     return snakeColors[i];
   },
+  DEAD_SNAKE: '#999999',
 };
