@@ -78,13 +78,20 @@ class ArenaPage extends React.Component {
             <span>Connected players: {players.join(' ') || 'none'}</span>
             &nbsp;
           </p>
-          : <SnakeRanking rating={rating} connected={players} /> }
+          : null }
 
         {gameRunning ?
           <GameBoard key={gameId} params={params} autostart suppressAutoDispatch />
           : <p>{noGameMessage}</p> }
 
-        <h3>Arena game History</h3>
+        {ranked ?
+          <div>
+            <h2>Leaderboards</h2>
+            <SnakeRanking rating={rating} connected={players} />
+          </div>
+          : null }
+
+        <h2>Arena game History</h2>
 
         {history && history.length > 0 ?
           <table className="arena-history-table">

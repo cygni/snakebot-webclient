@@ -1,6 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-import Images from '../../constants/Images';
 
 const propTypes = {
   rating: React.PropTypes.object.isRequired,
@@ -18,25 +17,28 @@ const SnakeRanking = function SnakeRanking(props) {
     .value()
     .reverse();
 
-  const snakeHead = color => Images.getSnakeHead(color, true).src;
-
   return (
-    <div className="activePlayers">
+    <div>
       {rankedSnakes.length > 0 ?
-        <h3>Glicko2 Rating</h3>
-        : null }
-      <ul>
-        {rankedSnakes.map(snake => (
-          <li key={snake.name}>
-            <figure>
-              { connected.includes(snake.name) ?
-                <img src={snakeHead('#9BF3F0')} alt="connected" title="connected" />
-                : <img src={snakeHead(snake)} alt="offline" title="offline" /> }
-            </figure>
-            <strong>{snake.rating}</strong> {snake.name}
-          </li>
-        ))}
-      </ul>
+        <table className="arena-ranking-table">
+          <thead>
+          <tr>
+            <th>Score</th>
+            <th>Snake Name</th>
+            <th>Currently Online</th>
+          </tr>
+          </thead>
+          <tbody>
+          {rankedSnakes.map(snake => (
+            <tr key={snake.name}>
+              <td> {snake.rating } </td>
+              <td> {snake.name} </td>
+              <td> {connected.includes(snake.name) ? 'Online' : '' } </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+        : <span>There are no recorded games for this arena.</span>}
     </div>
   );
 };

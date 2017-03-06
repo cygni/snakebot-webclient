@@ -776,6 +776,13 @@ button:hover, button:focus {
 }
 
 /* Arena */
+.arena-ranking-table th,td {
+  font-size: 20px;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .arena-history-table th,td {
   padding-left: 1rem;
   padding-right: 1rem;
