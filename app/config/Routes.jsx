@@ -6,6 +6,8 @@ import {
   hashHistory,
 } from 'react-router';
 
+import ReactGA from 'react-ga';
+
 import LoginPage from '../security/components/LoginPage';
 import Gameboard from '../game/components/GameBoard';
 import PageTemplate from '../common/templates/PageTemplate';
@@ -22,13 +24,19 @@ import Store from '../baseStore/BaseStore';
 import TournamentAction from '../tournament/action/tournament-actions';
 import ArenaPage from '../arena/components/ArenaPage';
 
+ReactGA.initialize('UA-96039706-1');
+
+function fireTracking() {
+  ReactGA.pageview(window.location.hash);
+}
+
 function enterTournamentPage(nextState, replace) {
   TournamentAction.fetchActiveTournament();
   Store.requireAuth(nextState, replace);
 }
 
 export default () => (
-  <Router history={hashHistory}>
+  <Router onUpdate={fireTracking} history={hashHistory}>
     <Route path="/" component={PageTemplate}>
       <IndexRoute component={HomePage} />
     </Route>
