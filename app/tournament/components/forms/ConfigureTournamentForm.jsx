@@ -8,12 +8,14 @@ import PlayerList from '../../components/players/PlayerList';
 
 function getSettings() {
   const settings = Store.getSettings();
-  return { settings };
+  const playerList = Store.getPlayerList();
+  return { settings, playerList };
 }
 
 const propTypes = {
   tournamentName: React.PropTypes.string.isRequired,
   settings: React.PropTypes.object.isRequired,
+  playerList: React.PropTypes.object.isRequired,
 };
 
 class ConfigureTournamentForm extends React.Component {
@@ -278,8 +280,8 @@ class ConfigureTournamentForm extends React.Component {
                       name="headToTailConsumes"
                       id="headToTailConsumes"
                       type="radio"
-                      value="False"
                       defaultChecked={this.props.settings.headToTailConsumes === false}
+                      value="False"
                       onChange={ConfigureTournamentForm.onInputChange}
                     /> False
                   </label>
@@ -330,6 +332,8 @@ class ConfigureTournamentForm extends React.Component {
               </Button>
               <Button
                 onClick={ConfigureTournamentForm.startTournament}
+                disabled={this.props.playerList.length === 0}
+                title={this.props.playerList.length === 0 ? 'Unable to start. No connected snakes' : ''}
                 bsStyle="info"
                 bsSize="large"
               >

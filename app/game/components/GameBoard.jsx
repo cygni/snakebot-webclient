@@ -171,13 +171,13 @@ class GameBoard extends React.Component {
     const size = BoardUtils.calculateSize();
 
     const navigation =
-      this.isTournament() ? <div>
+      this.isTournament() ? (<div>
         <div>
           <button onClick={() => GameBoard.moveToBracket()}>Back</button>
           <button style={{ float: 'right' }} onClick={() => this.moveToNextGame(this.props.params.gameId)}>Forward
           </button>
         </div>
-      </div> : <div />;
+      </div>) : <div />;
 
 
     return (

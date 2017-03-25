@@ -15,10 +15,13 @@ const propTypes = {
 
 function PlayerList(props) {
   return (
-    <ListGroup>{
-      props.playerList.map(
-        (player, index) => (<ListGroupItem key={index}>{player.name}</ListGroupItem>))}
-    </ListGroup>
+    <div>
+      <span>Number of Snakes: {props.playerList.length}</span>
+      <ListGroup>{
+        props.playerList.map(
+          (player, index) => (<ListGroupItem key={index}>{player.name}</ListGroupItem>))}
+      </ListGroup>
+    </div>
   );
 }
 
