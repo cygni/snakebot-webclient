@@ -334,7 +334,7 @@ class ConfigureTournamentForm extends React.Component {
               </Button>
               <Button
                 onClick={ConfigureTournamentForm.startTournament}
-                disabled={this.props.playerList.length === 0}
+                disabled={this.props.playerList.length < 2}
                 title={this.props.playerList.length === 0 ? 'Unable to start. No connected snakes' : ''}
                 bsStyle="info"
                 bsSize="large"
