@@ -47,7 +47,6 @@ const Sidebar = function Sidebar(props) {
     }
 
     snakes.sort(snakeOrdering);
-
     const snakeColor = (snake) => {
       if (isSnakeDead(snake)) {
         return '#dead';
