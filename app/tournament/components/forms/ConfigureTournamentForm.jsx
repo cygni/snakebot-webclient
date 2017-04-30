@@ -347,7 +347,7 @@ class ConfigureTournamentForm extends React.Component {
 
 
           <article className="third">
-            <h2 > Competing snakes</h2>
+            <h2> Competing snakes</h2>
             <PlayerList />
           </article>
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
 import TournamentStore from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch';
 import TournamentAction from '../../action/tournament-actions';
@@ -74,12 +75,14 @@ class Bracket extends React.Component {
 
     return (
       <div className="gotogame">
-        <button
-          type="button"
-          className="button-link"
+        <Button
+          bsStyle="info"
+          bsSize="large"
+          bsClass="button--go"
           onClick={Bracket.chooseGame(game)}
-        >Go to game
-        </button>
+        >
+          Go to game
+        </Button>
       </div>);
   }
 

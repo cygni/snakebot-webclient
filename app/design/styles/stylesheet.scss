@@ -772,6 +772,25 @@ button {
   }
 }
 
+.button--go {
+  font-size: 26px;
+  padding: 20px;
+  margin-top: 20px;
+
+  &:after {
+    content: '';
+    background-image: url('../images/icons/icon-forward.svg');
+    display: inline-block;
+    width: 11px;
+    padding: 8px;
+    height: 5px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-left: 10px;
+  }
+
+}
+
 .searchbtn {
   margin-left: 1rem;
 }
