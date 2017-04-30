@@ -320,6 +320,7 @@ class ConfigureTournamentForm extends React.Component {
                 onClick={ConfigureTournamentForm.createTournamentTable}
                 bsStyle="info"
                 bsSize="large"
+                bsClass="margin-sm-right"
               >
                 Update Tournament Settings
               </Button>
@@ -327,6 +328,7 @@ class ConfigureTournamentForm extends React.Component {
                 onClick={ConfigureTournamentForm.killTournament}
                 bsStyle="info"
                 bsSize="large"
+                bsClass="margin-sm-right"
               >
                 Kill Tournament
               </Button>
