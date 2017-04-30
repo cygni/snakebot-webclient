@@ -48,8 +48,6 @@ const Sidebar = function Sidebar(props) {
 
     snakes.sort(snakeOrdering);
 
-    console.log(snakes);
-
     const snakeColor = (snake) => {
       if (isSnakeDead(snake)) {
         return '#dead';
