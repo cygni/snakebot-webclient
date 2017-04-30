@@ -210,7 +210,7 @@ class ConfigureTournamentForm extends React.Component {
                     ObstaclesEnabled:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="obstaclesEnabled"
                     id="obstaclesEnabled"
@@ -239,7 +239,7 @@ class ConfigureTournamentForm extends React.Component {
                     FoodEnabled:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="foodEnabled"
                     id="foodEnabled"
@@ -267,7 +267,7 @@ class ConfigureTournamentForm extends React.Component {
                     HeadToTailConsumes:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="headToTailConsumes"
                     id="headToTailConsumes" type="radio"
@@ -293,7 +293,7 @@ class ConfigureTournamentForm extends React.Component {
                     TailConsumeGrows:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="tailConsumeGrows"
                     id="tailConsumeGrows"
@@ -347,7 +347,7 @@ class ConfigureTournamentForm extends React.Component {
 
 
           <article className="third">
-            <h2> Competing snakes</h2>
+            <h2 > Competing snakes</h2>
             <PlayerList />
           </article>
         </div>
