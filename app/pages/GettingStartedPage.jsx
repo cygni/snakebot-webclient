@@ -32,7 +32,9 @@ function GettingStartedPage() {
           <ul>
             <li><a href="https://github.com/cygni/snakebot-client-java">Java</a></li>
             <li><a href="https://github.com/cygni/snakebot-client-js">JS</a></li>
+            <li><a href="https://github.com/cygni/snakebot-client-python">Python</a></li>
             <li><a href="https://github.com/cygni/snakebot-client-dotnet">.Net</a></li>
+            <li><a href="https://github.com/cygni/snakebot-client-golang">Go</a></li>
             <li><a href="https://github.com/cygni/snakebot-client-clojurescript">ClojureScript</a></li>
             <li><a href="https://github.com/cygni/snakebot-client-rust">Rust</a></li>
             <li><a href="https://github.com/cygni/snakebot-client-cpp">C++</a></li>
