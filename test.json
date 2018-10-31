@@ -25,10 +25,7 @@
     "noofRoundsTailProtectedAfterNibble": 3,
     "pointsSuicide": -10
   },
-  "color": [
-    "#9C27B0",
-    "#BA68C8"
-  ],
+  "color": ["#9C27B0", "#BA68C8"],
   "players": [],
   "currentFrame": 0,
   "mapEvents": [],
