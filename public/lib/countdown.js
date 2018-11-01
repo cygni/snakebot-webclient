@@ -218,6 +218,7 @@
 
   // stage content:
   (lib.countdown = function(mode, startPosition, loop) {
+    loop = false;
     this.initialize(mode, startPosition, loop, {});
 
     // Fight
