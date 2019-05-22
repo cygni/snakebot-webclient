@@ -11,5 +11,7 @@ npm-debug.log
 
 # Ignore stupid macOS files
 .DS_Store
+
 .project
 .settings/org.eclipse.buildship.core.prefs
+.vscode/settings.json
