@@ -6,5 +6,5 @@ import com.bmuschko.gradle.docker.tasks.image.*
 
 task(buildDockerImage, type: DockerBuildImage) {
     inputDir = file('.')
-    tags.addAll(['snakebot-web:latest', 'docker.snake.cygni.se:5000/snakebot-web:latest', 'docker.snake.cygni.se:5000/snakebot-web:$BUILD_NUMBER'])
+    tags.addAll(['snakebot-web:latest', 'docker.snake.cygni.se:5000/snakebot-web:latest'])
 }
