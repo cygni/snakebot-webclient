@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 
 .idea
+.gradle
 /node_modules
 /dist/bundle.js
 npm-debug.log
@@ -10,3 +11,7 @@ npm-debug.log
 
 # Ignore stupid macOS files
 .DS_Store
+
+.project
+.settings/org.eclipse.buildship.core.prefs
+.vscode/settings.json
