@@ -3,7 +3,7 @@
 .idea
 .gradle
 /node_modules
-/dist/bundle.js
+/dist
 npm-debug.log
 
 # Ignore the eslint cache

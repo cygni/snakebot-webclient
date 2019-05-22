@@ -18,3 +18,18 @@ task(dockerBuildAndPush) {
 	dependsOn buildDockerImage
 	dependsOn pushDockerLatestImage
 }
+
+task(buildDockerNightlyImage, type: DockerBuildImage) {
+    inputDir = file('.')
+    tags.addAll(['snakebot-web:nightly', 'docker.snake.cygni.se:5000/snakebot-web:nightly'])
+}
+
+task(pushDockerNightlyImage, type: DockerPushImage) {
+	imageName = 'docker.snake.cygni.se:5000/snakebot-web'
+	tag ='nightly'
+}
+
+task(dockerBuildAndPushNightly) {
+	dependsOn buildDockerNightlyImage
+	dependsOn pushDockerNightlyImage
+}
