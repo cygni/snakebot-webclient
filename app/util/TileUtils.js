@@ -1,7 +1,6 @@
 import Images from '../constants/Images';
 import Colors from './Colors';
 
-const deadSnakes = [];
 const imgCache = {};
 const toRad = Math.PI / 180;
 
@@ -183,16 +182,15 @@ function _renderCollisions(stage, snakes, tileSize, isTournament) {
     msg.voice = voices.find(voice => voice.name === 'Karen');
   }
 
-  snakes.forEach((snake) => {
-    if (!deadSnakes.includes(snake.id) && isTournament) {
-      msg.text = snake.name + ' died';
+  snakes.forEach((dead) => {
+    if (!dead.hasBeenSpokenOf && isTournament) {
+      msg.text = dead.name + ' died';
       speechSynthesis.speak(msg);
+      dead.hasBeenSpokenOf = true;
     }
 
-    _renderDeathTile(stage, snake.deathX, snake.deathY, tileSize);
-    deadSnakes.push(snake.id);
-  }
-  );
+    _renderDeathTile(stage, dead.deathX, dead.deathY, tileSize);
+  });
 }
 
 // Render dead snakes

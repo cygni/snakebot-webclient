@@ -128,18 +128,18 @@ class GameBoard extends React.Component {
   }
 
   renderDeadSnakes(mapEvent, tileSize, state) {
-    const allDeadSnakes = state.deadSnakes.filter(snake =>
-      (mapEvent.worldTick > snake.worldTick && snake.worldTick + snake.ttl >= mapEvent.worldTick)
+    const allDyingSnakes = state.deadSnakes.filter(dead =>
+      (mapEvent.worldTick > dead.worldTick && dead.worldTick + dead.ttl >= mapEvent.worldTick)
     );
 
-    const collisions = state.deadSnakes.filter(snake =>
-      mapEvent.worldTick === (snake.worldTick + 1)
+    const collisions = state.deadSnakes.filter(dead =>
+      mapEvent.worldTick === (dead.worldTick + 1)
     );
 
     this.deadSnakeLayer.removeAllChildren();
-    if (allDeadSnakes.length > 0) {
+    if (allDyingSnakes.length > 0) {
       TileUtils.renderDeadSnakes(
-        this.deadSnakeLayer, mapEvent, allDeadSnakes, tileSize, state.colors
+        this.deadSnakeLayer, mapEvent, allDyingSnakes, tileSize, state.colors
       );
       if (collisions.length > 0) {
         TileUtils.renderCollisions(this.worldLayer, collisions, tileSize, this.isTournament());
