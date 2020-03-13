@@ -20,7 +20,7 @@
     "immutable": "^3.7.6",
     "jwt-decode": "^2.0.1",
     "lodash": "^4.17.15",
-    "minimist": "1.2.0",
+    "minimist": "1.2.5",
     "react": "^15.3.1",
     "react-bootstrap": "^0.30.3",
     "react-bootstrap-native-slider": "^2.0.0",
