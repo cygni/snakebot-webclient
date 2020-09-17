@@ -210,7 +210,7 @@ class ConfigureTournamentForm extends React.Component {
                     ObstaclesEnabled:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="obstaclesEnabled"
                     id="obstaclesEnabled"
@@ -239,7 +239,7 @@ class ConfigureTournamentForm extends React.Component {
                     FoodEnabled:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="foodEnabled"
                     id="foodEnabled"
@@ -267,7 +267,7 @@ class ConfigureTournamentForm extends React.Component {
                     HeadToTailConsumes:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="headToTailConsumes"
                     id="headToTailConsumes" type="radio"
@@ -293,7 +293,7 @@ class ConfigureTournamentForm extends React.Component {
                     TailConsumeGrows:
                   </label>
                 </div>
-                <div>
+                <div className="margin-md-bottom">
                   <input
                     name="tailConsumeGrows"
                     id="tailConsumeGrows"
@@ -320,6 +320,7 @@ class ConfigureTournamentForm extends React.Component {
                 onClick={ConfigureTournamentForm.createTournamentTable}
                 bsStyle="info"
                 bsSize="large"
+                bsClass="margin-sm-right"
               >
                 Update Tournament Settings
               </Button>
@@ -327,12 +328,13 @@ class ConfigureTournamentForm extends React.Component {
                 onClick={ConfigureTournamentForm.killTournament}
                 bsStyle="info"
                 bsSize="large"
+                bsClass="margin-sm-right"
               >
                 Kill Tournament
               </Button>
               <Button
                 onClick={ConfigureTournamentForm.startTournament}
-                disabled={this.props.playerList.length === 0}
+                disabled={this.props.playerList.length < 2}
                 title={this.props.playerList.length === 0 ? 'Unable to start. No connected snakes' : ''}
                 bsStyle="info"
                 bsSize="large"

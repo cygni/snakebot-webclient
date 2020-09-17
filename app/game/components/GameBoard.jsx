@@ -172,7 +172,7 @@ class GameBoard extends React.Component {
 
     const navigation =
       this.isTournament() ? (<div>
-        <div>
+        <div className="margin-md-bottom">
           <button onClick={() => GameBoard.moveToBracket()}>Back</button>
           <button style={{ float: 'right' }} onClick={() => this.moveToNextGame(this.props.params.gameId)}>Forward
           </button>
