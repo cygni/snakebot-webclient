@@ -26,12 +26,16 @@
     "webpack-dev-server": "^4.9.2"
   },
   "dependencies": {
+    "flux": "^4.0.3",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.2.0",
-    "react-router": "^6.3.0",
+    "react-ga": "^3.3.0",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
     "rest": "^2.0.0",
     "sockjs-client": "^1.6.1",
     "style-loader": "^3.3.1"

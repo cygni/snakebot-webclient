@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { hashHistory } from 'react-router';
+import { HashRouter } from 'react-router-dom';
 import _ from 'lodash';
 import restclient from '../util/RestClient';
 import Socket from '../websocket/WebSocket';
@@ -162,12 +162,12 @@ const _loginUser = (action) => {
 
 const _logOutUser = () => {
   _clearCredentials();
-  hashHistory.push('/');
+  HashRouter.push('/');
 };
 
 const _invalidToken = () => {
   _clearCredentials();
-  hashHistory.push('/auth');
+  HashRouter.push('/auth');
 };
 
 function _isLoggedIn() {
@@ -209,7 +209,7 @@ const _startTournament = () => {
     token: _getToken(),
     _tournamentId: _tournament._tournamentId,
   });
-  hashHistory.push('tournament/tournamentbracket');
+  HashRouter.push('tournament/tournamentbracket');
 };
 
 const _tournamentCreated = (_tournamentInfo) => {
@@ -292,7 +292,7 @@ const _fetchActiveTournament = (emitChange) => {
 };
 
 const _moveToBracket = () => {
-  hashHistory.push('tournament/tournamentbracket');
+  HashRouter.push('tournament/tournamentbracket');
 };
 
 const _moveToNextTournamentGame = (id) => {
@@ -307,12 +307,12 @@ const _moveToNextTournamentGame = (id) => {
       game.gamePlayed === false && game.gameId !== id
     );
     if (nextGame) {
-      hashHistory.push('tournament/' + nextGame.gameId);
+      HashRouter.push('tournament/' + nextGame.gameId);
     } else {
-      hashHistory.push('tournament/tournamentbracket');
+      HashRouter.push('tournament/tournamentbracket');
     }
   } else {
-    hashHistory.push('tournament/tournamentbracket');
+    HashRouter.push('tournament/tournamentbracket');
   }
 };
 
@@ -492,7 +492,7 @@ BaseStore.dispatcher = register(
         _tournament.gamePlan = action.jsonData;
         break;
       case Constants.SET_ACTIVE_TOURNAMENT_GAME:
-        hashHistory.push('/tournament/' + action.gameId);
+        HashRouter.push('/tournament/' + action.gameId);
         break;
       case Constants.TOURNAMENT_ENDED_EVENT:
         _tournamentEnded(action.event);

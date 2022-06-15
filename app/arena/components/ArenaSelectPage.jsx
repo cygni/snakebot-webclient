@@ -1,5 +1,6 @@
 import React from 'react';
-import { withRouter, Link } from 'react-router';
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
 class ArenaSelectPage extends React.Component {
   constructor(props) {

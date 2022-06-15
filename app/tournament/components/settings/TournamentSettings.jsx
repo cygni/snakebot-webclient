@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
 import Store from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch';
@@ -23,9 +23,9 @@ function Settings(props) {
     table = <ConfigureTournamentForm tournamentName={props.tournament.tournamentName} />;
   }
   return (
-    <Grid fluid>
+    <Container fluid>
       {table}
-    </Grid >
+    </Container >
   );
 }
 

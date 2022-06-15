@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import Store from '../../baseStore/BaseStore';
 import StoreWatch from './watch/StoreWatch';

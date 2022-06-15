@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Link,
-} from 'react-router';
+} from 'react-router-dom';
 import '../design/styles/stylesheet.scss';
 import Config from 'Config'; // eslint-disable-line
 

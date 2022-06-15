@@ -2,8 +2,6 @@ import React from 'react';
 import {
   Router,
   Route,
-  IndexRoute,
-  hashHistory,
 } from 'react-router';
 
 import ReactGA from 'react-ga';
@@ -24,6 +22,8 @@ import Store from '../baseStore/BaseStore';
 import TournamentAction from '../tournament/action/tournament-actions';
 import ArenaPage from '../arena/components/ArenaPage';
 
+import {HashRouter} from 'react-router-dom';
+
 ReactGA.initialize('UA-96039706-1');
 
 function fireTracking() {
@@ -36,42 +36,42 @@ function enterTournamentPage(nextState, replace) {
 }
 
 export default () => (
-  <Router onUpdate={fireTracking} history={hashHistory}>
+  <HashRouter onUpdate={fireTracking}>
     <Route path="/" component={PageTemplate}>
-      <IndexRoute component={HomePage} />
+      <Route exact path="/" component={HomePage}/>
     </Route>
     <Route path="/viewgame/:gameId" component={PageTemplate}>
-      <IndexRoute component={Gameboard} />
+      <Route exact path="/" component={Gameboard}/>
     </Route>
     <Route path="/viewgame" component={PageTemplate} >
-      <IndexRoute component={GameSearch} />
+      <Route exact path="/" component={GameSearch}/>
     </Route>
     <Route path="/auth" component={PageTemplate}>
-      <IndexRoute component={LoginPage} />
+      <Route exact path="/" component={LoginPage}/>
     </Route>
     <Route path="/about" component={PageTemplate}>
-      <IndexRoute component={AboutPage} />
+      <Route exact path="/" component={AboutPage}/>
     </Route>
     <Route path="/gettingstarted" component={PageTemplate}>
-      <IndexRoute component={GettingStartedPage} />
+      <Route exact path="/" component={GettingStartedPage}/>
     </Route>
     <Route path="/status" component={PageTemplate}>
-      <IndexRoute component={StatusPage} />
+      <Route exact path="/" component={StatusPage}/>
     </Route>
     <Route path="/arena/:arenaName" component={PageTemplate}>
-      <IndexRoute component={ArenaPage} />
+      <Route exact path="/" component={ArenaPage}/>
     </Route>
     <Route path="/arena" component={PageTemplate}>
-      <IndexRoute component={ArenaSelectPage} />
+      <Route exact path="/" component={ArenaSelectPage}/>
     </Route>
     <Route
       path="/tournament"
       component={PageTemplate}
       onEnter={enterTournamentPage}
     >
-      <IndexRoute component={TournamentSettings} />
+      <Route exact path="/" component={TournamentSettings}/>
       <Route name="bracket" path="/tournament/tournamentbracket" component={Bracket} />
       <Route name="activeGame" path="/tournament/:gameId" component={Gameboard} />
     </Route>
-  </Router>
+  </HashRouter>
 );

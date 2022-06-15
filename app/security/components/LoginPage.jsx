@@ -2,6 +2,9 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import AuthService from '../services/AuthService';
 
+import PropTypes from 'prop-types';
+
+
 const propTypes = {
   router: React.PropTypes.object.isRequired,
   location: React.PropTypes.object.isRequired,

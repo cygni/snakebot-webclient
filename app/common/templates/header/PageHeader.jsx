@@ -1,7 +1,9 @@
 import React from 'react';
-import {
-  Link,
-} from 'react-router';
+// import {
+//   Link,
+// } from 'react-router';
+import { Link } from 'react-router-dom';
+
 import AuthService from '../../../security/services/AuthService';
 import Store from '../../../baseStore/BaseStore';
 import snakelogo from '../../../design/images/logos/snakelogo.png';
