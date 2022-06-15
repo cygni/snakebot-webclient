@@ -40,13 +40,13 @@ module.exports = {
   },
   entry: './app/App.jsx',
   output: {
-    path: './dist',
+    path: __dirname + '/dist',
     filename: 'bundle.js',
     publicPath: '/',
   },
   devServer: {
-    inline: true,
-    contentBase: './dist',
+    // inline: true,
+    static: './dist',
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -56,38 +56,68 @@ module.exports = {
     }),
   ],
   module: {
-    preLoaders: [{
-      test: /\.(js|jsx)$/,
-      loader: 'eslint-loader',
-      cache: true,
-    }],
-    loaders: [{
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      loader: 'babel',
-      query: {
-        presets: ['react', 'es2015'],
-        plugins: prod() ? ['transform-remove-console'] : [],
-      },
+    // preLoaders: [{
+    //   test: /\.(js|jsx)$/,
+    //   loader: 'eslint-loader',
+    //   cache: true,
+    // }],
+    rules: [
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-react', '@babel/preset-env'],
+            plugins: prod() ? ['transform-remove-console'] : [],
+          },
+        },
+      ],
+      // query: {
+      
     }, {
       test: /\.scss$/,
       include: /app/,
-      loaders: ['style', 'css', 'sass'],
+      // loaders: ['style', 'css', 'sass'],
+      use: [
+        {
+          loader: "style-loader"
+        },
+        {
+          loader: "css-loader"
+        },
+        {
+          loader: "sass-loader"
+        }
+      ]
     }, {
       test: /\.(jpe?g|gif|svg|png")$/i,
-      loaders: [
-        'url?limit=8192',
-        'image-webpack',
+      // loaders: [
+        use: [
+          {
+            // loader: 'url?limit=8192',
+            loader: "url-loader",
+            options: {
+              limit: 8192
+            }
+          },
+          {
+            loader: 'image-webpack-loader',
+          }
       ],
     }, {
       test: /\.png$/,
       loader: 'url-loader',
-      query: {
+      // query: {
+      options: {
         mimetype: 'image/png',
       },
-    }],
+    }
+  ],
   },
   externals: {
     Config: JSON.stringify(configuration),
   },
+  mode: 'development'
 };
