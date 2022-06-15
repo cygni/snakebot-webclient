@@ -8,6 +8,8 @@ import GameAction from '../../game/action/game-actions';
 import Sidebar from './sidebar/Sidebar';
 import GameControl from './sidebar/GameControl';
 
+import PropTypes from 'prop-types';
+
 function getGameState() {
   const state = Store.getActiveGameState();
   return { state };
@@ -16,11 +18,11 @@ function getGameState() {
 const COUNTDOWN_DELAY_MS = 7100;
 
 const propTypes = {
-  state: React.PropTypes.object.isRequired, // eslint-disable-line
-  params: React.PropTypes.object.isRequired,
-  routes: React.PropTypes.array.isRequired,
-  autostart: React.PropTypes.bool,
-  suppressAutoDispatch: React.PropTypes.bool,
+  state: PropTypes.object.isRequired, // eslint-disable-line
+  params: PropTypes.object.isRequired,
+  routes: PropTypes.array.isRequired,
+  autostart: PropTypes.bool,
+  suppressAutoDispatch: PropTypes.bool,
 };
 
 class GameBoard extends React.Component {

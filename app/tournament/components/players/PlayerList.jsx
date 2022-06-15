@@ -4,13 +4,15 @@ import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import Store from '../../../baseStore/BaseStore';
 import StoreWatch from '../../watch/StoreWatch';
 
+import PropTypes from 'prop-types';
+
 function getPlayerList() {
   const playerList = Store.getPlayerList();
   return { playerList };
 }
 
 const propTypes = {
-  playerList: React.PropTypes.array.isRequired,
+  playerList: PropTypes.array.isRequired,
 };
 
 function PlayerList(props) {

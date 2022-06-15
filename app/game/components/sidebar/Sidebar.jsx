@@ -3,13 +3,16 @@ import StoreWatch from '../watch/StoreWatch';
 import GameStore from '../../../baseStore/BaseStore';
 import Images from '../../../constants/Images';
 
+import PropTypes from 'prop-types';
+
+
 function getActiveGame() {
   const state = GameStore.getActiveGameState();
   return { state };
 }
 
 const propTypes = {
-  state: React.PropTypes.object.isRequired,
+  state: PropTypes.object.isRequired,
 };
 
 const isSnakeDead = snake => snake.positions.length === 0;

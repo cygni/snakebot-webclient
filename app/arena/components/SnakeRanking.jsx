@@ -2,9 +2,12 @@ import React from 'react';
 import _ from 'lodash';
 import Images from '../../constants/Images';
 
+import PropTypes from 'prop-types';
+
+
 const propTypes = {
-  rating: React.PropTypes.object.isRequired,
-  connected: React.PropTypes.array.isRequired,
+  rating: PropTypes.object.isRequired,
+  connected: PropTypes.array.isRequired,
 };
 
 const SnakeRanking = function SnakeRanking(props) {

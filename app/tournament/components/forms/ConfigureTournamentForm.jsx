@@ -5,6 +5,8 @@ import StoreWatch from '../../watch/StoreWatch';
 import Action from '../../action/tournament-actions';
 import PlayerList from '../../components/players/PlayerList';
 
+import PropTypes from 'prop-types';
+
 
 function getSettings() {
   const settings = Store.getSettings();
@@ -13,9 +15,9 @@ function getSettings() {
 }
 
 const propTypes = {
-  tournamentName: React.PropTypes.string.isRequired,
-  settings: React.PropTypes.object.isRequired,
-  playerList: React.PropTypes.object.isRequired,
+  tournamentName: PropTypes.string.isRequired,
+  settings: PropTypes.object.isRequired,
+  playerList: PropTypes.object.isRequired,
 };
 
 class ConfigureTournamentForm extends React.Component {

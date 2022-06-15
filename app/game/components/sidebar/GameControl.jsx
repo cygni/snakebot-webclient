@@ -10,6 +10,8 @@ import Pause from '../../../design/images/icons/icon-pause.svg';
 import Replay from '../../../design/images/icons/icon-replay.svg';
 import Forwards from '../../../design/images/icons/icon-forward.svg';
 
+import PropTypes from 'prop-types';
+
 function gameControlStateCallback() {
   const gameState = GameStore.getActiveGameState();
   const frameCount = GameStore.getFrameCount();
@@ -17,8 +19,8 @@ function gameControlStateCallback() {
 }
 
 const propTypes = {
-  frameCount: React.PropTypes.number.isRequired,
-  gameState: React.PropTypes.object.isRequired,
+  frameCount: PropTypes.number.isRequired,
+  gameState: PropTypes.object.isRequired,
 };
 
 class GameControl extends React.Component {

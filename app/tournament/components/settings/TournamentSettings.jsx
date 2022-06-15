@@ -6,13 +6,15 @@ import StoreWatch from '../../watch/StoreWatch';
 import CreateTournamentForm from './../forms/CreateTournamentForm';
 import ConfigureTournamentForm from './../forms/ConfigureTournamentForm';
 
+import PropTypes from 'prop-types';
+
 function getActiveTournament() {
   const tournament = Store.getActiveTournament();
   return { tournament };
 }
 
 const propTypes = {
-  tournament: React.PropTypes.object.isRequired,
+  tournament: PropTypes.object.isRequired,
 };
 
 function Settings(props) {

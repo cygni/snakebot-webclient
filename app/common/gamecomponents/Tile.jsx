@@ -1,6 +1,8 @@
 import React from 'react';
 import TileTypes from '../../constants/TileTypes';
 
+import PropTypes from 'prop-types';
+
 const borders = new Map([
   ['horizontal', 'none solid none solid'],
   ['vertical', 'solid none solid none'],
@@ -17,11 +19,11 @@ const borders = new Map([
 ]);
 
 const propTypes = {
-  type: React.PropTypes.object.isRequired,
-  width: React.PropTypes.number.isRequired,
-  height: React.PropTypes.number.isRequired,
-  color: React.PropTypes.string.isRequired,
-  tileType: React.PropTypes.string.isRequired,
+  type: PropTypes.object.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  color: PropTypes.string.isRequired,
+  tileType: PropTypes.string.isRequired,
 };
 
 const Tile = (props) => {

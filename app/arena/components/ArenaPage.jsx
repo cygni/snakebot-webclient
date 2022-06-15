@@ -9,13 +9,15 @@ import GameBoard from '../../game/components/GameBoard';
 import SnakeRanking from './SnakeRanking';
 import '../../design/styles/stylesheet.scss';
 
+import PropTypes from 'prop-types';
+
 function getArenaState() {
   return Store.getArenaState();
 }
 
 const propTypes = {
-  params: React.PropTypes.object.isRequired,
-  arenaState: React.PropTypes.object.isRequired,
+  params: PropTypes.object.isRequired,
+  arenaState: PropTypes.object.isRequired,
 };
 
 class ArenaPage extends React.Component {

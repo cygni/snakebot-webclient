@@ -3,8 +3,10 @@ import Header from './header/PageHeader';
 import PageFooter from './footer/PageFooter';
 import '../../design/styles/stylesheet.scss';
 
+import PropTypes from 'prop-types';
+
 const propTypes = {
-  children: React.PropTypes.object.isRequired,
+  children: PropTypes.object.isRequired,
 };
 
 const PageTemplate = props => (

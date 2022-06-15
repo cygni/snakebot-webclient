@@ -5,6 +5,8 @@ import GameAction from '../action/game-actions';
 import GameStore from '../../baseStore/BaseStore';
 import StoreWatch from '../components/watch/StoreWatch';
 
+import PropTypes from 'prop-types';
+
 function getSearchResults() {
   const searchResults = GameStore.getSearchResults();
 
@@ -12,8 +14,8 @@ function getSearchResults() {
 }
 
 const propTypes = {
-  text: React.PropTypes.string,
-  searchResults: React.PropTypes.object.isRequired,
+  text: PropTypes.string,
+  searchResults: PropTypes.object.isRequired,
 };
 
 class GameSearch extends React.Component {

@@ -4,6 +4,8 @@ import StoreWatch from '../../watch/StoreWatch';
 import TournamentAction from '../../action/tournament-actions';
 import Star from '../../../design/images/star/star.svg';
 
+import PropTypes from 'prop-types';
+
 function getGamePlan() {
   const gamePlan = TournamentStore.getTournamentGamePlan();
   const winner = TournamentStore.getTournamentWinner();
@@ -14,8 +16,8 @@ function getGamePlan() {
 }
 
 const propTypes = {
-  gamePlan: React.PropTypes.object,
-  winner: React.PropTypes.object,
+  gamePlan: PropTypes.object,
+  winner: PropTypes.object,
 };
 
 class Bracket extends React.Component {
