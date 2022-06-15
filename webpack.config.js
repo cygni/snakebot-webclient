@@ -3,7 +3,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const webpack = require('webpack');
 
 const getServerUrl = function () {
-  const host = argv['server-host'] !== undefined ? argv['server-host'] : 'snake.cygni.se';
+  const host = argv['server-host'] !== undefined ? argv['server-host'] : 'localhost:8080';
   if (argv['server-port'] !== undefined) {
     return 'http://' + host + ':' + argv['server-port'];
   }
@@ -47,6 +47,12 @@ module.exports = {
   devServer: {
     // inline: true,
     static: './dist',
+    // https: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+    }
   },
   plugins: [
     new webpack.DefinePlugin({

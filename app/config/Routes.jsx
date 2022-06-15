@@ -37,41 +37,22 @@ function enterTournamentPage(nextState, replace) {
 
 export default () => (
   <HashRouter onUpdate={fireTracking}>
-    <Route path="/" component={PageTemplate}>
-      <Route exact path="/" component={HomePage}/>
-    </Route>
-    <Route path="/viewgame/:gameId" component={PageTemplate}>
-      <Route exact path="/" component={Gameboard}/>
-    </Route>
-    <Route path="/viewgame" component={PageTemplate} >
-      <Route exact path="/" component={GameSearch}/>
-    </Route>
-    <Route path="/auth" component={PageTemplate}>
-      <Route exact path="/" component={LoginPage}/>
-    </Route>
-    <Route path="/about" component={PageTemplate}>
-      <Route exact path="/" component={AboutPage}/>
-    </Route>
-    <Route path="/gettingstarted" component={PageTemplate}>
-      <Route exact path="/" component={GettingStartedPage}/>
-    </Route>
-    <Route path="/status" component={PageTemplate}>
-      <Route exact path="/" component={StatusPage}/>
-    </Route>
-    <Route path="/arena/:arenaName" component={PageTemplate}>
-      <Route exact path="/" component={ArenaPage}/>
-    </Route>
-    <Route path="/arena" component={PageTemplate}>
-      <Route exact path="/" component={ArenaSelectPage}/>
-    </Route>
-    <Route
-      path="/tournament"
-      component={PageTemplate}
-      onEnter={enterTournamentPage}
-    >
-      <Route exact path="/" component={TournamentSettings}/>
-      <Route name="bracket" path="/tournament/tournamentbracket" component={Bracket} />
-      <Route name="activeGame" path="/tournament/:gameId" component={Gameboard} />
-    </Route>
+    <PageTemplate>
+      <Route exact path="/" component={HomePage}></Route>
+      <Route path="/viewgame/:gameId" component={Gameboard}></Route>
+      <Route exact path="/viewgame" component={GameSearch} ></Route>
+      <Route exact path="/auth" component={LoginPage}></Route>
+      <Route exact path="/about" component={AboutPage}></Route>
+      <Route exact path="/gettingstarted" component={GettingStartedPage}></Route>
+      <Route exact path="/status" component={StatusPage}></Route>
+      <Route path="/arena/:arenaName" component={ArenaPage}></Route>
+      <Route exact path="/arena" component={ArenaSelectPage}></Route>
+      <Route exact path="/tournament" onEnter={enterTournamentPage}>
+        <TournamentSettings>  
+          <Route name="bracket" path="/tournament/tournamentbracket" component={Bracket} />
+          <Route name="activeGame" path="/tournament/:gameId" component={Gameboard} />
+        </TournamentSettings>
+      </Route>
+    </PageTemplate>
   </HashRouter>
 );
