@@ -1,8 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { StrictMode } from 'react';
 import Routes from './config/Routes';
+import {createRoot} from 'react-dom/client';
 
-ReactDOM.render(
-  <Routes />,
-  document.getElementById('app')
+const rootElement = document.getElementById('app');
+const root = createRoot(rootElement);
+
+root.render( 
+    <Routes />
 );
