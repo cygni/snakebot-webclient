@@ -38,21 +38,23 @@ function enterTournamentPage(nextState, replace) {
 export default () => (
   <HashRouter onUpdate={fireTracking}>
     <PageTemplate>
-      <Route exact path="/" component={HomePage}></Route>
-      <Route path="/viewgame/:gameId" component={Gameboard}></Route>
-      <Route exact path="/viewgame" component={GameSearch} ></Route>
-      <Route exact path="/auth" component={LoginPage}></Route>
-      <Route exact path="/about" component={AboutPage}></Route>
-      <Route exact path="/gettingstarted" component={GettingStartedPage}></Route>
-      <Route exact path="/status" component={StatusPage}></Route>
-      <Route path="/arena/:arenaName" component={ArenaPage}></Route>
-      <Route exact path="/arena" component={ArenaSelectPage}></Route>
-      <Route exact path="/tournament" onEnter={enterTournamentPage}>
-        <TournamentSettings>  
-          <Route name="bracket" path="/tournament/tournamentbracket" component={Bracket} />
-          <Route name="activeGame" path="/tournament/:gameId" component={Gameboard} />
-        </TournamentSettings>
-      </Route>
+      <div>
+        <Route exact path="/" component={HomePage}></Route>
+        <Route path="/viewgame/:gameId" component={Gameboard}></Route>
+        <Route exact path="/viewgame" component={GameSearch} ></Route>
+        <Route exact path="/auth" component={LoginPage}></Route>
+        <Route exact path="/about" component={AboutPage}></Route>
+        <Route exact path="/gettingstarted" component={GettingStartedPage}></Route>
+        <Route exact path="/status" component={StatusPage}></Route>
+        <Route path="/arena/:arenaName" component={ArenaPage}></Route>
+        <Route exact path="/arena" component={ArenaSelectPage}></Route>
+        <Route exact path="/tournament" onEnter={enterTournamentPage}>
+          <TournamentSettings>  
+            <Route name="bracket" path="/tournament/tournamentbracket" component={Bracket} />
+            <Route name="activeGame" path="/tournament/:gameId" component={Gameboard} />
+          </TournamentSettings>
+        </Route>
+      </div>
     </PageTemplate>
   </HashRouter>
 );
