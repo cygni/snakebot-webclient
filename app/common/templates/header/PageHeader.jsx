@@ -2,7 +2,7 @@ import React from 'react';
 // import {
 //   Link,
 // } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import AuthService from '../../../security/services/AuthService';
 import Store from '../../../baseStore/BaseStore';
@@ -28,20 +28,20 @@ const PageHeader = () => {
       </Link>
       <nav>
         <ul>
-          <li><Link to="" activeClassName="selected">Start</Link></li>
-          <li><Link to="about" activeClassName="selected">About</Link></li>
-          <li><Link to="gettingstarted" activeClassName="selected">Getting started</Link></li>
+          <li><NavLink to="" activeClassName="selected">Start</NavLink></li>
+          <li><NavLink to="about" activeClassName="selected">About</NavLink></li>
+          <li><NavLink to="gettingstarted" activeClassName="selected">Getting started</NavLink></li>
           {/*
-            <li><Link to="arena" activeClassName="selected">Arena</Link></li>
+            <li><NavLink to="arena" activeClassName="selected">Arena</NavLink></li>
           */}
-          <li><Link to="viewgame" activeClassName="selected">Games</Link></li>
+          <li><NavLink to="viewgame" activeClassName="selected">Games</NavLink></li>
           {loggedIn ?
-            <li><Link to="tournament" activeClassName="selected">Tournament</Link></li>
+            <li><NavLink to="tournament" activeClassName="selected">Tournament</NavLink></li>
             : null
           }
           {loggedIn ?
             <li><a href="" onClick={tryLogout}>Log out</a></li> :
-            <li><Link to="auth" activeClassName="selected">Log in</Link></li>
+            <li><NavLink to="auth" activeClassName="selected">Log in</NavLink></li>
           }
         </ul>
       </nav>
