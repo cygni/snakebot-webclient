@@ -5,7 +5,7 @@ import AuthService from '../services/AuthService';
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  router: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   location: PropTypes.object.isRequired,
 };
 
@@ -35,9 +35,9 @@ class LoginPage extends React.Component {
       () => {
         const location = this.props.location.state;
         if (location && location.nextPathname) {
-          this.props.router.push(location.nextPathname);
+          this.props.history.push(location.nextPathname);
         } else {
-          this.props.router.push('/');
+          this.props.history.push('/');
         }
       },
       () => {
