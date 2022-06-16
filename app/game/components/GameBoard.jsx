@@ -19,8 +19,7 @@ const COUNTDOWN_DELAY_MS = 7100;
 
 const propTypes = {
   state: PropTypes.object.isRequired, // eslint-disable-line
-  params: PropTypes.object.isRequired,
-  routes: PropTypes.array.isRequired,
+  match: PropTypes.object.isRequired,
   autostart: PropTypes.bool,
   suppressAutoDispatch: PropTypes.bool,
 };
@@ -96,7 +95,7 @@ class GameBoard extends React.Component {
 
   setActiveGame() {
     if (this.allowAutoDispatch()) {
-      GameAction.activeGame(this.props.params.gameId);
+      GameAction.activeGame(this.props.match.params.gameId);
     }
   }
 
@@ -108,7 +107,7 @@ class GameBoard extends React.Component {
 
   countdownAndStartGame() {
     if (this.allowAutoDispatch()) {
-      GameAction.startPrefetchingGame(this.props.params.gameId);
+      GameAction.startPrefetchingGame(this.props.match.params.gameId);
     }
     TileUtils.addCountDown(this.countDownLayer);
     GameBoard.sleep(COUNTDOWN_DELAY_MS);
@@ -120,7 +119,8 @@ class GameBoard extends React.Component {
   }
 
   isTournament() {
-    return this.props.routes && this.props.routes[0].path.startsWith('/tournament');
+    // return this.props.routes && this.props.routes[0].path.startsWith('/tournament');
+    return this.props.match.path.startsWith('/tournament'); // Unsure if this is done correctly
   }
 
   checkForAutostart() {
@@ -176,7 +176,7 @@ class GameBoard extends React.Component {
       this.isTournament() ? (<div>
         <div>
           <button onClick={() => GameBoard.moveToBracket()}>Back</button>
-          <button style={{ float: 'right' }} onClick={() => this.moveToNextGame(this.props.params.gameId)}>Forward
+          <button style={{ float: 'right' }} onClick={() => this.moveToNextGame(this.props.match.params.gameId)}>Forward
           </button>
         </div>
       </div>) : <div />;
