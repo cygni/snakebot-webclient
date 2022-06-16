@@ -7,6 +7,8 @@ import TileUtils from '../../util/TileUtils';
 import GameAction from '../../game/action/game-actions';
 import Sidebar from './sidebar/Sidebar';
 import GameControl from './sidebar/GameControl';
+import backgroundIMG from "../../design/images/backgrounds/space.png"
+import canvasIMG from "../../design/images/backgrounds/game.svg"
 
 import PropTypes from 'prop-types';
 
@@ -188,8 +190,8 @@ class GameBoard extends React.Component {
 
         <div className="thegame clear-fix">
           <Sidebar />
-          <div className="gameboard">
-            <canvas
+          <div className="gameboard" style={{ backgroundImage: `url(${backgroundIMG})` }} >
+            <canvas style={{ backgroundImage: `url(${canvasIMG})` }}
               id="canvas"
               width={size.width + 0}
               height={size.height + 0}
@@ -208,3 +210,4 @@ class GameBoard extends React.Component {
 GameBoard.propTypes = propTypes;
 
 export default new StoreWatch(GameBoard, getGameState);
+
